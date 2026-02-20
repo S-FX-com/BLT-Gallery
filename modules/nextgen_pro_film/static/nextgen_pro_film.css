@@ -1,0 +1,57 @@
+div.nextgen_pro_film {
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.nextgen_pro_film .image-wrapper {
+	text-align: center;
+	padding: 15px;
+	vertical-align: middle;
+	max-width: 100%;
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.nextgen_pro_film .image-wrapper a {
+	display: block;
+	border: 0;
+	font-size: 0;
+	text-decoration: none;
+	max-width: 100% !important;
+	margin: 0 auto;
+}
+
+.nextgen_pro_film .image-wrapper picture {
+	max-width: 100% !important;
+}
+
+.nextgen_pro_film .nextgen_pro_film_image {
+	position: relative;
+	border: none;
+	max-width: 100% !important;
+}
+
+.nextgen_pro_film .image-wrapper .ngg-trigger-buttons {
+	clear: both;
+	float: none;
+	margin: 5px 0 0 0;
+}
+
+.nextgen_pro_film .ngg-navigation {
+	clear: both;
+}
+
+.nextgen_pro_film .nextgen_pro_film_title {
+	margin-top: 5px;
+	word-break: break-word;
+}
+
+.nextgen_pro_film .nextgen_pro_film_description {
+	margin-top: 5px;
+	word-break: break-word;
+}

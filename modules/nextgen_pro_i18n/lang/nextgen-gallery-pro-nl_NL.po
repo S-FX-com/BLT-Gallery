@@ -1,0 +1,2387 @@
+# Copyright (C) 2015 NextGEN Pro by Photocrati
+# This file is distributed under the same license as the NextGEN Pro by Photocrati package.
+msgid ""
+msgstr ""
+"Project-Id-Version: NextGEN Pro by Photocrati\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/nextgen-gallery-pro\n"
+"POT-Creation-Date: 2015-04-14 22:06:10+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-10-17 17:55+0200\n"
+"Last-Translator: Frank Leenders <leenders.f@icloud.com>\n"
+"Language-Team: Frank Leenders <leenders.f@icloud.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl\n"
+"X-Generator: Poedit 1.8.10\n"
+
+#: modules/autoupdate/module.autoupdate.php:693
+msgid "Could not download package file."
+msgstr "Het pakketbestand kon niet worden gedownload."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:99
+msgid "No updates available. You are using the latest version of Photocrati."
+msgstr "Geen updates beschikbaar. U gebruikt de nieuwste versie van Photocrati."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:100
+msgid "An update is available."
+msgstr "Er is een update beschikbaar."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:101
+msgid "Update size is {0} and a total of <b>{1}</b> will be downloaded."
+msgstr "De grootte van de update is {0} en totaal <b>{1}</b> zal worden gedownload."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:102
+msgid ""
+"In order to update, we need to confirm that you are still an active member. "
+"You'll be redirected to our site, prompted for the email address you used during "
+"purchase, and returned here for the update. {2}This is part of a new update "
+"mechanism, and you'll only need to do it once."
+msgstr ""
+"Om te updaten, moeten we bevestigen dat u nog steeds een actief lid bent. U zult "
+"worden doorverwezen naar onze site, gevraagd  worden om het e-mailadres dat u "
+"gebruikt heeft tijdens aankoop en daarna wordt u hiereretourneerd. {2} Dit is "
+"onderdeel van het nieuwe update-mechanisme, en hoeft dit slechts één keer te doen."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:103
+msgid "Start confirmation"
+msgstr "Start bevestiging"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:104
+msgid ""
+"Your updates cannot be installed because your membership has expired. You can "
+"update in minutes and get immediate access to updates and support for an "
+"additional year."
+msgstr ""
+"Uw updates kunnen niet worden geïnstalleerd omdat uw lidmaatschap is verlopen. U "
+"kunt dit bijwerken in enkele minuten en onmiddellijke toegangkrijgen tot updates "
+"en ondersteuning voor een extra jaar."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:105
+msgid "Renew my membership"
+msgstr "Mijn lidmaatschap verlengen"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:106
+msgid "Start Update"
+msgstr "Update starten"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:107
+msgid "Return to dashboard"
+msgstr "Terug naar uw account."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:108
+msgid "Success! Everything is now up-to-date."
+msgstr "Succes! Alles is nu bijgewerkt."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:109
+msgid "Click <b>Start Update</b> to begin the upgrade process."
+msgstr "Klik op <b>Start Update</b> als u wil beginnen met het upgrade proces."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:110
+msgid "Preparing upgrade process..."
+msgstr "Voorbereiding van upgrade proces..."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:111
+msgid "Downloading package {1} of {0}..."
+msgstr "Pakket {1} van {0} downloaden…"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:112
+msgid "Installing package {1} of {0}..."
+msgstr "Pakket {1} van {0} installeren..."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:113
+msgid "Activating packages..."
+msgstr "Activeer pakketten..."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:114
+msgid "Cleaning up..."
+msgstr "Bezig met opruimen..."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:115
+msgid "Update was canceled."
+msgstr "Update is geannuleerd."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:116
+msgid "An error occurred during your update ({0})."
+msgstr "Er is een fout opgetreden tijdens het bijwerken ({0})."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:117
+msgid "Show Update Log"
+msgstr "Update-logboek weergeven"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:118
+msgid "Download Update Log"
+msgstr "Downloaden van het Update-logboek"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:212
+#: modules/autoupdate_admin/templates/admin_page.php:2
+msgid "Photocrati Updates"
+msgstr "Photocrati Updates"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:212
+msgid "Photocrati"
+msgstr "Photocrati"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:224
+msgid "Welcome to Photocrati"
+msgstr "Welkom bij Photocrati"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:266
+msgid "version"
+msgstr "versie"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:297
+msgid "You are using the following products:"
+msgstr "U gebruikt de volgende producten:"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:300
+msgid "You are using"
+msgstr "U gebruikt"
+
+#: modules/autoupdate_admin/templates/admin_page.php:4
+msgid "Loading..."
+msgstr "Laden..."
+
+#: modules/cheque/adapter.cheque_checkout_ajax.php:12
+#: modules/cheque/adapter.cheque_checkout_ajax.php:67
+#: modules/paypal_standard/adapter.paypal_standard_ajax.php:49
+#: modules/test_gateway/adapter.test_gateway_checkout_ajax.php:57
+msgid "Your cart is empty"
+msgstr "Uw winkelmand is leeg."
+
+#: modules/cheque/adapter.cheque_checkout_ajax.php:30
+msgid "Please fill all fields and try again"
+msgstr "Vul alle velden in en probeer het opnieuw."
+
+#: modules/cheque/adapter.cheque_checkout_ajax.php:38
+msgid "Invalid country selected, please try again."
+msgstr "Ongeldig land geselecteerd, probeer het opnieuw."
+
+#: modules/cheque/adapter.cheque_checkout_ajax.php:84
+msgid ""
+"Payment was successfully made via Check. Once you have received payment, you can "
+"click “Verify” in the View Orders page and a confirmation email will be sent to "
+"the user."
+msgstr ""
+"Als betaalmethode is bankoverschrijving gekozen. Zodra de betaling is ontvangen, "
+"kun je klikken op \"Controleer\" in de pagina \"Bekijk Orders\" en wordt er een "
+"bevestigings-mail naar de gebruiker gestuurd."
+
+#: modules/cheque/adapter.cheque_checkout_button.php:31
+msgid "Shipping information"
+msgstr "Leveringsinformatie"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:32
+msgid "Pay by check"
+msgstr "Betalen via een bankoverschrijving"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:33
+#: modules/test_gateway/adapter.test_gateway_checkout_button.php:16
+msgid "Place order"
+msgstr "Plaats bestelling"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:34
+#: modules/ecommerce/templates/manage_pricelist.php:36
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:46
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:35
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:24
+#: modules/paypal_standard/adapter.paypal_standard_button.php:43
+#: modules/test_gateway/adapter.test_gateway_checkout_button.php:17
+msgid "Processing..."
+msgstr "Verwerken..."
+
+#: modules/cheque/adapter.cheque_checkout_button.php:37
+#: modules/ecommerce/adapter.manual_pricelist_form.php:21
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:49
+msgid "Name"
+msgstr "Naam"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:38
+#: modules/ecommerce/adapter.payment_gateway_form.php:194
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:50
+#: modules/paypal_standard/adapter.paypal_standard_form.php:55
+msgid "Email"
+msgstr "E-mail"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:39
+msgid "Address"
+msgstr "Adres"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:40
+msgid "City"
+msgstr "Plaatsnaam"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:41
+msgid "State"
+msgstr "Provincie"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:42
+msgid "Zip"
+msgstr "Postcode"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:43
+msgid "Country"
+msgstr "Land"
+
+#: modules/cheque/module.cheque.php:61 modules/cheque/module.cheque.php:62
+msgid "Verify check payment"
+msgstr "Controleer de bestellingen via bankoverschrijving"
+
+#: modules/cheque/module.cheque.php:134
+msgid "Order payment verified"
+msgid_plural "%s orders payment verified"
+msgstr[0] "Betaling geverifieerd"
+msgstr[1] "%s betalingen geverifieerd"
+
+#: modules/cheque/module.cheque.php:172
+msgid ""
+"<p>Thanks very much for your purchase! We'll be in touch shortly via email to "
+"confirm your order and to provide details on payment.</p>"
+msgstr ""
+"<p>Hartelijk dank voor uw aankoop! We zullen binnenkort contact via e-mail "
+"opnemen ter bevestiging van uw bestelling en om details te verstrekken over de "
+"betaling.</p>"
+
+#: modules/comments/class.comment_mapper.php:65
+msgid "NextGEN Comment Link - %s - %s"
+msgstr "NextGEN reageer Link - %s - %s"
+
+#: modules/comments/module.comments.php:88
+#: modules/comments/templates/comments.php:162
+msgid "Comments"
+msgstr "Reacties"
+
+#: modules/comments/module.comments.php:89
+msgid "Comment"
+msgstr "Reactie"
+
+#: modules/comments/templates/comments.php:27
+msgid "%1$s"
+msgstr "%1$s"
+
+#: modules/comments/templates/comments.php:36
+msgid "Reply"
+msgstr "Reageer"
+
+#: modules/comments/templates/comments.php:47
+msgid "Your comment is awaiting moderation."
+msgstr "Uw reactie wacht op moderatie."
+
+#: modules/comments/templates/comments.php:117
+msgid "&raquo;"
+msgstr "&raquo;"
+
+#: modules/comments/templates/comments.php:133
+msgid "&laquo;"
+msgstr "&laquo;"
+
+#: modules/comments/templates/comments.php:145
+msgid "%1$s comment"
+msgid_plural "%1$s comments"
+msgstr[0] "%1$s reactie"
+msgstr[1] ""
+
+#: modules/comments/templates/comments.php:159
+msgid "Comments are closed."
+msgstr "Reageren niet meer mogelijk."
+
+#: modules/comments/templates/comments.php:166
+msgid "Click here to cancel reply"
+msgstr "Klik hier om uw antwoord te annuleren"
+
+#: modules/comments/templates/comments.php:178
+msgid ""
+"You must be <a href=\"%s\" id=\"nggpl-comment-logout\">logged in</a> to post a "
+"comment."
+msgstr ""
+"U moet zijn <a href=“%s” id=“nggpl-comment-logout”>ingelogd</a> om een reactie te "
+"plaatsen."
+
+#: modules/comments/templates/comments.php:179
+msgid "Leave a comment"
+msgstr "Geef een reactie"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:7
+#: modules/ecommerce/adapter.ecommerce_ajax.php:75
+#: modules/ecommerce/adapter.ecommerce_options_form.php:67
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:86
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:67
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:413
+msgid "Digital Downloads"
+msgstr "Digitale downloads"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:35
+msgid "Display link to license terms?"
+msgstr "Link naar licentiebepalingen weergeven?"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:36
+msgid "Licensing page:"
+msgstr "Licentievoorwaarden:"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:37
+msgid "Name:"
+msgstr "Naam:"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:38
+msgid "Price:"
+msgstr "Prijs:"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:39
+msgid "Longest Image Dimension:"
+msgstr "Langste afmeting van de afbeelding:"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:40
+msgid "A setting of 0px will deliver full-resolution images"
+msgstr "Een instelling van 0px zal volledige resolutie geven"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:41
+msgid "Enter 0 for maximum"
+msgstr "Voer 0 voor maximaal"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:42
+#: modules/ecommerce/adapter.manual_pricelist_form.php:23
+msgid "Enter title of the item"
+msgstr "Geef titel van het item"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:43
+#: modules/ecommerce/adapter.manual_pricelist_form.php:24
+#: modules/ecommerce/templates/manage_pricelist.php:33
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:44
+#: modules/ecommerce/adapter.manual_pricelist_form.php:25
+msgid "Add another item"
+msgstr "Voeg een ander item toe"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:45
+#: modules/ecommerce/adapter.manual_pricelist_form.php:26
+msgid "No items available for this source."
+msgstr "Geen items beschikbaar voor deze bron."
+
+#: modules/ecommerce/adapter.display_type_ecommerce_form.php:24
+msgid "Enable ecommerce?"
+msgstr "Ecommerce inschakelen?"
+
+#: modules/ecommerce/adapter.display_type_ecommerce_form.php:29
+msgid "see instructions"
+msgstr "Zie instructies"
+
+#: modules/ecommerce/adapter.ecommerce_ajax.php:78
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:87
+msgid "View license terms"
+msgstr "Weergave van licentievoorwaarden"
+
+#: modules/ecommerce/adapter.ecommerce_ajax.php:132
+msgid "We're sorry, but we couldn't find your order."
+msgstr "We konden geen bestelling vinden. Onze excuses voor het ongemak"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_controller.php:7
+#: modules/ecommerce/adapter.ecommerce_instructions_controller.php:12
+#: modules/ecommerce/adapter.payment_gateway_form.php:275
+msgid "Instructions"
+msgstr "Instructies"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:12
+msgid "Getting Started"
+msgstr "Ermee Beginnen"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:31
+msgid "How to create a gallery with ecommerce"
+msgstr "Hoe maak je een galerij met Ecommerce"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:34
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:68
+msgid "Configure your %s."
+msgstr "Configureer uw %s."
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:35
+msgid "ecommerce settings"
+msgstr "instellingen voor Ecommerce"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:39
+msgid "Create one or more %s."
+msgstr "Maak een of meer %s."
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:40
+msgid "pricelists"
+msgstr "prijslijsten"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:44
+msgid ""
+"Using the %s page, associate a pricelist with any gallery or image you would like "
+"to sell."
+msgstr ""
+"Met behulp van de %s pagina kan je een prijslijst aan je gallerij of afbeelding "
+"toevoegen."
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:45
+msgid "Manage Galleries"
+msgstr "Galerijen beheren"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:48
+msgid ""
+"When adding or editing a gallery via the NextGEN Insert Gallery Window, be sure "
+"to enable ecommerce."
+msgstr ""
+"Bij het toevoegen of bewerken van een galerij via de NextGEN Insert Gallery "
+"Window, vergeet Ecommerce niet in te schakelen."
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:51
+msgid "Be sure to select "
+msgstr "Zorg ervoor dat u selecteert"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:51
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:107
+#: modules/nextgen_pro_lightbox_legacy/module.nextgen_pro_lightbox_legacy.php:244
+msgid "NextGEN Pro Lightbox"
+msgstr "NextGEN Pro Lightbox"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:51
+msgid " as your desired lightbox effect."
+msgstr "als uw gewenste lightbox effect."
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:54
+msgid "Additional Documentation on %s"
+msgstr "Aanvullende documentatie bij %s"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:55
+msgid "nextgen-gallery.com"
+msgstr "NextGen-Gallery.com"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:59
+msgid "Ecommerce Overview"
+msgstr "Ecommerce Overzicht"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:60
+msgid "How to Configure Ecommerce Options"
+msgstr "Het configureren van opties voor Ecommerce"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:61
+msgid "How to Create and Assign a Pricelist"
+msgstr "Hoe maak je of wijzig je een prijslijst"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:62
+msgid "How to Add Ecommerce to a Gallery"
+msgstr "Hoe voeg je Ecommerce toe aan een gallerij"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:65
+msgid "How to create a proofing gallery"
+msgstr "Hoe maak je een drukproevengalerij"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:69
+msgid "proofing settings"
+msgstr "Instellingen drukproeven"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:73
+msgid "Select %s as your desired lightbox effect."
+msgstr "Selecteer %s als uw gewenste lightbox effect."
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:74
+msgid "NextGen Pro Lightbox"
+msgstr "NextGen Pro Lightbox"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:77
+msgid ""
+"When adding a gallery via the NextGen Insert Gallery Window, click the option to "
+"enable proofing."
+msgstr ""
+"Bij het toevoegen van een galerie via het NextGen Insert Gallery Window, klikt u "
+"op de optie om drukproeven in te schakelen."
+
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:7
+msgid "Ecommerce Options"
+msgstr "Opties voor Ecommerce"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:12
+msgid "General Options"
+msgstr "Algemene Instellingen"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:39
+msgid "Shopping Cart"
+msgstr "Winkelwagen"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:48
+msgid "Thanks"
+msgstr "Bedankt!"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:57
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:445
+msgid "Order Cancelled"
+msgstr "Bestelling geannuleerd"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:57
+msgid "You order was cancelled."
+msgstr "U bestelling is geannuleerd."
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:61
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:447
+msgid "Your order was cancelled"
+msgstr "Uw bestelling is geannuleerd"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:67
+msgid "[ngg_pro_digital_downloads]"
+msgstr "[ngg_pro_digital_downloads]"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:145
+msgid "\"Not for sale\" Message"
+msgstr "\"Niet te koop\" Bericht"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:166
+msgid "Home Country"
+msgstr "Thuisland"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:176
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:101
+msgid "Create new"
+msgstr "Nieuwe maken"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:197
+msgid "Currency"
+msgstr "Valuta"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:211
+msgid "Checkout page"
+msgstr "Afrekenpagina"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:214
+msgid ""
+"This page requires the [ngg_pro_checkout] shortcode, which will be automatically "
+"added if not already present. Selecting \"Create new\" will create a new page "
+"that will appear in your Primary Menu unless you've customized your menu "
+"settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr ""
+"Deze pagina heeft de [ngg_pro_checkout] shortcode nodig, deze wordt automatisch "
+"toegevoegd indien ze niet aanwezig is. “Maak nieuwe” zal een nieuwe pagina maken "
+"die verschijnt in het hoofdmenu tenzij u uw menu instellingen heeft aangepast: "
+"http://codex.wordpress.org/Appearance_Menus_SubPanel"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:226
+msgid "Thank-you page"
+msgstr "Bedanktpagina"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:229
+msgid ""
+"This page should have the [ngg_pro_order_details] shortcode, which will be "
+"automatically added if not already present. Selecting \"Create new\" will create "
+"a new page that will appear in your Primary Menu unless you've customized your "
+"menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr ""
+"Deze pagina heeft de [ngg_pro_order_details] shortcode nodig, deze wordt "
+"automatisch toegevoegd indien ze niet aanwezig is. “Maak nieuwe” zal een nieuwe "
+"pagina maken die verschijnt in het hoofdmenu tenzij u uw menu instellingen heeft "
+"aangepast: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:241
+msgid "Cancel page"
+msgstr "Annuleringspagina"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:244
+msgid ""
+"Selecting \"Create new\" will create a new page that will appear in your Primary "
+"Menu unless you've customized your menu settings: http://codex.wordpress.org/"
+"Appearance_Menus_SubPanel"
+msgstr ""
+"“Maak nieuwe” zal een nieuwe pagina maken die verschijnt in het hoofdmenu tenzij "
+"u uw menu instellingen heeft aangepast: http://codex.wordpress.org/"
+"Appearance_Menus_SubPanel"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:256
+msgid "Digital downloads page"
+msgstr "Digitale downloadpagina"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:259
+msgid ""
+"This page requires the [ngg_pro_digital_downloads] shortcode, which will be "
+"automatically added if not already present. Selecting \"Create new\" will create "
+"a new page that will appear in your Primary Menu unless you've customized your "
+"menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr ""
+"Deze pagina heeft de [ngg_pro_digital_downloads] shortcode nodig, deze wordt "
+"automatisch toegevoegd indien ze niet aanwezig is. “Maak nieuwe” zal een nieuwe "
+"pagina maken die verschijnt in het hoofdmenu tenzij u uw menu instellingen heeft "
+"aangepast: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+
+#: modules/ecommerce/adapter.ecommerce_pages.php:15
+msgid "Manage Pricelists"
+msgstr "Beheer prijslijsten"
+
+#: modules/ecommerce/adapter.ecommerce_pages.php:22
+msgid "View Orders"
+msgstr "Bekijk bestellingen"
+
+#: modules/ecommerce/adapter.ecommerce_pages.php:29
+msgid "View Proofs"
+msgstr "Bekijk drukproeven"
+
+#: modules/ecommerce/adapter.ecommerce_pro_lightbox_form.php:37
+msgid "Display cart"
+msgstr "Winkelwagen weergeven"
+
+#: modules/ecommerce/adapter.ecommerce_pro_lightbox_form.php:39
+msgid ""
+"When on the cart sidebar will be opened at startup. If the \"Display Comments\" "
+"option is also on the comments panel will open instead."
+msgstr ""
+"Als dit aan staat wordt de winkelwagen bij het opstarten geopend. Als de 'Toon "
+"commentaar' optie is ook op de opmerkingen paneel in plaats openen."
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:7
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:62
+msgid "Manual Pricelist"
+msgstr "Handmatige prijslijst"
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:22
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:68
+#: modules/ecommerce/class.nextgen_pro_checkout.php:42
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:22
+msgid "Price"
+msgstr "Prijs"
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:27
+msgid "Domestic shipping rate:"
+msgstr "Verzendkosten binnenland:"
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:28
+msgid "International shipping rate:"
+msgstr "Verzenkosten internationaal:"
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:29
+msgid "Enable international shipping rate?"
+msgstr "Internationale verzendkosten inschakelen?"
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:64
+msgid "Flat Rate"
+msgstr "Forfaitair"
+
+#: modules/ecommerce/adapter.manual_pricelist_form.php:65
+msgid "Percentage"
+msgstr "Percentage"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:7
+msgid "E-mail"
+msgstr "E-mail"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:12
+msgid "E-mail Settings"
+msgstr "E-mail instellingen"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:44
+msgid "Order notification e-mail subject:"
+msgstr "Onderwerp bestelnotificatie e-mail:"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:48
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:99
+msgid "Subject"
+msgstr "Onderwerp"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:57
+msgid "Order notification e-mail recipient:"
+msgstr "Bestelnotificatie ontvanger:"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:61
+msgid "john@example.com"
+msgstr "john.doe@example.com"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:70
+msgid "Order notification e-mail content:"
+msgstr "Inhoud bestelnotificatie e-mail:"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:72
+msgid ""
+"Wrap placeholders in %%param%%. Accepted placeholders: customer_name, email, "
+"total_amount, item_count, shipping_street_address, shipping_city, shipping_state, "
+"shipping_zip, shipping_country, order_id, hash, order_details_page, admin_email, "
+"blog_name, blog_description, blog_url, site_url, home_url, and file_list"
+msgstr ""
+"Beschikbare placeholders in %%param%%. Toegelaten placeholders: customer_name, "
+"email, total_amount, item_count, shipping_street_address, shipping_city, "
+"shipping_state, shipping_zip, shipping_country, order_id, hash, "
+"order_details_page, admin_email, blog_name, blog_description, blog_url, site_url, "
+"home_url, en file_list"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:83
+msgid "Send e-mail receipt to customer?"
+msgstr "Stuur een factuur via e-mail?"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:85
+msgid "If enabled a receipt will be sent to the customer after successful checkout"
+msgstr ""
+"Wanneer ingeschakeld, zal eer een mail met de factuur naar de klant gestuurd "
+"worden na een voltooide betaling"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:95
+msgid "E-mail subject:"
+msgstr "E-mail onderwerp:"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:109
+msgid "E-mail content:"
+msgstr "Inhoud e-mail:"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:111
+msgid ""
+"Wrap placeholders in %%param%%. Accepted placeholders: customer_name, email, "
+"total_amount, item_count, shipping_street_address, shipping_city, shipping_state, "
+"shipping_zip, shipping_country, order_id, hash, order_details_page, admin_email, "
+"blog_name, blog_description, blog_url, site_url, and home_url"
+msgstr ""
+"Beschikbare placeholders in %%param%%. Toegelaten placeholders: customer_name, "
+"email, total_amount, item_count, shipping_street_address, shipping_city, "
+"shipping_state, shipping_zip, shipping_country, order_id, hash, "
+"order_details_page, admin_email, blog_name, blog_description, blog_url, site_url, "
+"en home_url"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:12
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:253
+msgid "Payment Gateway"
+msgstr "Betalingsgateway"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:62
+msgid "Enable Stripe"
+msgstr "Stripe inschakelen"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:64
+msgid ""
+"Not all currencies are supported by all payment gateways. Please be sure to "
+"confirm your desired currency is supported by Stripe"
+msgstr ""
+"Niet alle valuta's worden ondersteund door alle betalingsgateways. Zorg ervoor "
+"dat u de gewenste valuta wordt ondersteund door Stripe"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:97
+msgid "Stripe does not support your currently chosen currency"
+msgstr "Stripe biedt geen ondersteuning voor uw gekozen valuta"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:109
+msgid "Use sandbox"
+msgstr "Gebruik sandbox"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:111
+#: modules/ecommerce/adapter.payment_gateway_form.php:182
+msgid ""
+"If enabled transactions will use testing servers on which no currency is actually "
+"moved"
+msgstr ""
+"Wanneer ingeschakeld zal de test server gebruikt worden waar geen geld  wordt "
+"verzonden"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:123
+msgid "Public key"
+msgstr "Public key"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:137
+msgid "Private key"
+msgstr "Private key"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:151
+msgid "Enable PayPal Express Checkout"
+msgstr "PayPal Express Checkout inschakelen"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:153
+#: modules/paypal_standard/adapter.paypal_standard_form.php:30
+msgid ""
+"Not all currencies are supported by all payment gateways. Please be sure to "
+"confirm your desired currency is supported by PayPal"
+msgstr ""
+"Niet alle valuta's worden ondersteund door alle betaling gateways. Zorg ervoor "
+"dat u de gewenste valuta wordt ondersteund door PayPal"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:168
+#: modules/paypal_standard/adapter.paypal_standard_form.php:73
+msgid "PayPal does not support your currently chosen currency"
+msgstr "PayPal biedt geen ondersteuning voor uw gekozen valuta"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:180
+msgid "Use sandbox?"
+msgstr "Sandbox gebruiken?"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:208
+msgid "API Username"
+msgstr "API Gebruikersnaam"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:222
+msgid "API Password"
+msgstr "API Wachtwoord"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:236
+msgid "API Signature"
+msgstr "API Handtekening"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:250
+msgid "Enable Testing Gateway"
+msgstr "Testgateway inschakelen"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:252
+msgid ""
+"Enables a gateway that does not collect payments and sends users directly to "
+"their order confirmation"
+msgstr ""
+"Een gateway die geen betalingen verzamelt en gebruikers direct naar hun "
+"orderbevestiging stuurt"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:263
+msgid "Enable Checks"
+msgstr "Accepteer bankoverschrijvingen"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:277
+msgid "Use this to inform users how to pay and where they should send their payment"
+msgstr ""
+"Gebruik dit om gebruikers te informeren over hoe ze moeten betalen en waar ze hun "
+"betaling moet sturen"
+
+#: modules/ecommerce/adapter.reset_ecommerce_settings_form.php:11
+msgid ""
+"Please note that this includes all NextGEN Pro settings, including ecommerce "
+"options."
+msgstr ""
+"Houd er rekening mee dat dit alle NextGEN Pro-instellingen omvat, inclusief "
+"opties voor Ecommerce."
+
+#: modules/ecommerce/class.digital_downloads.php:74
+#: modules/ecommerce/class.nextgen_pro_checkout.php:39
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:19
+msgid "Image"
+msgstr "Afbeelding"
+
+#: modules/ecommerce/class.digital_downloads.php:75
+msgid "Resolution"
+msgstr "Resolutie"
+
+#: modules/ecommerce/class.digital_downloads.php:76
+msgid "Item"
+msgstr "Product"
+
+#: modules/ecommerce/class.digital_downloads.php:77
+msgid "Download"
+msgstr "Download"
+
+#: modules/ecommerce/class.digital_downloads.php:78
+msgid "Digital Downloads for Order #%s"
+msgstr "Digitale downloads voor bestelling #%s"
+
+#: modules/ecommerce/class.digital_downloads.php:86
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:497
+msgid ""
+"Oops! This page usually displays details for image purchases, but you have not "
+"ordered any images yet. Please feel free to continue browsing. Thanks for "
+"visiting."
+msgstr ""
+"Oeps! Deze pagina bevat meestal details voor drukproeven, maar u heeft nog geen "
+"afbeeldingen als proef aangemerkt. Ga gerust door met bladeren. Bedankt voor uw "
+"bezoek."
+
+#: modules/ecommerce/class.digital_downloads.php:98
+msgid ""
+"We haven't received payment confirmation yet. This may take a few minutes. Please "
+"wait..."
+msgstr ""
+"Nog geen betalingsbevestiging ontvangen. Dit kan enkele minuten duren. Een "
+"ogenblik geduld..."
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:62
+msgid "Add To Cart"
+msgstr "Toevoegen aan winkelwagen"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:63
+msgid "Change quantities to update your cart."
+msgstr "Aantallen wijzigen om uw winkelwagen te wijzigen."
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:64
+msgid "View Cart / Checkout"
+msgstr "Bekijk winkelwagen / afrekenen"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:65
+msgid "This image is not for sale"
+msgstr "Sorry, deze foto is momenteel niet te koop."
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:66
+#: modules/ecommerce/class.nextgen_pro_checkout.php:40
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:20
+msgid "Quantity"
+msgstr "Aantal"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:67
+#: modules/ecommerce/class.nextgen_pro_checkout.php:41
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:21
+msgid "Description"
+msgstr "Omschrijving"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:69
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:23
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:254
+msgid "Total"
+msgstr "Totaal"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:70
+msgid "Update Cart"
+msgstr "Winkelwagen bijwerken"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:71
+msgid "Toggle cart sidebar"
+msgstr "Laat winkelwagen zien"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:72
+msgid "Your cart has been updated"
+msgstr "Uw winkelwagen is bijgewerkt"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:78
+msgid "Prints & Products"
+msgstr "Prints & producten"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:43
+msgid "Totals"
+msgstr "Totalen"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:44
+msgid "Subtotal:"
+msgstr "Subtotaal"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:45
+msgid "Shipping:"
+msgstr "Bezorging:"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:46
+msgid "Total:"
+msgstr "Totaal:"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:47
+msgid "There have been no items added to your cart."
+msgstr "Er zijn geen items in uw winkelwagen"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:48
+msgid "Continue shopping"
+msgstr "Verder winkelen"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:49
+msgid "Empty cart"
+msgstr "Winkelwagen legen"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:50
+msgid "Ship to:"
+msgstr "Verzenden naar:"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:51
+msgid "International"
+msgstr "Internationaal"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:265
+msgid "We couldn't find your order. We apologize for the inconvenience"
+msgstr "We konden geen bestelling vinden. Onze excuses voor het ongemak"
+
+#: modules/ecommerce/class.nextgen_pro_order_verification.php:18
+msgid "Please wait - we appreciate your patience."
+msgstr "Een moment geduld a.u.b. - Wij waarderen uw geduld."
+
+#: modules/ecommerce/class.nextgen_pro_order_verification.php:19
+msgid "We're verifying your order. This might take a few minutes."
+msgstr "Uw bestelling wordt gecontroleerd. Dit kan enkele minuten duren."
+
+#: modules/ecommerce/class.nextgen_pro_order_verification.php:20
+msgid "This page will redirect automatically."
+msgstr "Deze pagina zal automatisch omleiden."
+
+#: modules/ecommerce/class.pricelist_source_page.php:25
+msgid "Manage Pricelist"
+msgstr "Prijslijst beheren"
+
+#: modules/ecommerce/class.pricelist_source_page.php:71
+msgid "Saved pricelist successfully"
+msgstr "Prijslijst succesvol opgeslagen"
+
+#: modules/ecommerce/class.pricelist_source_page.php:72
+msgid "Deleted pricelist"
+msgstr "Verwijderde prijslijst"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:211
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:212
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:935
+msgid "Ecommerce"
+msgstr "Ecommerce"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:250
+msgid "ID"
+msgstr "ID"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:251
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:102
+msgid "Customer"
+msgstr "Klant"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:252
+msgid "Order Status"
+msgstr "Status van bestelling"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:269
+msgid "Cheque"
+msgstr "Bankoverschrijving"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:273
+msgid "PayPal"
+msgstr "PayPal"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:276
+msgid "Stripe"
+msgstr "Stripe"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:279
+msgid "Test"
+msgstr "Test"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:335
+msgid "All order statuses"
+msgstr "Bestelstatussen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:336
+msgid "Verified"
+msgstr "Geverifieerd"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:337
+msgid "Unverified"
+msgstr "Ongecontroleerd"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:338
+msgid "Fraud"
+msgstr "Fraude"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:382
+msgid "Duplicate"
+msgstr "Dupliceren"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:423
+msgid "Checkout"
+msgstr "Afrekenen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:434
+msgid "Order Details"
+msgstr "Details van de bestelling"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:456
+msgid "Verifying order"
+msgstr "Order verifiëren"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:519
+msgid ""
+"Thank you for your order, [customer_name]. You ordered the following items:\n"
+"                [items]\n"
+"\n"
+"                <p>\n"
+"                <h3>Order Details</h3>\n"
+"                Subtotal: [subtotal_amount]<br/>\n"
+"                [if_ordered_shippable_items]Shipping: [shipping_amount]<br/>[/"
+"if_ordered_shippable_items]\n"
+"                Total: [total_amount]<br/>\n"
+"                </p>\n"
+"\n"
+"                [if_ordered_shippable_items]\n"
+"                <p>\n"
+"                We will be shipping your items to:<br/>\n"
+"                [shipping_street_address]<br/>\n"
+"                [shipping_city], [shipping_state] [shipping_zip]<br/>\n"
+"                [shipping_country]\n"
+"                </p>\n"
+"                [/if_ordered_shippable_items]\n"
+"\n"
+"                [if_ordered_digital_downloads]\n"
+"                <h3>Digital Downloads</h3>\n"
+"                <p>You may download your digital products <a "
+"href='[digital_downloads_page_url]'>here.</a></p>\n"
+"                [/if_ordered_digital_downloads]\n"
+"            "
+msgstr ""
+"Bedankt voor uw bestelling, [customer_name]. U heeft het volgende besteld:\n"
+"                [items]\n"
+"\n"
+"                <p>\n"
+"                <h3>Details bestelling</h3>\n"
+"                Subtotaal: [subtotal_amount]<br/>\n"
+"                [if_ordered_shippable_items]Verzendkosten: [shipping_amount]<br/"
+">[/if_ordered_shippable_items]\n"
+"                Totaal: [total_amount]<br/>\n"
+"                </p>\n"
+"\n"
+"                [if_ordered_shippable_items]\n"
+"                <p>\n"
+"                We verzenden uw bestelling naar:<br/>\n"
+"                [shipping_street_address]<br/>\n"
+"                [shipping_city], [shipping_state] [shipping_zip]<br/>\n"
+"                [shipping_country]\n"
+"                </p>\n"
+"                [/if_ordered_shippable_items]\n"
+"\n"
+"                [if_ordered_digital_downloads]\n"
+"                <h3>Digitale downloads</h3>\n"
+"                <p>U mag uw digitale producten hier downloaden <a "
+"href='[digital_downloads_page_url]'>.</a></p>\n"
+"                [/if_ordered_digital_downloads]\n"
+"            "
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:712
+msgid "(includes Ecommerce Options)"
+msgstr "(inclusief opties voor Ecommerce)"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:747
+msgid "Pricelists"
+msgstr "Prijslijsten"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:748
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:749
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:900
+msgid "Pricelist"
+msgstr "Prijslijst"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:750
+msgid "Add New Pricelist"
+msgstr "Nieuwe Prijslijst  toevoegen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:751
+msgid "Edit Pricelist"
+msgstr "Bewerk prijslijst"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:752
+msgid "New Pricelist"
+msgstr "Nieuwe prijslijst"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:753
+msgid "View Pricelist"
+msgstr "Bekijk prijslijst"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:754
+msgid "Search Pricelists"
+msgstr "Zoek prijslijsten"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:755
+msgid "No pricelists found"
+msgstr "Geen prijslijsten gevonden"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:764
+msgid "Pricelist Item"
+msgstr "Prijslijst Item"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:772
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:774
+msgid "Orders"
+msgstr "Bestellingen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:773
+msgid "Order"
+msgstr "Bestelling"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:775
+msgid "Add New Order"
+msgstr "Nieuwe bestelling toevoegen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:776
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:778
+msgid "View Order"
+msgstr "Bestelling bekijken"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:777
+msgid "New Order"
+msgstr "Nieuwe bestelling"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:779
+msgid "Search Orders"
+msgstr "Zoek in bestellingen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:780
+msgid "No orders found"
+msgstr "Geen bestellingen gevonden"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:942
+msgid "Use gallery's pricelist"
+msgstr "Gebruik prijslijst van de galerij"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:946
+msgid "None (not for sale)"
+msgstr "Geen (niet te koop)"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:978
+msgid "None"
+msgstr "Geen"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1049
+msgid "New Purchase!"
+msgstr "Nieuwe aankoop!"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1052
+msgid "Thank you for your purchase!"
+msgstr "Hartelijk dank voor uw aankoop!"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1053
+msgid ""
+"Thank you for your order, %%customer_name%%.\n"
+"\n"
+"You ordered %%item_count%% items, and have been billed a total of %%total_amount%"
+"%.\n"
+"\n"
+"To review your order, please go to %%order_details_page%%.\n"
+"\n"
+"Thanks for shopping at %%site_url%%!"
+msgstr ""
+"Bedankt voor uw bestellng, %%customer_name%%.\n"
+"\n"
+"U heeft %%item_count%% items besteld, voor een totaal van: %%total_amount%%.\n"
+"\n"
+"Om uw bestelling te bekijken ga naar %%order_details_page%%.\n"
+"\n"
+"Bedankt om te winkelen bij %%site_url%%!"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1054
+msgid ""
+"You received a payment of %%total_amount%% from %%customer_name%%. For more "
+"details, visit: %%order_details_page%%\n"
+"\n"
+"%%gateway_admin_note%%\n"
+"\n"
+"Here is a comma separated list of the image file names. You can copy and\n"
+"paste this in your favorite image management software to quickly search for\n"
+"and find all selected images.\n"
+"\n"
+"Files: %%file_list%%"
+msgstr ""
+"U heeft een betaling ontvangen van %%total_amount%% van %%customer_name%%. "
+"Bezoek: %%order_details_page%% voor meer details\n"
+"\n"
+"%%gateway_admin_note%%\n"
+"\n"
+"Dit is een lijst met alle namen van de foto’s gescheiden door komma’s\n"
+"plak dit in uw favoriete foto programma om snel alle \n"
+"geselecteerde foto’s te vinden.\n"
+"\n"
+"Files: %%file_list%%"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1055
+msgid "Sorry, this image is not currently for sale."
+msgstr "Sorry, deze foto is momenteel niet te koop."
+
+#: modules/ecommerce/templates/manage_pricelist.php:32
+msgid "Save"
+msgstr "Opslaan"
+
+#: modules/image_protection/adapter.image_protection_form.php:12
+msgid "Image Protection"
+msgstr "Afbeelding bescherming"
+
+#: modules/image_protection/adapter.image_protection_form.php:43
+msgid "Protect images"
+msgstr "Bescherm beelden"
+
+#: modules/image_protection/adapter.image_protection_form.php:45
+msgid "Protect images from being downloaded both by right click or drag &amp; drop"
+msgstr ""
+"Bescherm afbeeldingen tegen downloaden via zowel rechts klikken, als drag &amp; "
+"drop"
+
+#: modules/image_protection/adapter.image_protection_form.php:58
+msgid "Disable right click menu completely"
+msgstr "Rechtermuisknop-menu volledig uitschakelen"
+
+#: modules/image_protection/adapter.image_protection_form.php:60
+msgid ""
+"By default the right click menu is only disabled for NextGEN images. Enable this "
+"to disable the right click menu on the whole page."
+msgstr ""
+"Standaard is het rechtermuisknop-menu alleen uitgeschakeld voor NextGEN beelden. "
+"Als u dit inschakelt wordt de rechter muisknop op de hele pagina uitgeschakeld."
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:57
+msgid "Display galleries as"
+msgstr "Galerijen tonen als"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:60
+msgid "How would you like galleries to be displayed?"
+msgstr "Hoe wil u dat galerijen worden weergegeven?"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:69
+msgid "Caption color"
+msgstr "Onderschrift Tekstkleur"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:79
+msgid "Caption size"
+msgstr "Bijschrift tekstgrootte"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:93
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:59
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:78
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:183
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:97
+msgid "Border color"
+msgstr "Randkleur"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:103
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:45
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:64
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:169
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:62
+msgid "Border size"
+msgstr "Randdikte"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:117
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:179
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:175
+msgid "Background color"
+msgstr "Achtergrondkleur"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:127
+msgid "Padding"
+msgstr "Opvullen"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:141
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:76
+msgid "Spacing"
+msgstr "Tussenruimte"
+
+#: modules/nextgen_pro_albums/module.nextgen_pro_albums.php:124
+msgid "NextGEN Pro List Album"
+msgstr "NextGEN Pro Lijst Album"
+
+#: modules/nextgen_pro_albums/module.nextgen_pro_albums.php:135
+msgid "NextGEN Pro Grid Album"
+msgstr "NextGEN Pro Album Raster"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:69
+msgid "Image display size"
+msgstr "Formaat afbeelding"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:71
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:99
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:28
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:39
+msgid "Measured in pixels"
+msgstr "Gemeten in pixels"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:73
+msgid "image width"
+msgstr "Breedte afbeelding:"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:83
+msgid "Image maximum height"
+msgstr "Maximale afbeeldingshoogte"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:85
+msgid "Measured in pixels. Empty or 0 will not impose a limit."
+msgstr "Gemeten in pixels. Leeg of 0 is geen limiet opleggen."
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:97
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:112
+msgid "Image spacing"
+msgstr "Tussenruimte Afbeeldingen"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:111
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:281
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:278
+msgid "Display captions"
+msgstr "Bijschriften weergeven"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:121
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:104
+msgid "Caption location"
+msgstr "Locatie onderschrift"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:123
+msgid "Above"
+msgstr "Boven"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:124
+msgid "Below"
+msgstr "Onder"
+
+#: modules/nextgen_pro_blog_gallery/module.nextgen_pro_blog_gallery.php:68
+msgid "NextGEN Pro Blog Style"
+msgstr "NextGEN Pro Blog stijl"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:32
+msgid "Enable caption overlay"
+msgstr "Bijschrift overlay inschakelen"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:42
+msgid "Display share icons"
+msgstr "Delen weergeven?"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:54
+msgid "Display image title"
+msgstr "Titel weergeven"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:66
+msgid "Display image description"
+msgstr "Beschrijving van de afbeelding weergeven"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:78
+msgid "Animation type"
+msgstr "Animatie type"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:80
+msgid "Fade in"
+msgstr "Langzaam verschijnen"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:81
+msgid "Slide up"
+msgstr "Naar boven schuiven"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:82
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:84
+msgid "Slide down"
+msgstr "Omlaag schuiven"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:83
+msgid "Slide left"
+msgstr "Schuif links"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:85
+msgid "Titlebar"
+msgstr "Titelbalk"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:86
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:33
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:33
+msgid "Plain"
+msgstr "Vlak"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:50
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:48
+msgid "Images per page"
+msgstr "Aantal afbeeldingen per pagina"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:52
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:50
+msgid "\"0\" will display all images at once"
+msgstr "0 geeft alle afbeeldingen tegelijk weer"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:54
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:52
+msgid "# of images"
+msgstr "Aantal afbeeldingen"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:88
+msgid "Frame size"
+msgstr "Framegrootte"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:102
+msgid "Frame color"
+msgstr "Frame kleur"
+
+#: modules/nextgen_pro_film/module.nextgen_pro_film.php:67
+msgid "NextGEN Pro Film"
+msgstr "NextGEN Pro Film"
+
+#: modules/nextgen_pro_horizontal_filmstrip/module.nextgen_pro_horizontal_filmstrip.php:64
+msgid "NextGEN Pro Horizontal Filmstrip"
+msgstr "NextGEN Pro Horizontale Filmstrip"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:73
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:69
+msgid "Router slug"
+msgstr "Router slug"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:75
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:71
+msgid "Used to route JS actions to the URL"
+msgstr "Gebruikt om JS acties naar de URL te sturen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:90
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:86
+msgid "Icon color"
+msgstr "Icoon kleur"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:92
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:103
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:137
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:148
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:159
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:170
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:181
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:192
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:203
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:88
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:99
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:133
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:144
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:155
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:166
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:177
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:188
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:199
+msgid "An empty setting here will use your style defaults"
+msgstr "Een lege instelling hier gebruikt de instellingen van uw stijl"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:101
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:97
+msgid "Icon background"
+msgstr "Icoon achtergrond"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:113
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:109
+msgid "Display background on carousel icons"
+msgstr "Achtergrond op carrousel pictogrammen weergeven"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:123
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:119
+msgid "Display rounded background on carousel icons"
+msgstr "Afgeronde achtergrond op carrousel pictogrammen weergeven"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:135
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:131
+msgid "Floating elements color"
+msgstr "Zwevende elementen kleur"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:146
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:142
+msgid "Sidebar button text color"
+msgstr "Zijbalk knop Tekstkleur"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:157
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:153
+msgid "Sidebar button background"
+msgstr "De achtergrond van de knop van de zijbalk"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:168
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:164
+msgid "Carousel text color"
+msgstr "De kleur van de tekst van de carrousel"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:190
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:186
+msgid "Carousel background color"
+msgstr "De kleur van de achtergrond van de carrousel"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:201
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:197
+msgid "Sidebar background color"
+msgstr "Zijbalk achtergrond kleur"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:212
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:209
+msgid "Pan cropped images"
+msgstr "Vul bijgesneden beelden op"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:214
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:211
+msgid "When enabled images can be panned with the mouse"
+msgstr "Wanneer ingeschakeld kunnen beelden worden opgevuld met de muis"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:223
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:220
+msgid "Pause on interaction"
+msgstr "Pauzeren op interactie"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:225
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:222
+msgid ""
+"When enabled image display will be paused if the user presses a thumbnail or any "
+"navigational link"
+msgstr ""
+"Wanneer ingeschakeld zal de weergaven van afbeeldingen worden onderbroken als de "
+"gebruiken een thumbnail of link aanklikt"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:234
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:231
+msgid "Enable browser routing"
+msgstr "Browser-routering inschakelen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:236
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:233
+msgid "Necessary for commenting to be enabled"
+msgstr "Noodzakelijk om reacties in te schakelen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:245
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:242
+msgid "Enable sharing"
+msgstr "Delen inschakelen."
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:247
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:244
+msgid "When enabled social-media sharing icons will be displayed"
+msgstr "Wanneer dit aanstaat worden de sociale-media-iconen weergegeven"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:257
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:254
+msgid "Enable comments"
+msgstr "Reacties toestaan"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:269
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:266
+msgid "Display comments"
+msgstr "Laat de reacties zien"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:271
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:268
+msgid "When on the commenting sidebar will be opened at startup"
+msgstr "Wanneer dit aan staat zal de reactie zijbalk worden geopend bij het laden"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:283
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:280
+msgid "When on the captions toolbar will be opened at startup"
+msgstr ""
+"Wanneer dit aan staat zal de onderschrift gereedschapsbalk worden geopend bij het "
+"laden"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:292
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:289
+msgid "Display carousel"
+msgstr "Caroussel weergeven"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:294
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:291
+msgid ""
+"When disabled the navigation carousel will be docked and hidden offscreen at "
+"startup"
+msgstr ""
+"Wanneer uitgeschakeld zal de navigatie-carrousel worden gedokt en verborgen "
+"offscreen bij het opstarten"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:303
+msgid "Enable Twitter Cards"
+msgstr "Twitter-kaarten inschakelen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:313
+msgid "Twitter username"
+msgstr "Twitter gebruikersnaam"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:315
+msgid "Required by twitter for Twitter Card analytics"
+msgstr "Vereist door twitter voor Twitter-kaarten analyses"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:325
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:300
+msgid "Localize limit"
+msgstr "Lokaliseren van limiet"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:327
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:302
+msgid ""
+"For performance gallery images are localized as javascript. Galleries with more "
+"images this limit will make an AJAX call to load the rest at startup. Set to 0 to "
+"include every image in displayed galleries."
+msgstr ""
+"Voor prestaties worden galerijafbeeldingen gelokaliseerd als JavaScript. "
+"Galerijen met meer foto's roepen AJAX aan om de rest te laden tijdens het "
+"opstarten. Indien ingesteld op 0 worden alle afbeeldingen in de gallerij geladen."
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:339
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:314
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:155
+msgid "Transition speed"
+msgstr "Overgangssnelheid"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:341
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:355
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:316
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:330
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:124
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:157
+msgid "Measured in seconds"
+msgstr "Gemeten in seconden"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:343
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:357
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:318
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:332
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:126
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:159
+msgid "seconds"
+msgstr "seconden"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:353
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:328
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:122
+msgid "Slideshow speed"
+msgstr "Snelheid diavoorstelling"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:365
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:340
+msgid "Default: a dark theme"
+msgstr "Standaard: een donker thema"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:366
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:341
+msgid "All black: Removes borders from the comments panel"
+msgstr "Alles zwart: verwijdert de randen van het opmerkingenvenster"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:367
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:342
+msgid "All white: A white based theme"
+msgstr "Totaal wit: een op wit gebaseerd thema"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:373
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:348
+msgid "Style"
+msgstr "Stijl"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:376
+msgid ""
+"Preset styles to customize the display. Selecting an option may reset some color "
+"fields."
+msgstr ""
+"Vooraf gedefinieerde stijlen voor het aanpassen van de weergave. Een optie "
+"selecteren kan sommige veldkleuren herstellen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:383
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:358
+msgid "Crossfade betweens images"
+msgstr "Crossfade tussen de afbeeldingen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:384
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:359
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:139
+msgid "Fades into background color between images"
+msgstr "Verdwijnt in de achtergrondkleur tussen de afbeeldingen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:385
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:360
+msgid "Quickly removes the image into background color, then fades the next image"
+msgstr ""
+"Snel het beeld in achtergrondkleur laten verwijden, dan het volgende beeld laten "
+"verschijnen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:386
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:361
+msgid "Slides the images depending on image position"
+msgstr "Dia's van de beelden afhankelijk van de beeldpositie"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:387
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:362
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:142
+msgid "Fade between images and slide slightly at the same time"
+msgstr "Vervagen tussen afbeeldingen en dia enigszins op hetzelfde moment"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:396
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:371
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:136
+msgid "Transition effect"
+msgstr "Overgangseffect"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:407
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:382
+msgid "Touch transition effect"
+msgstr "Touch overgangseffect"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:410
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:385
+msgid ""
+"The transition to use on touch devices if the default transition is too intense"
+msgstr ""
+"De overgang om te gebruiken op touch-apparaten als de standaardovergang te intens "
+"is"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:419
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:394
+msgid "Crop image display"
+msgstr "Afbeelding bijsnijden"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:421
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:396
+msgid "Images will be scaled to fill the display, centered and cropped"
+msgstr ""
+"Afbeeldingen worden geschaald om de  display te vullen, gecentreerd en bijgesneden"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:422
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:397
+msgid "Images will be scaled down until the entire image fits"
+msgstr "Foto's zullen worden omlaag geschaald, totdat de volledige afbeelding past"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:423
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:398
+msgid "Images will scale to fill the height of the display"
+msgstr "Afbeeldingen worden geschaald om de hoogte van het scherm te vullen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:424
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:399
+msgid "Images will scale to fill the width of the display"
+msgstr "Afbeeldingen worden geschaald om de breedte van het scherm te vullen"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:425
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:400
+msgid "Landscape images will fill the display, but scale portraits to fit"
+msgstr ""
+"Afbeeldingen in horizontale stand zijn beeldvullend, afbeeldingen in portretstand "
+"worden geschaald zodat ze passen."
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:426
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:401
+msgid "Portrait images will fill the display, but scale landscapes to fit"
+msgstr ""
+"Afbeeldingen in portretstand zijn beeldvullend, afbeeldingen in horizontale stand "
+"worden geschaald zodat ze passen."
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:17
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:17
+msgid "Display Triggers"
+msgstr "Weergave-Triggers"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:19
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:19
+msgid "Always"
+msgstr "Altijd"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:20
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:20
+msgid "Exclude Small Screens"
+msgstr "Kleine schermen uitsluiten"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:21
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:21
+msgid "Never"
+msgstr "Nooit"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:32
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:32
+msgid "Triggers Style"
+msgstr "Triggers stijl"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:33
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_triggers_form.php:33
+msgid "Fancy"
+msgstr "Luxe"
+
+#: modules/nextgen_pro_lightbox/class.opengraph_controller.php:89
+#: modules/nextgen_pro_lightbox_legacy/class.opengraph_controller.php:83
+msgid "Status: 404 Image not found"
+msgstr "Statuut: 404 afbeelding niet gevonden"
+
+#: modules/nextgen_pro_lightbox/class.opengraph_controller.php:90
+#: modules/nextgen_pro_lightbox_legacy/class.opengraph_controller.php:84
+msgid "Image not found"
+msgstr "Afbeelding niet gevonden"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:134
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:68
+msgid "Toggle social sidebar"
+msgstr "Sidebar aan/uit"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:135
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:69
+msgid "Play / Pause"
+msgstr "Speel / Pauze"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:136
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:70
+msgid "Toggle fullscreen"
+msgstr "Volledig scherm aan/uit"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:137
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:71
+msgid "Toggle image info"
+msgstr "Afbeelding info aan/uit"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:138
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:72
+msgid "Close window"
+msgstr "Venster sluiten"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:140
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:74
+msgid "Share on Twitter"
+msgstr "Deel op Twitter"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:141
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:75
+msgid "Share on Google+"
+msgstr "Deel op Google+"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:142
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:76
+msgid "Share on Facebook"
+msgstr "Deel op Facebook"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:143
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_resources.php:77
+msgid "Share on Pinterest"
+msgstr "Delen op Pinterest"
+
+#: modules/nextgen_pro_lightbox_legacy/adapter.nextgen_pro_lightbox_form.php:351
+msgid ""
+"Preset styles to customize the display. Selecting an option may reset some color "
+"fields"
+msgstr ""
+"Vooraf gedefinieerde stijlen voor het aanpassen van de weergave. Een optie "
+"selecteren kan sommige veldkleuren herstellen"
+
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:26
+msgid "Maximum image width"
+msgstr "Maximale beeldbreedte"
+
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:37
+msgid "Image padding"
+msgstr "Opvulling afbeelding (padding)"
+
+#: modules/nextgen_pro_masonry/module.nextgen_pro_masonry.php:72
+msgid "NextGEN Pro Masonry"
+msgstr "NextGEN Pro Metselwerk"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:42
+msgid "Proof request by %1$s (%2$d images)"
+msgstr "Verzoek voor een drukproef voor %1$s (%2$ d beelden)"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:56
+msgid "Done"
+msgstr "Klaar"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:99
+msgid "Proof post could not be created"
+msgstr "Drukproefbericht kon niet worden aangemaakt."
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:105
+msgid "Please provide a name and e-mail address"
+msgstr "Vul een geldig e-mail adres in a.u.b."
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:109
+msgid "No images selected"
+msgstr "Geen foto's geselecteerd"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:114
+#: modules/stripe/adapter.stripe_checkout_button.php:87
+#: modules/stripe/adapter.stripe_checkout_button.php:156
+msgid "Invalid request"
+msgstr "Ongeldig verzoek."
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_form.php:17
+msgid "Enable proofing?"
+msgstr "Inschakelen drukproeven"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_form.php:19
+msgid "Trigger buttons need to be enabled for proofing to work"
+msgstr "Trigger knoppen moeten worden ingeschakeld wil drukproeven werken"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:12
+msgid "Proofing"
+msgstr "Drukproeven"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:56
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:189
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:259
+msgid "Proofed Images"
+msgstr "Drukproeven"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:116
+msgid "Confirmation page"
+msgstr "Bevestigingspagina"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:119
+msgid ""
+"This page requires the [ngg_pro_proofing] shortcode, which will be automatically "
+"added if not already present. Selecting \"Create new\" will create a new page "
+"that will appear in your Primary Menu unless you've customized your menu "
+"settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr ""
+"Deze pagina heeft de [ngg_pro_checkout] shortcode nodig, deze wordt automatisch "
+"toegevoegd indien ze niet aanwezig is. “Maak nieuwe” zal een nieuwe pagina maken "
+"die verschijnt in het hoofdmenu tenzij u uw menu instellingen heeft aangepast: "
+"http://codex.wordpress.org/Appearance_Menus_SubPanel"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:130
+msgid "Pro Lightbox icon color"
+msgstr "Pro Lightbox pictogram kleur"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:132
+msgid ""
+"When the NextGen Pro Lightbox is active an additional icon is added for image "
+"proofing, this controls the color of that icon for chosen images"
+msgstr ""
+"Wanneer de NextGen Pro Lightbox actief is wordt er een extra pictogram toegevoegd "
+"voor de drukproeven, hiermee wordt de kleur van dat pictogram aangepast"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:143
+msgid "Trigger text"
+msgstr "Trigger tekst"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:155
+msgid "Admin email message"
+msgstr "Administrator e-mail"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:157
+msgid ""
+"Possible substitution fields: admin, file_list, proof_link, user_name, user_email"
+msgstr ""
+"Mogelijke vervangingsvelden: admin, file_list, proof_link, user_name, user_email"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:168
+msgid "Send confirmation to users"
+msgstr "Bevestiging verzenden naar gebruikers"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:180
+msgid "Confirmation subject"
+msgstr "Bevestiging onderwerp"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:194
+msgid "Confirmation email"
+msgstr "Bevestiging e-mail"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:196
+msgid "Possible substition fields: user_name, user_email, proof_link"
+msgstr "Mogelijke substitutievelden: user_name, user_email, proof_link"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:208
+msgid "Not found message"
+msgstr "Bericht niet gevonden"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:210
+msgid ""
+"This is displayed to users viewing the proofing page without a valid proofing to "
+"view"
+msgstr ""
+"Dit wordt weergegeven als gebruikers de pagina voor drukproeven zonder een "
+"geldige drukproef om weer te geven"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:221
+msgid "Confirmation template"
+msgstr "Bevestiging sjabloon"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:223
+msgid "Possible substition fields: user_name, user_email, proof_link, proof_details"
+msgstr ""
+"Mogelijke substitutievelden: user_name, user_email, proof_link, proof_details"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:45
+msgid "Submitting {0} image{1}"
+msgstr "Indienen van {0} afbeelding {1}"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:47
+msgid "Send"
+msgstr "Versturen"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:48
+msgid "Submitting..."
+msgstr "Indienen..."
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:51
+msgid "Proof image?"
+msgstr "Drukproef?"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:151
+msgid "Proofs"
+msgstr "Drukproeven"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:152
+msgid "Proof"
+msgstr "Drukproef"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:153
+msgid "Add New Proof"
+msgstr "Nieuwe drukproef toevoegen"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:154
+msgid "Edit Proof"
+msgstr "Bewerk drukproef"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:155
+msgid "New Proof"
+msgstr "Nieuwe drukproef"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:156
+msgid "View Proof"
+msgstr "Zoek drukproef"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:157
+msgid "Search Proof"
+msgstr "Zoek drukproef"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:158
+msgid "Nothing found"
+msgstr "Niks gevonden"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:159
+msgid "Nothing found in Trash"
+msgstr "Niets gevonden in de prullenbak"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:225
+msgid "User confirmation"
+msgstr "Bevestiging van de gebruiker"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:227
+msgid "Gallery source url"
+msgstr "Galerij bron"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:230
+msgid "Thumbnail"
+msgstr "Miniatuur"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:230
+msgid "Title"
+msgstr "Titel"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:230
+msgid "Filename"
+msgstr "Bestandsnaam"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:334
+msgid "Submit proofs"
+msgstr "Indienen van drukproeven"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:335
+msgid ""
+"Hi %%admin%% Administrator,\n"
+"\n"
+"%%user_name%% has submitted images from a proofing gallery.\n"
+"\n"
+"You can find the proofed images at %%proof_link%%\n"
+"\n"
+"Here is a comma separated list of the image file names. You can copy and\n"
+"paste this in your favorite image management software to quickly search for\n"
+"and find all selected images.\n"
+"\n"
+"Files: %%file_list%%"
+msgstr ""
+"Hallo %% admin %% beheerder, %% user_name %% heeft drukproeven ?ingediend.\n"
+"\n"
+"U vindt de drukproeven op %% proof_link %% hier is een door komma's gescheiden "
+"lijst met de namen van deze afbeeldingsbestanden. U kunt deze kopiëren en plakken "
+"in uw favoriete software zodat u snel kunt zoeken binnen de geselecteerde "
+"afbeeldingen.\n"
+"\n"
+"Bestanden: %% file_list %%"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:348
+msgid "Confirmation of image proof"
+msgstr "Bevestiging van het bewijs van de drukproef."
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:349
+msgid ""
+"Hello %%user_name%%,\n"
+"\n"
+"This is confirmation that you have selected and submitted the following\n"
+"images from one of our proofing galleries: %%proof_link%%\n"
+"\n"
+"Thanks very much!"
+msgstr ""
+"Hallo %% user_name %%, dit is de bevestiging dat u afbeeldingen heeft "
+"geselecteerd en heeft verstuurd vanuit één van galerijen: %% proof_link %%. "
+"Hartelijk dank!"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:358
+msgid ""
+"<p>%%user_name%% has submitted the following images for proofing. <a href=\"%"
+"%proof_link%%\">Go back</a></p>\n"
+"\n"
+" %%proof_details%%"
+msgstr ""
+"<p>%% user_name %% heeft de volgende afbeeldingen voor geselecteerd als "
+"drukproef. <a href=\"%%proof_link%%\">Ga terug</a></p>%% proof_details %%"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:364
+msgid ""
+"Oops! This page usually displays details for image proofs, but you have not "
+"proofed any images yet. Please feel free to continue browsing. Thanks for "
+"visiting."
+msgstr ""
+"Oeps! Deze pagina bevat meestal details voor drukproeven, maar u heeft nog geen "
+"afbeeldingen als proef aangemerkt. Ga gerust door met bladeren. Bedankt voor uw "
+"bezoek."
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:55
+msgid "Gallery width"
+msgstr "Breedte van de galerij"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:61
+msgid "Pixels"
+msgstr "Pixels"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:61
+msgid "Percent"
+msgstr "Percentage"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:72
+msgid "Crop images"
+msgstr "Afbeeldingen bijsnijden"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:82
+msgid "Pan images"
+msgstr "Schaal afbeeldingen"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:94
+msgid "Show captions"
+msgstr "Toon bijschriften"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:106
+msgid "Top"
+msgstr "Boven"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:107
+msgid "Bottom"
+msgstr "Onder"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:108
+msgid "Top (Overlay)"
+msgstr "Boven (Overlay)"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:109
+msgid "Bottom (Overlay)"
+msgstr "Onder (Overlay)"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:138
+msgid "Crossfade between images"
+msgstr "Crossfade tussen afbeeldingen"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:140
+msgid ""
+"Quickly move the image into the background color, then fade into the next image"
+msgstr ""
+"Snel de afbeelding verplaatsen naar de achtergrondkleur, dan verdwijnen in de "
+"volgende afbeelding"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:141
+msgid "Slide images depending on image position"
+msgstr "Diabeelden afhankelijk van de beeldpositie"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:171
+msgid "Borders will not be applied if \"Crop Images\" is enabled"
+msgstr ""
+"Randen zullen niet worden toegepast als \"Snij afbeelding bij\" is ingeschakeld"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:195
+msgid "Stage aspect ratio"
+msgstr "Verhoudingen"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:208
+msgid "Show play controls"
+msgstr "Toon besturingselementen"
+
+#: modules/nextgen_pro_slideshow/module.nextgen_pro_slideshow.php:73
+msgid "NextGEN Pro Slideshow"
+msgstr "NextGEN Pro Diavoorstelling"
+
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:86
+msgid "Number of columns to display"
+msgstr "Aantal weer te geven kolommen"
+
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:88
+msgid "An empty or zero in this field will use a responsive layout"
+msgstr "Een leeg of nul in dit veld zal een responsieve lay-out gebruiken"
+
+#: modules/nextgen_pro_thumbnail_grid/module.nextgen_pro_thumbnail_grid.php:70
+msgid "NextGEN Pro Thumbnail Grid"
+msgstr "NextGEN Pro miniaturen raster"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:23
+#: modules/paypal_standard/adapter.paypal_standard_button.php:35
+msgid "Pay with PayPal"
+msgstr "Betalen met PayPal"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:133
+msgid ""
+"Payment was successfully made via PayPal Express Checkout, with no further "
+"payment action required."
+msgstr ""
+"Betaling is het met succes gedaan via PayPal standaard, waarbij geen verdere "
+"betalingsactie is vereist."
+
+#: modules/paypal_standard/adapter.paypal_standard_ajax.php:38
+msgid "PayPal Customer"
+msgstr "PayPal klant"
+
+#: modules/paypal_standard/adapter.paypal_standard_ajax.php:39
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: modules/paypal_standard/adapter.paypal_standard_ajax.php:45
+msgid ""
+"Payment was successfully made via PayPal Standard, with no further payment action "
+"required."
+msgstr ""
+"Betaling is het met succes gedaan via PayPal Standaard, waarbij geen verdere "
+"betalingsactie is vereist."
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:28
+msgid "Enable PayPal Standard"
+msgstr "PayPal (Standaard) betaling accepteren"
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:41
+msgid "Use Sandbox?"
+msgstr "Sandbox gebruiken?"
+
+#: modules/stripe/adapter.stripe_checkout_button.php:24
+msgid "Pay with Card"
+msgstr "Betalen met kaart"
+
+#: modules/stripe/adapter.stripe_checkout_button.php:129
+msgid ""
+"Payment was successfully made via Stripe, with no further payment action required."
+msgstr ""
+"Betaling is het met succes gedaan via Stripe, waarbij geen verdere betalingsactie "
+"is vereist."
+
+#: modules/stripe/adapter.stripe_checkout_button.php:139
+msgid "Order from %s for %s (%s)"
+msgstr "%s bestellingen van de %s"
+
+#: modules/test_gateway/adapter.test_gateway_checkout_ajax.php:39
+msgid "Test Customer"
+msgstr "Test klant"
+
+#: modules/test_gateway/adapter.test_gateway_checkout_ajax.php:40
+msgid "No email"
+msgstr "Geen e-mail"
+
+#: modules/test_gateway/adapter.test_gateway_checkout_ajax.php:50
+msgid ""
+"Payment was successfully made via the Test Gateway, with no further payment "
+"action required."
+msgstr ""
+"Betaling is het met succes gedaan via de Test Gateway, waarbij geen verdere "
+"betalingsactie is vereist."
+
+#: nggallery-pro.php:196
+msgid "There are updates available. You can <a href=\"%s\">Update Now</a>."
+msgstr "Er zijn updates beschikbaar. U kunt <a href=\"%s\">Nu bijwerken</a>."
+
+#: nggallery-pro.php:249
+msgid ""
+"Please install &amp; activate <a href=\"http://wordpress.org/plugins/nextgen-"
+"gallery/\" target=\"_blank\">NextGEN Gallery</a> to allow NextGEN Pro to work."
+msgstr ""
+"Installeren en activeer a.u.b. <a href=\"http://wordpress.org/plugins/nextgen-"
+"gallery/\" target=\"_blank\">NextGEN Gallery</a> zodat NextGEN Pro werkt."
+
+#: nggallery-pro.php:256
+msgid ""
+"NextGEN Gallery %s is incompatible with NextGEN Pro %s. Please update <a "
+"class='thickbox' href='%s'>NextGEN Gallery</a> to version %s or higher. NextGEN "
+"Pro has been deactivated."
+msgstr ""
+"NextGEN Gallery %s is niet compatibel met NextGEN Pro %s. Update <a "
+"class='thickbox' href='%s'>NextGEN Gallery</a> naar versie %s of hoger. NextGEN "
+"Pro is gedeactiveerd."
+
+#: nggallery-pro.php:266
+msgid ""
+"To activate the NextGEN Pro Lightbox please go to Gallery > Other Options > "
+"Lightbox Effects."
+msgstr ""
+"Om de NextGEN Pro Lightbox te activeren ga naar Gallery > andere opties > "
+"Lightbox effecten."
+
+#: nggallery-pro.php:271
+msgid ""
+"Warning: your server does not have BCMath enabled. Please enable BCMath to "
+"prevent possible issues with ecommerce orders"
+msgstr ""
+"Waarschuwing: uw server heeft BCMath niet ingeschakeld. Schakel BCMath a.u.b. in "
+"om kwesties met digitale bestellingen te voorkomen"
+
+# Plugin Name of the plugin/theme
+msgid "NextGEN Pro by Photocrati"
+msgstr "NextGEN Pro door Photocrati"
+
+# Plugin URI of the plugin/theme
+msgid "http://www.nextgen-gallery.com"
+msgstr "http://www.NextGen-Gallery.com"
+
+# Description of the plugin/theme
+msgid ""
+"The complete \"Pro\" add-on for NextGEN Gallery. Enjoy ecommerce, beautiful new "
+"gallery displays, and a responsive Pro Lightbox with social sharing "
+"and commenting."
+msgstr ""
+"De volledige \"Pro\" add-on voor NextGEN Gallery. Geniet van Ecommerce, mooie "
+"nieuwe galerie displays en een fullscreen, responsieve Pro Lightbox met sociaal "
+"delen en commentaar."
+
+# Author of the plugin/theme
+msgid "Photocrati Media"
+msgstr "Photocrati Media"
+
+# Author URI of the plugin/theme
+msgid "http://www.photocrati.com"
+msgstr "http://www.Photocrati.com"

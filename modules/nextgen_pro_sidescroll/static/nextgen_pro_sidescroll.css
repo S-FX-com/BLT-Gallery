@@ -1,0 +1,48 @@
+.nextgen_pro_sidescroll {
+	position: fixed;
+    left: 500vw;
+	padding: 10px 0;
+}
+
+.nextgen_pro_sidescroll.nextgen_pro_sidescroll_open {
+    position: relative;
+    left: auto;
+}
+
+.nextgen_pro_sidescroll_wrapper {
+    padding-bottom: 16px;
+}
+
+.nextgen_pro_sidescroll .image-wrapper {
+    display: inline;
+}
+
+/* For theme conflicts with Twenty series themes */
+.nextgen_pro_sidescroll_wrapper a {
+    box-shadow: none;
+}
+
+.nextgen_pro_sidescroll_wrapper img {
+    margin-left: 2px;
+}
+
+/* For theme conflicts with Twenty series themes */
+.nextgen_pro_sidescroll_wrapper img.nextgen_pro_sidescroll_image {
+    display: inline;
+}
+
+/* For compatibility with hover captions */
+.nextgen_pro_sidescroll figure.ngg-figure {
+    display: inline-block !important;
+    height: auto !important;
+    opacity: 1 !important;
+}
+
+.nextgen_pro_sidescroll .gallery-nav {
+    box-shadow: -3px -3px 7px #CCC;
+    padding: 10px 15px;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+    display: none
+}

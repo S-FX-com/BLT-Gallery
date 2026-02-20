@@ -1,0 +1,3645 @@
+# Copyright (C) 2021 Imagely
+# This file is distributed under the same license as the NextGEN Pro plugin.
+msgid ""
+msgstr "Loktenilo"
+"Project-Id-Version: NextGEN Pro\n"
+"Report-Msgid-Bugs-To: https://www.imagely.com/wordpress-gallery-plugin/nextgen-pro/\n"
+"Last-Translator: Imagely\n"
+"Language-Team: Imagely\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2015-04-14 22:06:10+00:00\n"
+"PO-Revision-Date: 2021-04-06 12:22+08\n"
+"X-Generator: WP-CLI 2.5.0-alpha-59d879d\n"
+"X-Domain: nextgen-gallery-pro\n"
+
+#. Plugin Name of the plugin
+msgid "NextGEN Pro"
+msgstr "Loktenilo"
+
+#. Plugin URI of the plugin
+msgid "http://www.imagely.com/wordpress-gallery-plugin/nextgen-pro/"
+msgstr "Loktenilo"
+
+#. Description of the plugin
+msgid "The complete \"Pro\" add-on for NextGEN Gallery. Enjoy ecommerce, beautiful new gallery displays, and a responsive Pro Lightbox with social sharing and commenting."
+msgstr "Loktenilo"
+
+#. Author of the plugin
+#: modules/autoupdate_admin/module.autoupdate_admin.php:220
+msgid "Imagely"
+msgstr "Loktenilo"
+
+#. Author URI of the plugin
+msgid "https://www.imagely.com"
+msgstr "Loktenilo"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:221
+msgid "Imagely Updates"
+msgstr "Loktenilo"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:241
+msgid "Welcome to Imagely"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_ajax.php:19
+msgid "If you are using automatic print fulfillment, you MUST VERIFY THE ORDER to release it to the print lab. You can do this in the Ecommerce > View Orders area of your website. We recommend waiting until you've received payment, because an order cannot be canceled once it is sent to the print lab."
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:27
+msgid "Shipping information"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:28
+msgid "Pay by check"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:29
+#: modules/test_gateway/adapter.test_gateway_checkout_button.php:28
+msgid "Place order"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:30
+#: modules/coupons/templates/edit.php:43
+#: modules/coupons/templates/edit_redesign.php:48
+#: modules/ecommerce/templates/manage_pricelist.php:45
+#: modules/ecommerce/templates/manage_pricelist.php:82
+#: modules/ecommerce/templates/manage_pricelist.php:170
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:41
+msgid "Cancel"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:31
+#: modules/free_gateway/adapter.free_checkout_button.php:26
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:29
+#: modules/paypal_standard/adapter.paypal_standard_button.php:60
+#: modules/stripe/module.stripe.php:118
+#: modules/test_gateway/adapter.test_gateway_checkout_button.php:29
+msgid "Processing..."
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:33
+#: modules/ecommerce/adapter.print_category_form.php:62
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:44
+msgid "Name"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:34
+#: modules/ecommerce/class.nextgen_pro_checkout.php:80
+#: modules/ecommerce/class.nextgen_pro_checkout.php:81
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:45
+msgid "Email"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:35
+msgid "Address"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:36
+#: modules/ecommerce/class.nextgen_pro_checkout.php:86
+#: modules/ecommerce/class.nextgen_pro_checkout.php:87
+msgid "City"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:37
+msgid "State"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:38
+msgid "Zip"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_button.php:39
+#: modules/ecommerce/class.nextgen_pro_checkout.php:88
+#: modules/ecommerce/class.nextgen_pro_checkout.php:89
+msgid "Country"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_form.php:31
+msgid "Enable Checks"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_form.php:43
+msgid "Instructions"
+msgstr "Loktenilo"
+
+#: modules/cheque/adapter.cheque_checkout_form.php:45
+msgid "Use this to inform users how to pay and where they should send their payment"
+msgstr "Loktenilo"
+
+#: modules/cheque/module.cheque.php:79
+msgid "<p>Thanks very much for your purchase! We'll be in touch shortly via email to confirm your order and to provide details on payment.</p>"
+msgstr "Loktenilo"
+
+#: modules/comments/class.comment_mapper.php:74
+msgid "NextGEN Comment Link - %s - %s"
+msgstr "Loktenilo"
+
+#: modules/comments/module.comments.php:88
+msgid "<a href='%s' target='_blank'>View in lightbox</a>"
+msgstr "Loktenilo"
+
+#: modules/comments/module.comments.php:128
+msgid "Image in gallery '%s'"
+msgstr "Loktenilo"
+
+#: modules/comments/module.comments.php:153
+#: modules/comments/module.comments.php:155
+#: modules/comments/module.comments.php:156
+msgid "Comment"
+msgstr "Loktenilo"
+
+#: modules/comments/module.comments.php:157
+msgid "View Gallery"
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:36
+msgid "Reply"
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:47
+msgid "Your comment is awaiting moderation."
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:146
+msgid "%1$s comment"
+msgid_plural "%1$s comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules/comments/templates/comments.php:160
+msgid "Comments are closed."
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:163
+msgid "Comments"
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:167
+msgid "Click here to cancel reply"
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:180
+msgid "You must be <a href=\"%s\" id=\"nggpl-comment-logout\">logged in</a> to post a comment."
+msgstr "Loktenilo"
+
+#: modules/comments/templates/comments.php:181
+msgid "Leave a comment"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:7
+msgid "Coupon details"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:32
+msgid "Code"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:34
+msgid "This field must be unique from every other coupon code"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:44
+msgid "Discount type"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:46
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:67
+msgid "Percent"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:47
+msgid "Flat"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:59
+msgid "Discount amount"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:74
+msgid "Starting date"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_form.php:85
+msgid "Ending date"
+msgstr "Loktenilo"
+
+#: modules/coupons/adapter.coupon_admin_settings_form.php:20
+msgid "Hide coupons on checkout"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:24
+msgid "Title must not be blank"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:25
+msgid "Coupon code must not be blank"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:26
+msgid "Coupon code must be unique"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:27
+msgid "Discount type must not be blank"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:28
+msgid "Discount type must be \"Flat\" or \"Percent\""
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:29
+msgid "Discount amount must not be blank"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:30
+msgid "Discount amount must be a number 0 or larger"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:31
+msgid "Starting date must not be blank"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:32
+msgid "Ending date must not be blank"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:35
+msgid "Starting date must be in the form (Year)-(Month)-(Day)"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:36
+msgid "Ending date must be in the form (Year)-(Month)-(Day)"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon.php:37
+msgid "Starting date must come before the ending date"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:37
+#: modules/coupons/class.coupon_admin_page.php:149
+msgid "New Coupon"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:39
+#: modules/coupons/class.coupon_admin_page.php:148
+msgid "Edit Coupon"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:121
+msgid "Times Used"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:145
+msgid "Coupons"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:146
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1016
+msgid "Coupon"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:147
+msgid "Add New Coupon"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:150
+msgid "View Coupon"
+msgstr "Loktenilo"
+
+#: modules/coupons/class.coupon_admin_page.php:151
+msgid "Search Coupon"
+msgstr "Loktenilo"
+
+#: modules/coupons/templates/edit.php:40
+#: modules/coupons/templates/edit_redesign.php:45
+#: modules/ecommerce/templates/manage_pricelist.php:166
+msgid "Save"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:7
+#: modules/ecommerce/adapter.ecommerce_ajax.php:119
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:88
+#: modules/ecommerce/class.pricelist_source_download.php:10
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:121
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1302
+msgid "Digital Downloads"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:34
+msgid "Display link to license terms?"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:35
+msgid "Licensing page:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:36
+msgid "Name:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:37
+msgid "Price:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:38
+msgid "Longest Image Dimension:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:39
+msgid "A setting of 0px will deliver full-resolution images"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:40
+#: modules/ecommerce/class.pricelist_source_download.php:26
+msgid "Enter 0 for maximum"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:41
+#: modules/ecommerce/adapter.print_category_form.php:61
+msgid "Enter title of the item"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:42
+#: modules/ecommerce/adapter.print_category_form.php:60
+msgid "Delete"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:43
+#: modules/ecommerce/adapter.print_category_form.php:57
+msgid "Add another item"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:44
+#: modules/ecommerce/adapter.print_category_form.php:63
+msgid "No items available for this source."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.digital_downloads_form.php:45
+msgid "Allow free downloads to download directly from the cart sidebar"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.display_type_ecommerce_form.php:27
+msgid "see instructions"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.display_type_ecommerce_form.php:28
+msgid "<strong>Warning</strong>: HTTPS was not detected! Without it NextGen Gallery Pro cannot process payments."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.display_type_ecommerce_form.php:30
+msgid "Enable ecommerce?"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_ajax.php:122
+msgid "View license terms"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_ajax.php:247
+msgid "We're sorry, but we couldn't find your order."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_ajax.php:487
+msgid "An error occurred saving this pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_controller.php:7
+#: modules/ecommerce/adapter.ecommerce_instructions_controller.php:12
+msgid "Ecommerce Set Up"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:12
+msgid "Getting Started"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:92
+msgid "Want help? Watch our short ecommerce overview video!"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:94
+msgid "The following are required for ALL ECOMMERCE including manual and automated print fulfillment."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:96
+msgid "Status will show green if done, red if still needed."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:98
+msgid "The following are required only for AUTOMATED PRINT FULFILLMENT."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:100
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1127
+msgid "Checking..."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:102
+msgid "Check Now"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:104
+msgid "Check Again"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:106
+msgid "How to create a gallery with ecommerce"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:108
+msgid "Unknown"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:110
+msgid "Done"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:112
+msgid "Required"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:114
+msgid "Optional"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:117
+msgid "Choose pages to use for Checkout, Order Confirmation, Cancel, and Digital Downloads. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:118
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:123
+msgid "Ecommerce Settings"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:122
+msgid "Add studio name, email, and address. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:127
+msgid "Set up a payment gateway. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:128
+msgid "Ecommerce Settings."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:132
+msgid "Enable image backups. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:133
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:138
+msgid "Other Options"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:137
+msgid "Enabled image resizing on upload. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:142
+msgid "Select Pro Lighbox as your lightbox. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:143
+msgid "Other Options "
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:147
+msgid "Create a Pricelist. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:148
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:170
+#: modules/ecommerce/adapter.ecommerce_pages.php:16
+msgid "Manage Pricelists"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:152
+msgid "Associate your pricelist with a gallery. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:153
+msgid "Manage Galleries"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:156
+msgid "When inserting your gallery on a page, be sure to enable ecommerce."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:159
+msgid "Have active NextGEN Pro License. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:160
+msgid "Login to Imagely to renew"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:164
+msgid "Have credit card on file (it will charged to cover wholesale cost from print lab). %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:165
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:13
+msgid "Ecommerce Options"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:169
+msgid "Add Print Lab items to a Pricelist. %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:174
+msgid "Add SSL certificate. Without HTTPS NextGen Gallery Pro cannot process payments."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:175
+msgid "SEO and search results"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:176
+msgid "insecure"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:180
+msgid "Additional Documentation on %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:181
+msgid "imagely.com"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:185
+msgid "Ecommerce Overview"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:186
+msgid "How to Configure Ecommerce Options"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:187
+msgid "How to Create and Assign a Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:188
+msgid "How to Add Ecommerce to a Gallery"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:191
+msgid "How to create a proofing gallery"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:194
+msgid "Configure your %s."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:195
+msgid "proofing settings"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:199
+msgid "Select %s as your desired lightbox effect."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:200
+msgid "NextGen Pro Lightbox"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_instructions_form.php:203
+msgid "When adding a gallery via the NextGen Insert Gallery Window, click the option to enable proofing."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:73
+msgid "Shopping Cart"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:78
+msgid "Thanks"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:83
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1340
+msgid "Order Cancelled"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:83
+msgid "You order was cancelled."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_controller.php:85
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1342
+msgid "Your order was cancelled"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:13
+msgid "General Options"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:54
+#: modules/ecommerce/class.nextgen_pro_checkout.php:104
+msgid "Calculating..."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:55
+msgid ""
+"If you change your currency, any print lab items in your pricelist will have their price updated using the last bulk markup value applied to that pricelist.\n"
+"\n"
+"If no previous bulk markup value is found, a default markup of %d%% will be applied.\n"
+"\n"
+"Please select OK to continue or CANCEL to revert to the previous currency selected."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:56
+#: modules/ecommerce/class.nextgen_pro_checkout.php:100
+msgid "%s cannot be empty."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:57
+#: modules/ecommerce/class.nextgen_pro_checkout.php:102
+msgid "%s is in an invalid format."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:58
+#: modules/ecommerce/class.nextgen_pro_checkout.php:101
+msgid "%s needs to be at least %s characters."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:59
+msgid "Form contains errors, please fix these errors before saving."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:60
+msgid "Invalid zip or postal code."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:61
+msgid "Your NextGEN Pro license has expired. Sales tax has been disabled."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:62
+#: modules/ecommerce/class.nextgen_pro_checkout.php:98
+msgid "Select Country"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:63
+#: modules/ecommerce/class.nextgen_pro_checkout.php:99
+msgid "Select Region"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:145
+msgid "\"Not for sale\" Message"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:161
+msgid "<strong>Studio Country</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:175
+msgid "<strong>Studio State</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:191
+msgid "<strong>Studio Postal Code</strong> (required for taxes)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:207
+msgid "<strong>Studio Name</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:224
+msgid "<strong>Studio Street Address</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:240
+msgid "Studio Address Line #2"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:256
+msgid "<strong>Studio City</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:272
+msgid "<strong>Studio Email</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:287
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:101
+msgid "Create new"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:308
+msgid "Currency"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:322
+msgid "Checkout page"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:325
+msgid "This page requires the [ngg_pro_checkout] shortcode, which will be automatically added if not already present. Selecting \"Create new\" will create a new page that will appear in your Primary Menu unless you've customized your menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:337
+msgid "Thank-you page"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:340
+msgid "This page should have the [ngg_pro_order_details] shortcode, which will be automatically added if not already present. Selecting \"Create new\" will create a new page that will appear in your Primary Menu unless you've customized your menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:352
+msgid "Cancel page"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:355
+msgid "Selecting \"Create new\" will create a new page that will appear in your Primary Menu unless you've customized your menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:367
+msgid "Digital downloads page"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:370
+msgid "This page requires the [ngg_pro_digital_downloads] shortcode, which will be automatically added if not already present. Selecting \"Create new\" will create a new page that will appear in your Primary Menu unless you've customized your menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:386
+msgid "Enable sales tax"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:388
+msgid "A valid NextGen Pro license is required to calculate sales tax."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:389
+msgid "SALES TAX NOTE: Sales tax is complex. "
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:390
+msgid "CLICK HERE"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:391
+msgid " to learn more about sales tax and how NextGEN Pro calculates it. Because we use a third party service (TaxJar), an active Pro license is required to enable sales tax."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:410
+msgid "Domestic shipping for manual-fulfilled items"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:412
+#: modules/ecommerce/adapter.ecommerce_options_form.php:441
+#: modules/ecommerce/adapter.ecommerce_options_form.php:470
+#: modules/ecommerce/adapter.manual_pricelist_settings_form.php:42
+msgid "Flat Rate"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:413
+#: modules/ecommerce/adapter.ecommerce_options_form.php:442
+#: modules/ecommerce/adapter.ecommerce_options_form.php:471
+msgid "Percentage Rate"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:417
+#: modules/ecommerce/adapter.ecommerce_options_form.php:446
+#: modules/ecommerce/adapter.ecommerce_options_form.php:475
+msgid "%"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:438
+msgid "Allow International shipping for manual-fulfilled items"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:440
+#: modules/ecommerce/adapter.ecommerce_options_form.php:469
+msgid "Disabled"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:463
+msgid "WHCC will fulfill your automated print lab orders. WHCC is based in the US and will provide a shipping cost estimate at the time of checkout. If you want to allow shipments outside US/Canada, you will need to turn this option on and configure the settings below. They'll be used to charge for shipping when users order prints. WHCC will then charge you (through us) separately for the cost of shipping."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:494
+msgid "Use cookies for cart storage"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:496
+msgid "Cookies are adequate for most customers but can only hold a limited number (around 30) of products due to browser limitations. When disabled the browser localStorage API will be used which does not have this problem but cart contents will be different on example.com vs www.example.com as well as across HTTP/HTTPS"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:507
+msgid "Cart menu icon"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:509
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2291
+msgid "None"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:510
+msgid "Icon Only"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:511
+msgid "Icon Only (When Cart Has Items)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:512
+msgid "Icon & Total"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:513
+msgid "Icon & Total (When Cart Has Items)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_options_form.php:516
+msgid "Determines the appearance of the Checkout page selected above when shown as an entry inside a menu. When a setting other than None is selected, the checkout page will be added to the first navigation menu registered by your theme."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_pages.php:23
+msgid "Manage Coupons"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_pages.php:30
+msgid "View Orders"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_pages.php:37
+msgid "View Proofs"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:16
+msgid "Print Lab Integration"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:39
+msgid "<strong>DO I NEED THIS?</strong> A credit card is needed only if you want to use automated print fulfillment."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:40
+msgid "<strong>IS THIS SECURE?</strong> Assuming you've enabled SSL on your website, then yes. This form sends your card information directly to Stripe, one of the world's leading payment processors. It is stored securely at Stripe, not locally by WordPress or NextGEN Gallery. Note: Without SSL, this form is not 100% secure. You should also enable SSL before receiving payments from your own visitors."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:41
+msgid "<strong>WILL YOU CHARGE ME?</strong> You will not be charged now. Your card will only be charged if someone submits a print lab order on your site. At that point, you will be billed for print and shipping costs from the print lab. You would pay those costs yourself if you worked directly with the lab. We're just automating the process for you."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:42
+msgid "<strong>AGREEMENT: By submitting your card here, you authorise Imagely to bill your card for the cost of print lab orders.</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:43
+msgid "Update credit card"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:44
+msgid "Done! You have a valid credit card on file (last four digits %s)."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:45
+msgid "The credit card you submitted (last four digits %s) has expired."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:46
+msgid "No card on file."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:47
+msgid "Your card is now connected and ready for automatic print lab fulfillment."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:48
+msgid "We're sorry, but we were unable to save your credit card information. Please check your card information and try again."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:49
+msgid "Remove card"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:50
+msgid "There was a problem trying to remove your card"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:51
+msgid "Your card has been removed"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:52
+msgid "<strong>IMPORTANT: Your site is not using SSL/HTTPS. Please add SSL/HTTPS and return to this tab to add your credit card.</strong>"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_printlab_form.php:53
+msgid "You are unable to save a credit card until SSL/HTTPS has been enabled for your site"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_pro_lightbox_form.php:24
+msgid "ECommerce"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_pro_lightbox_form.php:43
+msgid "Display cart initially"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.ecommerce_pro_lightbox_form.php:45
+msgid "When on the cart sidebar will be opened at startup. If the \"Display Comments\" option is also on the comments panel will open instead."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.manual_pricelist_settings_form.php:7
+msgid "Manual Fulfillment Settings"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.manual_pricelist_settings_form.php:18
+msgid "Domestic shipping rate:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.manual_pricelist_settings_form.php:19
+msgid "International shipping rate:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.manual_pricelist_settings_form.php:20
+msgid "Enable international shipping?"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.manual_pricelist_settings_form.php:43
+msgid "Percentage"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:7
+msgid "E-mail"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:12
+msgid "E-mail Settings"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:43
+msgid "Order notification e-mail subject:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:47
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:98
+msgid "Subject"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:56
+msgid "Order notification e-mail recipient:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:60
+msgid "john@example.com"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:69
+msgid "Order notification e-mail content:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:71
+msgid "Wrap placeholders in %%param%%. Accepted placeholders: customer_name, email, total_amount, item_count, shipping_street_address, shipping_city, shipping_state, shipping_zip, shipping_country, order_id, hash, order_details_page, admin_email, blog_name, blog_description, blog_url, site_url, home_url, and file_list"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:82
+msgid "Send e-mail receipt to customer?"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:84
+msgid "If enabled a receipt will be sent to the customer after successful checkout"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:94
+msgid "E-mail subject:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:108
+msgid "E-mail content:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.nextgen_pro_lightbox_mail_form.php:110
+msgid "Wrap placeholders in %%param%%. Accepted placeholders: customer_name, email, total_amount, item_count, shipping_street_address, shipping_city, shipping_state, shipping_zip, shipping_country, order_id, hash, order_details_page, admin_email, blog_name, blog_description, blog_url, site_url, and home_url"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.payment_gateway_form.php:19
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1015
+msgid "Payment Gateway"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:8
+msgid "Print Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:12
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:109
+msgid "Canvas"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:15
+msgid "Metal Prints"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:18
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:113
+msgid "Mounted Prints"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:21
+#: modules/ecommerce/class.pricelist_source_whcc.php:95
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:105
+msgid "Prints"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:58
+#: modules/ecommerce/templates/add_new_print_item.php:52
+msgid "Cost"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:59
+msgid "Cost (%s)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:64
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:92
+#: modules/ecommerce/class.nextgen_pro_checkout.php:58
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:27
+#: modules/ecommerce/class.pricelist_source_download.php:24
+#: modules/ecommerce/class.pricelist_source_manual.php:11
+#: modules/ecommerce/class.pricelist_source_whcc.php:20
+msgid "Price"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:65
+msgid "Price (%s)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:66
+msgid "All amounts shown are in %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/adapter.print_category_form.php:68
+msgid "All amounts shown are in %s. Due to fluctuations in currency conversion rates prices may not be exact."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:212
+#: modules/ecommerce/class.nextgen_pro_checkout.php:53
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:24
+msgid "Image"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:213
+msgid "Resolution"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:214
+msgid "Item"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:215
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:102
+msgid "Download"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:216
+msgid "Digital Downloads for Order #%s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:224
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1396
+msgid "Oops! This page usually displays details for image purchases, but you have not ordered any images yet. Please feel free to continue browsing. Thanks for visiting."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.digital_downloads.php:236
+msgid "We haven't received payment confirmation yet. This may take a few minutes. Please wait..."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.invalid_license_notice.php:29
+msgid "<strong>Your NextGEN Pro license has expired.</strong> Automated print lab fulfillment and automated sales tax require active membership. To use these services, please renew your license at <a target='_blank' href='http://www.imagely.com'>imagely.com</a>."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_mail_manager.php:21
+msgid "To send an e-mail, recipient, subject, and content is required"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:85
+msgid "Add To Cart"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:86
+msgid "View Cart / Checkout"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:87
+msgid "Invalid coupon"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:88
+#: modules/ecommerce/class.nextgen_pro_checkout.php:55
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:26
+msgid "Description"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:89
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1047
+msgid "Free"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:90
+msgid "%d item(s)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:91
+msgid "This image is not for sale"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:93
+msgid "Change quantities to update your cart."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:94
+#: modules/ecommerce/class.nextgen_pro_checkout.php:54
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:25
+msgid "Quantity"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:95
+#: modules/ecommerce/class.nextgen_pro_order_controller.php:28
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1017
+msgid "Total"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:96
+msgid "Update Cart"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:98
+msgid "Your cart has been updated"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:99
+msgid "Toggle cart sidebar"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:101
+#: modules/ecommerce/templates/add_new_print_item.php:54
+msgid "Add"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_add_to_cart.php:103
+msgid "Remove"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_cart.php:1346
+msgid "Please enter a valid zip or postal code"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_cart.php:1349
+msgid "Please inform the studio that there is a licensing problem and that taxes cannot be calculated"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:56
+msgid "Edit Crop"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:57
+msgid "Save Crop"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:59
+msgid "Totals"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:60
+msgid "Subtotal:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:61
+msgid "Shipping:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:62
+msgid "Total:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:63
+msgid "There have been no items added to your cart."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:64
+msgid "Continue shopping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:65
+msgid "Empty cart"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:66
+msgid "Ship to:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:67
+msgid "Ship via:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:68
+msgid "International"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:69
+msgid "Tax:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:70
+msgid "Update shipping & taxes"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:72
+msgid "Subtotal before discount:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:73
+msgid "Discount:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:74
+msgid "Coupon code"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:75
+msgid "Apply"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:76
+msgid "Coupon has been applied"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:78
+#: modules/ecommerce/class.nextgen_pro_checkout.php:79
+msgid "Full Name"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:82
+#: modules/ecommerce/class.nextgen_pro_checkout.php:83
+msgid "Address Line 1"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:84
+#: modules/ecommerce/class.nextgen_pro_checkout.php:85
+msgid "Address Line 2"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:90
+#: modules/ecommerce/class.nextgen_pro_checkout.php:91
+msgid "State / Region"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:92
+msgid "Postal Code"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:93
+msgid "Zip / Postal Code"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:94
+#: modules/ecommerce/class.nextgen_pro_checkout.php:95
+msgid "Phone"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:96
+msgid "We're sorry, but one or more items you've selected cannot be shipped to this country."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:97
+msgid "Please Add Address"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:103
+msgid "Form contains errors, please correct all errors before submitting the order."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:241
+#: modules/ecommerce/class.nextgen_pro_checkout.php:267
+msgid "Your cart is empty"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:257
+#: modules/ecommerce/class.nextgen_pro_checkout.php:262
+msgid "Invalid request"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:280
+msgid "Invalid country selected, please try again."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:344
+msgid "Could not save order:"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_checkout.php:719
+msgid "We couldn't find your order. We apologize for the inconvenience"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_currencies.php:2461
+msgid "'%s' or '%s' are invalid ISO 4217 numeric codes."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_currencies.php:2469
+msgid "Could not connect to api.exchangeratesapi.io"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_currencies.php:2484
+msgid "Unknown error encountered during currency conversion rate lookup."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_currencies.php:2495
+msgid "The next attempt to contact exchangeratesapi.io will happen at %s"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:81
+#: modules/ecommerce/class.nextgen_pro_order.php:96
+msgid "You must provide a name for the shipping information."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:82
+msgid "You must provide an email address in case of any problems fulfilling your order."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:83
+#: modules/ecommerce/class.nextgen_pro_order.php:84
+#: modules/ecommerce/class.nextgen_pro_order.php:86
+#: modules/ecommerce/class.nextgen_pro_order.php:87
+#: modules/ecommerce/class.nextgen_pro_order.php:88
+msgid "An error has occurred, please try again later."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:94
+msgid "You must provide a city for the shipping information."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:95
+msgid "You must provide a country for the shipping information."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:97
+msgid "You must provide a state for the shipping information."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:98
+msgid "You must provide a street address for the shipping information."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order.php:109
+msgid "You must provide a valid postal code for the shipping information."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order_verification.php:22
+msgid "Please wait - we appreciate your patience."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order_verification.php:23
+msgid "We're verifying your order. This might take a few minutes."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.nextgen_pro_order_verification.php:24
+msgid "This page will redirect automatically."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.non_https_notice.php:41
+msgid "NextGen has detected that your site does not have HTTPS enabled. While your site will function without HTTPS it is not recommended. HTTPS will improve your cart security, SEO, search results, and will remove the \"insecure\" marker that Google Chrome displays for sites without HTTPS."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_category_page.php:26
+msgid "Manage Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_category_page.php:129
+msgid "Saved pricelist successfully"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_category_page.php:130
+msgid "Deleted pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_category_page.php:131
+msgid "You are adding a Canvas to a pricelist. Please be aware that when printing a Canvas, the edges of the photo (between 1 to 3 inches) will wrap around the side of the product."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_download.php:12
+msgid "Image files are made available to users for download from your site"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_download.php:22
+#: modules/ecommerce/class.pricelist_source_manual.php:11
+#: modules/ecommerce/class.pricelist_source_whcc.php:20
+msgid "New product name"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_download.php:23
+msgid "Low, Medium, or High Resolution"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_download.php:25
+msgid "Longest Image Dimension"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_manual.php:6
+msgid "Manual Fulfillment"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_manual.php:6
+msgid "Manual fulfillment of purchased goods and items"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_manual.php:11
+#: modules/ecommerce/class.pricelist_source_whcc.php:20
+msgid "8x10\" Canvas or 4x6\" Glossy"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_manual.php:11
+#: modules/ecommerce/class.pricelist_source_whcc.php:20
+msgid "Category"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_manual.php:49
+msgid "Manual shipping for combined items"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_manual.php:101
+#: modules/ecommerce/class.pricelist_source_manual.php:134
+msgid "Manual Shipping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:8
+msgid "WHCC Prints"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:10
+msgid "Automatic fulfillment of purchased goods and items through Printlab integration"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:89
+msgid "Gallery Wraps"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:133
+msgid "International Shipping (Gallery Wraps)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:144
+msgid "Economy Trackable (Gallery Wraps)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:146
+msgid "3 Days or Less (Gallery Wraps)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:148
+msgid "Next Day Saver (Gallery Wraps)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:154
+msgid "UPS Canada (Gallery Wraps)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:165
+msgid "International Shipping (Prints)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:177
+msgid "Economy Trackable - Small sizes"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:179
+msgid "Economy Trackable - All sizes"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:182
+msgid "3 Days or Less"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:184
+msgid "Next Day Saver"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:186
+msgid "Priority One-day"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/class.pricelist_source_whcc.php:191
+msgid "UPS Canada"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:143
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:145
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:149
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:150
+msgid "Standard Shipping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:144
+msgid "Free Shipping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:146
+msgid "Economy Shipping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:147
+msgid "Expedited Shipping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:148
+msgid "Priority Shipping"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:512
+msgid "After your images have uploaded, click \"Manage Galleries\" to see your galleries."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:512
+msgid "Click \"Manage Galleries\" to see your galleries."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:519
+msgid "Hello, this wizard will guide you through the set up of NextGEN Pro Ecommerce."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:524
+msgid "Click \"Ecommerce Options\" to access NextGEN Ecommerce Options."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:529
+msgid "Select a Checkout page or use \"Create New\" to automatically create one."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:536
+msgid "Select a Thank You page or use \"Create New\" to automatically create one."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:542
+msgid "Select a Cancel page or use \"Create New\" to automatically create one."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:548
+msgid "Select a Digital Downloads page or use \"Create New\" to automatically create one."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:554
+msgid "Enter your Studio Name."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:560
+msgid "Enter your Studio Address."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:566
+msgid "Enter your Studio City."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:572
+msgid "Enter your Studio Country."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:578
+msgid "Enter your Studio State."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:585
+msgid "Enter your Studio Postal Code."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:591
+msgid "Enter your Studio email."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:597
+msgid "Scroll up and click the \"Save Options\" button to save your changes."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:604
+msgid "Click the \"Payment Gateway\" tab."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:609
+msgid "Please configure at least one payment gateway. For quick testing, enable the test gateway."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:615
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:708
+msgid "Click the \"Save Options\" button to save your changes."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:620
+msgid "Click the \"Print Lab Integration\" tab."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:625
+msgid "Enter your Credit Card information and click Update. Note: Your card will not be charged. It is stored securely at Stripe and will only be charged to cover your portion of the cost of future print lab orders."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:633
+msgid "Click \"Manage Pricelists\" to add a pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:638
+msgid "Click \"Add New\" to create a new pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:643
+msgid "Enter a name for your pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:648
+msgid "Click \"Add Product\" to add products to your pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:653
+msgid "For now, click \"WHCC Prints\" to add print items from WHCC, a pro lab. This will allow you to use automatic print fulfillment. Later, you can return to add manual fulfillment items or digital downloads if you like."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:659
+msgid "We have pre-selected popular WHCC print items for you. Now click \"Add Product\" to add these items to your pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:666
+msgid "Scroll down and click the \"Save\" button to save your Pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:674
+msgid "Click on \"Gallery\"."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:680
+msgid "Click \"Other Options\" to access NextGEN Options."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:685
+msgid "Ensure Image resize on upload is Enabled."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:691
+msgid "Ensure Image backups on upload is Enabled."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:697
+msgid "Click the \"Lightbox Effects\" tab."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:702
+msgid "Select \"NextGEN Pro Lightbox\" as your lightbox. This lightbox contains the interface for adding items to cart."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:715
+msgid "Now click the \"Add Gallery\" tab to add a new gallery."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:721
+msgid "Select a name for your gallery."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:726
+msgid "Now click the \"Add Files\" button and select some images to add to the gallery."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:731
+msgid "Now click the \"Start Upload\" button. LET UPLOAD COMPLETE before proceeding to next step."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:745
+msgid "Click on a gallery to open it."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:750
+msgid "Click to open Gallery Settings."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:755
+msgid "Select your new pricelist."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:760
+msgid "Click to save your changes."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:767
+msgid "Click on \"Pages\" to access your WordPress pages."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:773
+msgid "Click \"Add New\" to create a new page."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:779
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:811
+msgid "Type in a title for your page."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:784
+msgid "Now click the button to insert a block."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:790
+msgid "Type \"nextgen\" to search for the NextGEN block."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:797
+msgid "Click on the NextGEN block to add it."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:804
+msgid "Now click the \"Add NextGEN Gallery\" button."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:816
+msgid "Click the \"Add Gallery\" button to open NextGEN's Insert Gallery Window (IGW)."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:822
+msgid "Click inside the \"Galleries\" field and select your gallery."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:829
+msgid "Click the \"Customize\" tab."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:836
+msgid "Scroll down and set \"Enable Ecommerce\" to Yes. Then click \"Next Step\"."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:844
+msgid "Click the \"Insert Gallery\" button. Then click \"Next Step\"."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:852
+msgid "Congratulations! You're done. You've set up ecommerce and added an eccommerce gallery. You can now click \"Publish\" or \"Preview\" to view your gallery."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:956
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:957
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2248
+msgid "Ecommerce"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1012
+msgid "ID"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1013
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:121
+msgid "Customer"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1014
+msgid "Order Status"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1037
+msgid "No coupon."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1051
+msgid "Check"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1057
+msgid "PayPal"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1060
+msgid "Stripe"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1063
+msgid "Test"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1076
+msgid "Print Cost: "
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1088
+msgid "Resubmit to lab"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1122
+msgid "There was a problem looking up your order status. Please try again later."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1123
+msgid "Cancelled"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1124
+msgid "Submitted"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1125
+msgid "Processing"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1126
+msgid "Click to confirm"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1128
+msgid "Resubmitted"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1130
+msgid "Resubmitting..."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1170
+msgid "All order statuses"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1171
+msgid "Paid"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1172
+msgid "Unpaid"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1173
+msgid "Awaiting Payment"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1174
+msgid "Fraud"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1175
+msgid "Failed"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1270
+msgid "Duplicate"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1314
+msgid "Checkout"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1327
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2057
+msgid "Order Details"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1353
+msgid "Verifying order"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1418
+msgid ""
+"Thank you for your order, [customer_name]. You ordered the following items:\n"
+"                [items]\n"
+"\n"
+"                <h3>Order Details</h3>\n"
+"                <p>\n"
+"                Subtotal: [subtotal_amount]<br/>\n"
+"                [if_used_coupon]Discount: [discount_amount]<br/>[/if_used_coupon]\n"
+"                [if_ordered_shippable_items]Shipping: [shipping_amount]<br/>[/if_ordered_shippable_items]\n"
+"                [if_has_tax]Tax: [tax_amount]<br/>[/if_has_tax]\n"
+"                Total: [total_amount]<br/>\n"
+"                </p>\n"
+"\n"
+"                [if_ordered_shippable_items]\n"
+"                <p>\n"
+"                We will be shipping your items to:<br/>\n"
+"                [shipping_street_address]<br/>\n"
+"                [if_shipping_has_address_line]\n"
+"                    [shipping_address_line]<br/>\n"
+"                [/if_shipping_has_address_line]\n"
+"\n"
+"                [shipping_city], [shipping_state] [shipping_zip]<br/>\n"
+"                [shipping_country]\n"
+"                </p>\n"
+"                [/if_ordered_shippable_items]\n"
+"\n"
+"                [if_ordered_digital_downloads]\n"
+"                <h3>Digital Downloads</h3>\n"
+"                <p>You may download your digital products <a href='[digital_downloads_page_url]'>here.</a></p>\n"
+"                [/if_ordered_digital_downloads]\n"
+"            "
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1682
+msgid "Could not determine print lab order status at this time. Please check again later."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1885
+msgid "(includes Ecommerce Options)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1905
+msgid "A print lab order will be submitted for any orders that include any print lab items and you will be billed for the cost of goods. Once submitted, the print lab order cannot be cancelled. Continue to Mark as Paid?"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2006
+msgid "Pricelists"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2007
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2008
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2213
+msgid "Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2009
+msgid "Add New Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2010
+msgid "Edit Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2011
+msgid "New Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2012
+msgid "View Pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2013
+msgid "Search Pricelists"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2014
+msgid "No pricelists found"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2023
+msgid "Pricelist Item"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2031
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2033
+msgid "Orders"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2032
+msgid "Order"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2034
+msgid "Add New Order"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2035
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2037
+msgid "View Order"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2036
+msgid "New Order"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2038
+msgid "Search Orders"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2039
+msgid "No orders found"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2062
+msgid ""
+"The customer [customer_name] ordered the following items:\n"
+"            [items]\n"
+"\n"
+"            <h3>Order Details</h3>\n"
+"            <p>\n"
+"            Subtotal: [subtotal_amount]<br/>\n"
+"            [if_used_coupon]Discount: [discount_amount]<br/>[/if_used_coupon]\n"
+"            [if_ordered_shippable_items]Shipping: [shipping_amount]<br/>[/if_ordered_shippable_items]\n"
+"            [if_has_tax]Tax: [tax_amount]<br/>[/if_has_tax]\n"
+"            Total: [total_amount]<br/>\n"
+"            [if_ordered_printlab_items]\n"
+"                Printlab Status: [printlab_status_full]</br>\n"
+"            [/if_ordered_printlab_items]\n"
+"            [if_printlab_order_success]\n"
+"                Cost of Goods: [cost_of_goods]<br/>\n"
+"                [if_printlab_pdf_invoice_link]\n"
+"                    Invoice: <a target='_blank' href='[printlab_pdf_invoice_link]'>View PDF</a></br>\n"
+"                [/if_printlab_pdf_invoice_link]\n"
+"            [/if_printlab_order_success]\n"
+"            </p>\n"
+"\n"
+"            [if_ordered_shippable_items]\n"
+"            <p>\n"
+"            We will be shipping your items to:<br/>\n"
+"            [shipping_street_address]<br/>\n"
+"            [if_shipping_has_address_line]\n"
+"            [shipping_address_line]<br/>\n"
+"            [/if_shipping_has_address_line]\n"
+"            [shipping_city], [shipping_state] [shipping_zip]<br/>\n"
+"            [shipping_country]<br/>\n"
+"            [if_shipping_has_phone]\n"
+"            Ph: [shipping_phone]\n"
+"            [/if_shipping_has_phone]\n"
+"            </p>\n"
+"            [/if_ordered_shippable_items]\n"
+"\n"
+"            [if_ordered_digital_downloads]\n"
+"            <h3>Digital Downloads</h3>\n"
+"            <p>Download link for digital products: <a href='[digital_downloads_page_url]'>here.</a></p>\n"
+"            [/if_ordered_digital_downloads]\n"
+"        "
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2255
+msgid "Use gallery's pricelist"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2259
+msgid "None (not for sale)"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2328
+msgid "Mark as Paid"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2329
+msgid "Mark as Unpaid"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2330
+msgid "Mark as Awaiting Payment"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2396
+msgid "Order status updated"
+msgid_plural "%s orders updated"
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2499
+msgid "New Purchase!"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2502
+msgid "Thank you for your purchase!"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2503
+msgid ""
+"Thank you for your order, %%customer_name%%.\n"
+"\n"
+"You ordered %%item_count%% items, and have been billed a total of %%total_amount%%.\n"
+"\n"
+"To review your order, please go to %%order_details_page%%.\n"
+"\n"
+"Thanks for shopping at %%site_url%%!"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2504
+msgid ""
+"You received a payment of %%total_amount%% from %%customer_name%% (%%email%%). For more details, visit: %%order_details_page%%\n"
+"\n"
+"%%gateway_admin_note%%\n"
+"\n"
+"Here is a comma separated list of the image file names. You can copy and\n"
+"paste this in your favorite image management software to quickly search for\n"
+"and find all selected images.\n"
+"\n"
+"Files: %%file_list%%"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:2505
+msgid "Sorry, this image is not currently for sale."
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/add_new_print_item.php:51
+msgid "Product"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/add_new_print_item.php:53
+msgid "Estimated Cost"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/instructions.php:7
+msgid "Launch Ecommerce and Print Lab Setup Wizard"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:40
+msgid "Add product"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:54
+msgid "Markup Percent"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:63
+msgid "Round prices up to"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:67
+msgid ".00"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:68
+msgid ".99"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:69
+msgid "No Rounding"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:76
+msgid "Apply to all"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:121
+#: modules/ecommerce/templates/manage_pricelist.php:124
+msgid "Add Product"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:126
+msgid "Apply Markup to All Products"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:130
+msgid "Bulk Markup"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:141
+msgid "Enter title here"
+msgstr "Loktenilo"
+
+#: modules/ecommerce/templates/manage_pricelist.php:164
+msgid "Saving..."
+msgstr "Loktenilo"
+
+#: modules/free_gateway/adapter.free_checkout_ajax.php:19
+msgid "Order was free; no payment was charged"
+msgstr "Loktenilo"
+
+#: modules/free_gateway/adapter.free_checkout_button.php:25
+msgid "Free checkout"
+msgstr "Loktenilo"
+
+#: modules/image_protection/adapter.image_protection_form.php:17
+msgid "Image Protection"
+msgstr "Loktenilo"
+
+#: modules/image_protection/adapter.image_protection_form.php:48
+msgid "Protect images"
+msgstr "Loktenilo"
+
+#: modules/image_protection/adapter.image_protection_form.php:50
+msgid "Protect images from being downloaded both by right click or drag &amp; drop"
+msgstr "Loktenilo"
+
+#: modules/image_protection/adapter.image_protection_form.php:63
+msgid "Disable right click menu completely"
+msgstr "Loktenilo"
+
+#: modules/image_protection/adapter.image_protection_form.php:65
+msgid "By default the right click menu is only disabled for NextGEN images. Enable this to disable the right click menu on the whole page."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:59
+msgid "Display album and gallery descriptions"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:78
+msgid "Display galleries as"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:81
+msgid "How would you like galleries to be displayed?"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:93
+msgid "Enable breadcrumbs"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:103
+msgid "Caption color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:113
+msgid "Caption size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:127
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:65
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:193
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:203
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:103
+msgid "Border color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:137
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:51
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:175
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:189
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:68
+msgid "Border size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:151
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:253
+msgid "Background color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:161
+msgid "Padding"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/adapter.nextgen_pro_album_form.php:175
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:82
+msgid "Spacing"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/module.nextgen_pro_albums.php:123
+msgid "NextGEN Pro List Album"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_albums/module.nextgen_pro_albums.php:139
+msgid "NextGEN Pro Grid Album"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:75
+msgid "Image display size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:77
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:105
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:35
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:46
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:130
+#: modules/nextgen_pro_tile/adapter.nextgen_pro_tile_form.php:64
+#: modules/nextgen_pro_tile/adapter.nextgen_pro_tile_form.php:82
+msgid "Measured in pixels"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:79
+msgid "image width"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:89
+msgid "Image maximum height"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:91
+msgid "Measured in pixels. Empty or 0 will not impose a limit."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:103
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:239
+msgid "Image spacing"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:117
+msgid "Display captions"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:127
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:110
+msgid "Caption location"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:129
+msgid "Above"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/adapter.nextgen_pro_blog_form.php:130
+msgid "Below"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_blog_gallery/module.nextgen_pro_blog_gallery.php:73
+msgid "NextGEN Pro Blog Style"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:42
+msgid "Enable caption overlay"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:52
+msgid "Display share icons"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:64
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:61
+msgid "Display image title"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:76
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:109
+msgid "Display image description"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:88
+msgid "Animation type"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:90
+msgid "Fade in"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:91
+msgid "Slide up"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:92
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:94
+msgid "Slide down"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:93
+msgid "Slide left"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:95
+msgid "Titlebar"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_captions/adapter.nextgen_pro_captions_form.php:96
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:38
+msgid "Plain"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:75
+msgid "Title font color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:77
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:125
+msgid "An empty color setting will use your theme colors"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:91
+msgid "Title font size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:93
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:141
+msgid "Measured in pixels. An empty or zero setting will use your theme font size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:95
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:143
+msgid "# of pixels"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:123
+msgid "Description font color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:139
+msgid "Description font size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:157
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:54
+msgid "Images per page"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:159
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:56
+msgid "\"0\" will display all images at once"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:161
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:58
+msgid "# of images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:207
+msgid "Frame size"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/adapter.nextgen_pro_film_form.php:225
+msgid "Frame color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_film/module.nextgen_pro_film.php:77
+msgid "NextGEN Pro Film"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_horizontal_filmstrip/module.nextgen_pro_horizontal_filmstrip.php:72
+msgid "NextGEN Pro Horizontal Filmstrip"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_imagebrowser/module.nextgen_pro_imagebrowser.php:151
+msgid "NextGEN Pro ImageBrowser"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_album_form.php:36
+msgid "Open gallery in Pro Lightbox"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_album_form.php:38
+msgid "Feature only available when the Pro Lightbox has been selected as the lightbox effect in Other Options"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:83
+msgid "Color options"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:88
+msgid "Lightbox and image sizing"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:93
+msgid "Social"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:98
+msgid "Thumbnail carousel"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:103
+msgid "Transition effects"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:108
+msgid "Other settings"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:122
+msgid "Router slug"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:124
+msgid "Used to route JS actions to the URL"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:142
+msgid "Lightbox padding"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:144
+msgid "Padding is limited to no more than 25% of the browser screen size at startup"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:164
+msgid "Icon color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:166
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:177
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:211
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:222
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:233
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:244
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:255
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:266
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:277
+msgid "An empty setting here will use your style defaults"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:175
+msgid "Icon background"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:187
+msgid "Display background on carousel icons"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:197
+msgid "Display rounded background on carousel icons"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:209
+msgid "Floating elements color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:220
+msgid "Sidebar button text color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:231
+msgid "Sidebar button background"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:242
+msgid "Carousel text color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:264
+msgid "Carousel background color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:275
+msgid "Sidebar background color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:286
+msgid "Pan cropped images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:288
+msgid "When enabled images can be panned with the mouse"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:297
+msgid "Pause on interaction"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:299
+msgid "When enabled image display will be paused if the user presses a thumbnail or any navigational link"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:308
+msgid "Enable browser routing"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:310
+msgid "Necessary for commenting to be enabled"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:319
+msgid "Facebook App ID"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:321
+msgid "When available this enables a more advanced sharing backend"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:331
+msgid "Enable sharing"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:333
+msgid "When enabled social-media sharing icons will be displayed"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:343
+msgid "Enable comments"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:355
+msgid "Display comments initially"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:357
+msgid "When on the commenting sidebar will be opened at startup"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:367
+msgid "Display captions initially"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:369
+msgid "When on the captions toolbar will be opened at startup"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:378
+msgid "Display carousel thumbnails"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:385
+msgid "Very large galleries can impact Pro Lightbox performance on mobile devices; disable carousel thumbnails to reduce that impact"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:394
+msgid "Display carousel initially"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:396
+msgid "When disabled the navigation carousel will be docked and hidden offscreen at startup"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:405
+msgid "Enable Twitter Cards"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:416
+msgid "Twitter username"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:418
+msgid "Required by twitter for Twitter Card analytics"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:428
+msgid "Localize limit"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:430
+msgid "For performance gallery images are localized as javascript. Galleries with more images this limit will make an AJAX call to load the rest at startup. Set to 0 to include every image in displayed galleries."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:442
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:175
+msgid "Transition speed"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:444
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:458
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:144
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:177
+msgid "Measured in seconds"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:446
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:460
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:146
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:179
+msgid "seconds"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:456
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:142
+msgid "Slideshow speed"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:468
+msgid "Default: a dark theme"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:469
+msgid "All black: Removes borders from the comments panel"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:470
+msgid "All white: A white based theme"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:476
+msgid "Color theme"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:479
+msgid "Preset styles to customize the display. Selecting an option may reset some color fields."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:486
+msgid "Crossfade betweens images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:487
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:159
+msgid "Fades into background color between images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:488
+msgid "Quickly removes the image into background color, then fades the next image"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:489
+msgid "Slides the images depending on image position"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:490
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:162
+msgid "Fade between images and slide slightly at the same time"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:499
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:156
+msgid "Transition effect"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:510
+msgid "Touch transition effect"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:513
+msgid "The transition to use on touch devices if the default transition is too intense"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:522
+msgid "Crop image display"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:524
+msgid "Images will be scaled to fill the display, centered and cropped"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:525
+msgid "Images will be scaled down until the entire image fits"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:526
+msgid "Images will scale to fill the height of the display"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:527
+msgid "Images will scale to fill the width of the display"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:528
+msgid "Landscape images will fill the display, but scale portraits to fit"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_form.php:529
+msgid "Portrait images will fill the display, but scale landscapes to fit"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:22
+msgid "Display Triggers"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:24
+msgid "Always"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:25
+msgid "Exclude Small Screens"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:26
+msgid "Never"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:37
+msgid "Triggers Style"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/adapter.nextgen_pro_lightbox_triggers_form.php:38
+msgid "Fancy"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/class.opengraph_controller.php:86
+msgid "Status: 404 Image not found"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/class.opengraph_controller.php:87
+msgid "Image not found"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:110
+msgid "NextGEN Pro Lightbox"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:136
+msgid "Toggle social sidebar"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:137
+msgid "Play / Pause"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:138
+msgid "Toggle fullsize"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:139
+msgid "Toggle image info"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:140
+msgid "Close window"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:142
+msgid "Share on Twitter"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:143
+msgid "Share on Facebook"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:144
+msgid "Share on Pinterest"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:33
+msgid "Maximum image width"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:44
+msgid "Image padding"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_masonry/adapter.nextgen_pro_masonry_form.php:55
+msgid "Center the gallery"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_masonry/module.nextgen_pro_masonry.php:75
+msgid "NextGEN Pro Masonry"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:48
+msgid "Row height"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:63
+msgid "Margins"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:78
+msgid "Justify last row"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:79
+msgid "Justify"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:80
+msgid "Do not justify"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:81
+msgid "Hide"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:84
+msgid "When aligning the last row some images may appear cropped. Select \"Do not justify\" to allow the last row to appear flush but \"unfinished\". \"Hide\" will omit any images that can not be justified without cropping."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:95
+msgid "Enable \"lazy\" image loading"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:106
+msgid "Images to display at start"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/adapter.mosaic_form.php:119
+msgid "Images to load when scrolling"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_mosaic/module.mosaic.php:77
+msgid "NextGen Pro Mosaic"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:41
+msgid "Proof request by %1$s (%2$d images)"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:97
+msgid "Proof post could not be created"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:103
+msgid "Please provide a name and e-mail address"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_ajax.php:107
+msgid "No images selected"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_form.php:17
+msgid "Enable proofing?"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_form.php:19
+msgid "Trigger buttons or hover captions need to be enabled for proofing to work"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:12
+msgid "Proofing"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:56
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:208
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:278
+msgid "Proofed Images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:116
+msgid "Confirmation page"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:119
+msgid "This page requires the [ngg_pro_proofing] shortcode, which will be automatically added if not already present. Selecting \"Create new\" will create a new page that will appear in your Primary Menu unless you've customized your menu settings: http://codex.wordpress.org/Appearance_Menus_SubPanel"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:130
+msgid "Pro Lightbox icon color"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:132
+msgid "When the NextGen Pro Lightbox is active an additional icon is added for image proofing, this controls the color of that icon for chosen images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:143
+msgid "Trigger text"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:155
+msgid "Admin email message"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:157
+msgid "Possible substitution fields: admin, file_list, proof_link, user_name, user_email"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:168
+msgid "Send confirmation to users"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:180
+msgid "Confirmation subject"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:194
+msgid "Confirmation email"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:196
+msgid "Possible substition fields: user_name, user_email, proof_link"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:208
+msgid "Not found message"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:210
+msgid "This is displayed to users viewing the proofing page without a valid proofing to view"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:221
+msgid "Confirmation template"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_settings_form.php:223
+msgid "Possible substition fields: user_name, user_email, proof_link, proof_details"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:40
+msgid "Submitting {0} image{1}"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:42
+msgid "Send"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:43
+msgid "Submitting..."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/adapter.nextgen_pro_proofing_trigger_resources.php:46
+msgid "Proof image?"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:170
+msgid "Proofs"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:171
+msgid "Proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:172
+msgid "Add New Proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:173
+msgid "Edit Proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:174
+msgid "New Proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:175
+msgid "View Proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:176
+msgid "Search Proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:177
+msgid "Nothing found"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:178
+msgid "Nothing found in Trash"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:244
+msgid "User confirmation"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:246
+msgid "Gallery source url"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:249
+msgid "Thumbnail"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:249
+msgid "Title"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:249
+msgid "Filename"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:361
+msgid "Submit proofs"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:363
+msgid "Confirmation of image proof"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:364
+msgid "Oops! This page usually displays details for image proofs, but you have not proofed any images yet. Please feel free to continue browsing. Thanks for visiting."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:365
+msgid ""
+"Hi %%admin%% Administrator,\n"
+"\n"
+"%%user_name%% has submitted images from a proofing gallery.\n"
+"\n"
+"You can find the proofed images at %%proof_link%%\n"
+"\n"
+"Here is a comma separated list of the image file names. You can copy and\n"
+"paste this in your favorite image management software to quickly search for\n"
+"and find all selected images.\n"
+"\n"
+"Files: %%file_list%%"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:376
+msgid ""
+"Hello %%user_name%%,\n"
+"\n"
+"This is confirmation that you have selected and submitted the following\n"
+"images from one of our proofing galleries: %%proof_link%%\n"
+"\n"
+"Thanks very much!"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:382
+msgid ""
+"<p>%%user_name%% has submitted the following images for proofing. <a href=\"%%proof_link%%\">Go back</a></p>\n"
+"\n"
+" %%proof_details%%"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:15
+msgid "Resets all NextGEN and NextGEN Pro settings to default values, including ecommerce."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:26
+msgid "Replace NextGen Pro ecommerce options with their default setting"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:27
+msgid "Reset only ecommerce settings"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:28
+msgid ""
+"Reset all ecommerce options to default settings?\n"
+"\n"
+"Choose [Cancel] to Stop, [OK] to proceed."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:29
+msgid "Reset ecommerce options"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:30
+msgid "Resets only ecommerce settings to default values."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:31
+msgid "Replace all existing options (except ecommerce) with their default setting"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:32
+msgid "Reset non ecommerce settings"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:33
+msgid ""
+"Reset all non ecommerce options to default settings?\n"
+"\n"
+"Choose [Cancel] to Stop, [OK] to proceed."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:34
+msgid "Reset non-ecommerce options"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_settings/adapter.nextgen_pro_settings_reset_form.php:35
+msgid "Resets all settings except ecommerce to default values."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_sidescroll/adapter.nextgen_pro_sidescroll_form.php:33
+msgid "Gallery Height"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_sidescroll/adapter.nextgen_pro_sidescroll_form.php:35
+msgid "Provide desired gallery height in pixels."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_sidescroll/module.nextgen_pro_sidescroll.php:70
+msgid "NextGEN Pro Sidescroll"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:61
+msgid "Gallery width"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:67
+msgid "Pixels"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:78
+msgid "Crop images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:88
+msgid "Pan images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:100
+msgid "Show captions"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:112
+msgid "Top"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:113
+msgid "Bottom"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:114
+msgid "Top (Overlay)"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:115
+msgid "Bottom (Overlay)"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:128
+msgid "Caption height"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:132
+msgid "pixels"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:158
+msgid "Crossfade between images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:160
+msgid "Quickly move the image into the background color, then fade into the next image"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:161
+msgid "Slide images depending on image position"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:191
+msgid "Borders will not be applied if \"Crop Images\" is enabled"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:215
+msgid "Stage aspect ratio"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/adapter.nextgen_pro_slideshow_form.php:228
+msgid "Show play controls"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_slideshow/module.nextgen_pro_slideshow.php:75
+msgid "NextGEN Pro Slideshow"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:92
+msgid "Number of columns to display"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_thumbnail_grid/adapter.nextgen_pro_thumbnail_grid_form.php:94
+msgid "An empty or zero in this field will use a responsive layout"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_thumbnail_grid/module.nextgen_pro_thumbnail_grid.php:74
+msgid "NextGEN Pro Thumbnail Grid"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_tile/adapter.nextgen_pro_tile_form.php:47
+msgid "Override maximum gallery width"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_tile/adapter.nextgen_pro_tile_form.php:49
+msgid "Gallery width is set to your theme's content width but this can be overridden to create smaller galleries. If your theme does not provide the $content_width feature the default will fallback to 2000px."
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_tile/adapter.nextgen_pro_tile_form.php:62
+msgid "Maximum gallery width"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_tile/adapter.nextgen_pro_tile_form.php:80
+msgid "Margin between blocks of images"
+msgstr "Loktenilo"
+
+#: modules/nextgen_pro_tile/module.nextgen_pro_tile.php:86
+msgid "NextGEN Pro Tile"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:124
+#: modules/stripe/adapter.stripe_checkout_ajax.php:247
+#: modules/stripe/adapter.stripe_checkout_ajax.php:292
+msgid "This request requires an authenticated administrator"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:172
+msgid "An unexpected problem occurred contacting PayPal.com to register your site for payment notifications: %s"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:179
+msgid "NextGen Pro cannot register your site URL with PayPal to receive payment notifications. You must use the PayPal <a href=\"%s\" target=\"_blank\">developer dashboard</a> and do this manually."
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:182
+msgid "PayPal only allows 10 payment notification URL to be registered and you have reached that limit. You must use the PayPal <a href=\"%s\" target=\"_blank\">developer dashboard</a> to remove an existing registered URL before attempting again."
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:185
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:188
+msgid "An unexpected problem occurred contacting PayPal.com"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:208
+msgid "Order submitted to PayPal for processing"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:306
+msgid "Order from %s"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:342
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:345
+msgid "An unexpected problem occurred when contacting PayPal.com to create your order. Please try again later."
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_ajax.php:393
+msgid "An unexpected problem occurred when contacting PayPal.com. Please contact the site owner to complete your purchase."
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_button.php:62
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:28
+#: modules/paypal_standard/adapter.paypal_standard_button.php:52
+msgid "Pay with PayPal"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_form.php:78
+msgid "Enable PayPal Checkout"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_form.php:80
+msgid "Not all currencies are supported by all payment gateways. Please be sure to confirm your desired currency is supported by PayPal Checkout"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_form.php:91
+msgid "Use Sandbox"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_form.php:105
+msgid "<strong>Client ID</strong>"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_form.php:119
+msgid "<strong>Client secret</strong>"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/adapter.paypal_checkout_form.php:132
+msgid "See our <a href=\"%s\" target=\"_blank\"\">documentation</a> on setting up PayPal Checkout."
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/class.paypal_checkout_tls_notification.php:20
+msgid "PayPal Checkout does not support API requests made with TLS 1.1 or older. Please contact your systems administrator to enable TLS 1.2 support on your host."
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/module.paypal_checkout.php:55
+msgid "cURL is required for PayPal Checkout support to function"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/module.paypal_checkout.php:61
+msgid "JSON is required for PayPal Checkout support to function"
+msgstr "Loktenilo"
+
+#: modules/paypal_checkout/module.paypal_checkout.php:74
+msgid "PHP 5.6.0 is required for PayPal Checkout to function. Your settings have been preserved but PayPal Checkout will remain disabled until your PHP version is upgraded to at least 5.6.0."
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:182
+msgid "Could not complete order at PayPal"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:188
+#: modules/paypal_standard/adapter.paypal_standard_button.php:113
+msgid "The billed amount and the amount received are not the same"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:193
+msgid "Could not find order reference #%s"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:239
+msgid "Submitted to PayPal"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:303
+msgid "Your cart also contains 1 item at no cost"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_button.php:306
+msgid "Your cart also contains %d items at no cost"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:33
+msgid "Enable PayPal Express Checkout"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:35
+#: modules/paypal_standard/adapter.paypal_standard_form.php:34
+msgid "Not all currencies are supported by all payment gateways. Please be sure to confirm your desired currency is supported by PayPal"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:46
+msgid "Use sandbox?"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:48
+msgid "If enabled transactions will use testing servers on which no currency is actually moved"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:60
+#: modules/paypal_standard/adapter.paypal_standard_form.php:77
+msgid "<strong>Email</strong>"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:74
+msgid "<strong>API Username</strong>"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:88
+msgid "<strong>API Password</strong>"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/adapter.paypal_express_checkout_form.php:102
+msgid "<strong>API Signature</strong>"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/module.paypal_express_checkout.php:69
+msgid "cURL is required for PayPal Express support to function"
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/module.paypal_express_checkout.php:88
+msgid "This order has been marked as fraud and has been reported."
+msgstr "Loktenilo"
+
+#: modules/paypal_express_checkout/module.paypal_express_checkout.php:91
+msgid "We're sorry, but something went wrong processing your order. Please try again."
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/adapter.paypal_standard_ajax.php:20
+msgid "The order has been submitted to PayPal, and we're waiting for a response from PayPal to indicate that the payment has been made."
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:32
+msgid "Enable PayPal Standard"
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:49
+msgid "<strong>Warning:</strong> HTTPS was not detected. Because PayPal will not send IPN events over unencrypted connections NextGen cannot verify orders placed via PayPal Standard without the use of HTTPS."
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:63
+msgid "Use Sandbox?"
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:79
+msgid "Only PayPal Premier and Business accounts are supported"
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/adapter.paypal_standard_form.php:95
+msgid "PayPal does not support your currently chosen currency"
+msgstr "Loktenilo"
+
+#: modules/paypal_standard/module.paypal_standard.php:68
+msgid "cURL is required for PayPal support to function"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.controller.php:216
+msgid "Clear filters"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.controller.php:352
+msgid "Search Images"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.controller.php:353
+msgid "Search term"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:58
+msgid "Enable filtering results by tag"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:72
+msgid "Search image alttext"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:86
+msgid "Search image description"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:100
+msgid "Search image tags"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:112
+msgid "Natural language"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:113
+msgid "Boolean"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:118
+msgid "Database search mode"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:121
+msgid "A natural language search treats the requested string as a phrase in text without any operators except for quotation marks. A boolean search uses special rules and operators such as the plus and minus symbols."
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:134
+msgid "Minimum relevance"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:136
+msgid "The database server assigns a relevance score to each possible image based on a number of factors with zero being not at all relevant. Users with smaller databases or images whose alttext or description only holds a few words will need a lower number here; possibly as low as 0.05. It is unlikely many users will need to raise this beyond one."
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:152
+msgid "Limit search results"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:154
+msgid "Limit search results to this amount. A setting of zero means no limitations are applied"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:171
+msgid "Order by relevance first"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:184
+msgid "Image ID"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:185
+msgid "Gallery ID"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:186
+msgid "Image filename"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:187
+msgid "Image date (EXIF or time of upload)"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:192
+msgid "Order search results by"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:205
+msgid "Ascending"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:206
+msgid "Descending"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:211
+msgid "Order direction of search results"
+msgstr "Loktenilo"
+
+#: modules/search/adapter.form.php:236
+msgid "Display results as"
+msgstr "Loktenilo"
+
+#: modules/search/module.search.php:135
+msgid "NextGen Frontend Image Search"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:50
+msgid "Order submitted to Stripe for processing"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:81
+msgid "%d item from %s"
+msgid_plural "%d items from %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:115
+msgid "Taxes"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:121
+msgid "Shipping"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:178
+#: modules/stripe/adapter.stripe_checkout_ajax.php:221
+msgid "An error has occurred while processing your order. Please try again later."
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:188
+#: modules/stripe/adapter.stripe_checkout_ajax.php:227
+msgid "An error has occurred while processing an order on your website with a Stripe payment. Please include the following information when filing a bug report:"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_ajax.php:196
+#: modules/stripe/adapter.stripe_checkout_ajax.php:233
+msgid "Site error while processing a NextGen Pro order via Stripe"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_button.php:28
+msgid "Pay with Card"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_form.php:77
+msgid "Enable Stripe"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_form.php:79
+msgid "Not all currencies are supported by all payment gateways. Please be sure to confirm your desired currency is supported by Stripe"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_form.php:90
+msgid "<strong>Public key</strong>"
+msgstr "Loktenilo"
+
+#: modules/stripe/adapter.stripe_checkout_form.php:104
+msgid "<strong>Private key</strong>"
+msgstr "Loktenilo"
+
+#: modules/stripe/class.stripe_tls12_check_notification.php:22
+msgid "Stripe no longer supports API requests made with TLS 1.0. Please contact your systems administrator to enable TLS 1.2 support on your host."
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:117
+msgid "Check stripe"
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:119
+msgid "No unprocessed payments were found."
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:120
+msgid "%d order(s) have been processed and marked as paid. This page will now reload to display the updated order information."
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:121
+msgid "In case Stripe failed to connect to your site to mark an order as paid this button will manually check with Stripe for any missed payments made within the last 48 hours."
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:136
+msgid "cURL is required for Stripe support to function"
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:142
+msgid "JSON is required for Stripe support to function"
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:148
+msgid "Multibyte is required for Stripe support to function"
+msgstr "Loktenilo"
+
+#: modules/stripe/module.stripe.php:154
+msgid "PHP 5.4.0 is required for Stripe to function. Your settings have been preserved but Stripe will remain disabled until your PHP version is upgraded to at least 5.4.0."
+msgstr "Loktenilo"
+
+#: modules/test_gateway/adapter.test_gateway_checkout_ajax.php:19
+msgid "Payment was successfully made via the Test Gateway, with no further payment action required."
+msgstr "Loktenilo"
+
+#: modules/test_gateway/adapter.test_gateway_checkout_form.php:28
+msgid "Enable Testing Gateway"
+msgstr "Loktenilo"
+
+#: modules/test_gateway/adapter.test_gateway_checkout_form.php:30
+msgid "Enables a gateway that does not collect payments and sends users directly to their order confirmation"
+msgstr "Loktenilo"
+
+#: nggallery-pro.php:184
+msgid "There are updates available. You can <a href=\"%s\">Update Now</a>."
+msgstr "Loktenilo"
+
+#: nggallery-pro.php:236
+msgid "Please install &amp; activate <a href=\"http://wordpress.org/plugins/nextgen-gallery/\" target=\"_blank\">NextGEN Gallery</a> to allow NextGEN Pro to work."
+msgstr "Loktenilo"
+
+#: nggallery-pro.php:243
+msgid "NextGEN Gallery %s is incompatible with NextGEN Pro %s. Please update <a class='thickbox' href='%s'>NextGEN Gallery</a> to version %s or higher. NextGEN Pro has been deactivated."
+msgstr "Loktenilo"
+
+#: nggallery-pro.php:253
+msgid "NextGEN Plus is already active and cannot be used at the same time as NextGEN Pro. NextGEN Pro has been deactivated."
+msgstr "Loktenilo"
+
+#: nggallery-pro.php:258
+msgid "NextGEN Starter is already active and cannot be used at the same time as NextGEN Pro. NextGEN Pro has been deactivated."
+msgstr "Loktenilo"
+
+#: nggallery-pro.php:263
+msgid "To activate the NextGEN Pro Lightbox please go to Gallery > Other Options > Lightbox Effects."
+msgstr "Loktenilo"

@@ -1,0 +1,40 @@
+.nextgen_pro_list_album .image_container img {
+	border: 0;
+    max-width: 100% !important;
+}
+
+.nextgen_pro_list_album .gallery_link a,
+.nextgen_pro_list_album a.nextgen_pro_lightbox {
+	float: left;
+    margin-right: 20px;
+}
+
+.nextgen_pro_list_album .gallery_link a {
+    opacity: 0.9;
+}
+
+.nextgen_pro_list_album .gallery_link a:hover {
+    opacity: 1.0;
+}
+
+.nextgen_pro_list_album .caption_link a {
+    line-height: 100%;
+}
+
+.nextgen_pro_list_album .image_description {
+    text-align: justify;
+}
+
+.nextgen_pro_list_album .image_description h1,
+.nextgen_pro_list_album .image_description h2,
+.nextgen_pro_list_album .image_description h3,
+.nextgen_pro_list_album .image_description h4,
+.nextgen_pro_list_album .image_description h5,
+.nextgen_pro_list_album .image_description h6 {
+    display: inline;
+}
+
+.clear {
+	float: none;
+	clear: both;
+}

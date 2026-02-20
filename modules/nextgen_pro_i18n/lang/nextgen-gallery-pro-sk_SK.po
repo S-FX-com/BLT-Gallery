@@ -1,0 +1,1999 @@
+# Copyright (C) 2016 Imagely
+# This file is distributed under the same license as the NextGEN Pro package.
+msgid ""
+msgstr ""
+"Project-Id-Version: NextGEN Pro\n"
+"Report-Msgid-Bugs-To: https://www.imagely.com/wordpress-gallery-"
+"plugin/nextgen-pro/\n"
+"POT-Creation-Date: 2018-04-19 06:45+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2018-04-22 07:19+0000\n"
+"Last-Translator: cargo <kaffka@starline.sk>\n"
+"Language-Team: Slovenčina\n"
+"Language: sk_SK\n"
+"Plural-Forms: nplurals=3; plural=( n == 1 ) ? 0 : ( n >= 2 && n <= 4 ) ? 1 : "
+"2;\n"
+"X-Generator: Loco https://localise.biz/"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:100
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:109
+msgid "\"0\" will display all images at once"
+msgstr "\"0\" zobrazí všetky obrázky naraz"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:100
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:109
+msgid "# of images"
+msgstr "počet obrázkov"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:805
+msgid "(includes Ecommerce Options)"
+msgstr "(zahŕňa možnosti Ecommerce)"
+
+#: modules/comments/module.comments.php:78
+#, php-format
+msgid "<a href='%s' target='_blank'>View in lightbox</a>"
+msgstr "<a href='%s' target='_blank'>Zobraziť v lightboxe</a>"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:368
+#, php-format
+msgid ""
+"<p>%%user_name%% has submitted the following images for proofing. <a "
+"href=\"%%proof_link%%\">Go back</a></p>\n"
+"\n"
+" %%proof_details%%"
+msgstr ""
+"<p>%%user_name%% odoslal nasledujúce obrázky na kontrolu. <a "
+"href=\"%%proof_link%%\">Go back</a></p>\n"
+"\n"
+" %%proof_details%%"
+
+#: modules/cheque/module.cheque.php:181
+msgid ""
+"<p>Thanks very much for your purchase! We'll be in touch shortly via email "
+"to confirm your order and to provide details on payment.</p>"
+msgstr ""
+"<p>Ďakujeme za Váš nákup! Na potvrdenie objednávky a poskytnutie podrobností "
+"o platbe vás budeme kontaktovať e-mailom čo najskôr.</p>"
+
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:95
+msgid "Above"
+msgstr "Vyššie"
+
+#: modules/coupons/package.module.coupons.php:277
+msgid "Add New Coupon"
+msgstr "Pridať nový kupón"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:939
+msgid "Add New Order"
+msgstr "Pridať novú objednávku"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:914
+msgid "Add New Pricelist"
+msgstr "Pridať nový cenník"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:159
+msgid "Add New Proof"
+msgstr "Pridať novú kontrolu"
+
+#: modules/free_gateway/package.module.free_gateway.php:88
+#: modules/cheque/package.module.cheque.php:79
+msgid "Address"
+msgstr "Adresa"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:204
+msgid "Admin email message"
+msgstr "Administrátorská e-mailová správa"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:290
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:193
+msgid "All black: Removes borders from the comments panel"
+msgstr "Všetko čierne: Odstraňuje orámovanie z panelu s poznámkami"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:335
+msgid "All order statuses"
+msgstr "Všetky stavy objednávok"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:290
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:193
+msgid "All white: A white based theme"
+msgstr "Všetko biele: Biela základná téma"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:342
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:266
+msgid "Always"
+msgstr "Vždy"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:112
+msgid "An empty or zero in this field will use a responsive layout"
+msgstr ""
+"Prázdne alebo nula v tomto poli bude používať odpovedajúce usporiadanie"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:186
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:190
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:202
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:206
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:210
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:214
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:218
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:222
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:226
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:105
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:109
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:121
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:125
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:129
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:133
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:137
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:141
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:145
+msgid "An empty setting here will use your style defaults"
+msgstr "Prázdne nastavenie použije predvolené nastavenia štýlu"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+msgid "Animation type"
+msgstr "Typ animácie"
+
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:177
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:218
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:137
+msgid "Background color"
+msgstr "Farba pozadia"
+
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:95
+msgid "Below"
+msgstr "Nižšie"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:116
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:169
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:117
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:93
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:75
+msgid "Border color"
+msgstr "Farba orámovania"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:104
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:173
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:113
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:89
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:71
+msgid "Border size"
+msgstr "Veľkosť orámovania"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:89
+msgid "Borders will not be applied if \"Crop Images\" is enabled"
+msgstr "Orámovania sa nepoužijú, ak je zapnutá možnosť \"Orezanie obrázkov\""
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:69
+msgid "Bottom"
+msgstr "Dole"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:69
+msgid "Bottom (Overlay)"
+msgstr "Dole (Prekryté)"
+
+#: modules/image_protection/package.module.image_protection.php:53
+msgid ""
+"By default the right click menu is only disabled for NextGEN images. Enable "
+"this to disable the right click menu on the whole page."
+msgstr ""
+"Štandardne je ponuka pravého kliknutia vypnutá pre obrázky NextGEN. Povoľte "
+"toto, ak chcete zakázať ponuku pravého kliknutia na celej stránke."
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+#: modules/free_gateway/package.module.free_gateway.php:84
+#: modules/cheque/package.module.cheque.php:75
+#: modules/ecommerce/templates/manage_pricelist.php:36
+#: modules/coupons/templates/edit.php:36
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:161
+msgid "Caption color"
+msgstr "Farba titulkov"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:73
+msgid "Caption height"
+msgstr "Výška titulkov"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:69
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:95
+msgid "Caption location"
+msgstr "Umiestnenie titulkov"
+
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:165
+msgid "Caption size"
+msgstr "Veľkosť titulkov"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:222
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:141
+msgid "Carousel background color"
+msgstr "Farba pozadia karuselu"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:214
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:133
+msgid "Carousel text color"
+msgstr "Farba textu karuselu"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:452
+msgid "Checkout"
+msgstr "Pokladňa"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:284
+msgid "Cheque"
+msgstr "Šek"
+
+#: modules/free_gateway/package.module.free_gateway.php:89
+#: modules/cheque/package.module.cheque.php:80
+msgid "City"
+msgstr "Mesto"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:151
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Close window"
+msgstr "Zatvoriť okno"
+
+#: modules/coupons/package.module.coupons.php:19
+msgid "Code"
+msgstr "Kód"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:135
+msgid "Color options"
+msgstr "Možnosti farieb"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:292
+msgid "Color theme"
+msgstr "Farba témy"
+
+#: modules/comments/module.comments.php:155
+#: modules/comments/module.comments.php:157
+#: modules/comments/module.comments.php:158
+msgid "Comment"
+msgstr "Komentár"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:222
+msgid "Confirmation email"
+msgstr "Potvrdzujúci e-mail"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:349
+msgid "Confirmation of image proof"
+msgstr "Potvrdenie kontroly obrázka"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:186
+msgid "Confirmation page"
+msgstr "Stránka s potvrdením"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:216
+msgid "Confirmation subject"
+msgstr "Predmet potvrdenia"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:234
+msgid "Confirmation template"
+msgstr "Šablóna potvrdenia"
+
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:259
+msgid "Could not save order"
+msgstr "Nie je možné uložiť objednávku"
+
+#: modules/free_gateway/package.module.free_gateway.php:92
+#: modules/cheque/package.module.cheque.php:83
+msgid "Country"
+msgstr "Krajina"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:256
+#: modules/coupons/package.module.coupons.php:277
+msgid "Coupon"
+msgstr "Kupón"
+
+#: modules/coupons/package.module.coupons.php:92
+msgid "Coupon code must be unique"
+msgstr "Kód kupónu musí byť jedinečný"
+
+#: modules/coupons/package.module.coupons.php:91
+msgid "Coupon code must not be blank"
+msgstr "Kód kupónu nesmie byť prázdny"
+
+#: modules/coupons/package.module.coupons.php:6
+msgid "Coupon details"
+msgstr "Podrobnosti kupónu"
+
+#: modules/coupons/package.module.coupons.php:277
+msgid "Coupons"
+msgstr "Kupóny"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:175
+msgid "Create new"
+msgstr "Vytvor nový"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Crop image display"
+msgstr "Orezanie zobrazenia obrázka"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:57
+msgid "Crop images"
+msgstr "Orezanie obrázkov"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:81
+msgid "Crossfade between images"
+msgstr "Prelínanie medzi obrázkami"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:296
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:199
+msgid "Crossfade betweens images"
+msgstr "Prelínania medzi obrázkami"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:108
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:253
+msgid "Customer"
+msgstr "Zákazník"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:290
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:193
+msgid "Default: a dark theme"
+msgstr "Predvolená: tmavá téma"
+
+#: modules/ecommerce/templates/manage_pricelist.php:33
+msgid "Delete"
+msgstr "Vymazať"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:71
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:440
+msgid "Digital Downloads"
+msgstr "Digitálne stiahnutie"
+
+#: modules/image_protection/package.module.image_protection.php:53
+msgid "Disable right click menu completely"
+msgstr "Zakázať úplne kliknutie pravým tlačidlom myši"
+
+#: modules/coupons/package.module.coupons.php:29
+msgid "Discount amount"
+msgstr "Suma zľavy"
+
+#: modules/coupons/package.module.coupons.php:96
+msgid "Discount amount must be a number 0 or larger"
+msgstr "Suma zľavy musí byť číslo 0 alebo väčšie"
+
+#: modules/coupons/package.module.coupons.php:95
+msgid "Discount amount must not be blank"
+msgstr "Suma zľavy nesmie byť prázdna"
+
+#: modules/coupons/package.module.coupons.php:24
+msgid "Discount type"
+msgstr "Typ zľavy"
+
+#: modules/coupons/package.module.coupons.php:94
+msgid "Discount type must be \"Flat\" or \"Percent\""
+msgstr "Typ zľavy musí byť \"Celkový\" alebo \"Percento\""
+
+#: modules/coupons/package.module.coupons.php:93
+msgid "Discount type must not be blank"
+msgstr "Typ zľavy nesmie byť prázdny"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:194
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:113
+msgid "Display background on carousel icons"
+msgstr "Zobrazenie pozadia na ikonách karuselu"
+
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:173
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:91
+msgid "Display captions"
+msgstr "Zobrazenie titulkov"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:262
+msgid "Display captions initially"
+msgstr "Zobraziť titulky na začiatku"
+
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:177
+msgid "Display carousel"
+msgstr "Zobraziť karusel"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:266
+msgid "Display carousel initially"
+msgstr "Zobrazte karusel na začiatku"
+
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:169
+msgid "Display comments"
+msgstr "Zobraziť komentáre"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:258
+msgid "Display comments initially"
+msgstr "Zobraziť komentáre na začiatku"
+
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:150
+msgid "Display galleries as"
+msgstr "Zobraziť galérie ako"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:39
+msgid "Display image description"
+msgstr "Zobraziť popis obrázku"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:35
+msgid "Display image title"
+msgstr "Zobraziť názov obrázku"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:198
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:117
+msgid "Display rounded background on carousel icons"
+msgstr "Zobraziť zaoblené pozadie na ikonách karuselu"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:31
+msgid "Display share icons"
+msgstr "Zobraziť ikony zdieľania"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:342
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:266
+msgid "Display Triggers"
+msgstr "Zobraziť spúšťače"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:87
+msgid "Do not justify"
+msgstr "Neoprávňujte"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:42
+msgid "Done"
+msgstr "Hotovo"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:409
+msgid "Duplicate"
+msgstr "Kópia"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:213
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:214
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1099
+msgid "Ecommerce"
+msgstr "Ecommerce"
+
+#: modules/coupons/package.module.coupons.php:202
+#: modules/coupons/package.module.coupons.php:277
+msgid "Edit Coupon"
+msgstr "Upraviť kupón"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:915
+msgid "Edit Pricelist"
+msgstr "Upraviť cenník"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:160
+msgid "Edit Proof"
+msgstr "Upraviť kontrolu"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+#: modules/free_gateway/package.module.free_gateway.php:87
+#: modules/paypal_standard/package.module.paypal_standard.php:234
+#: modules/cheque/package.module.cheque.php:78
+msgid "Email"
+msgstr "Email"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:93
+msgid "Enable \"lazy\" image loading"
+msgstr "Povolenie \"lenivého\" načítania obrázkov"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:238
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:157
+msgid "Enable browser routing"
+msgstr "Povoiť smerovanie prehliadača"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:27
+msgid "Enable caption overlay"
+msgstr "Povoliť prekrytie titulkov"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:250
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:165
+msgid "Enable comments"
+msgstr "Povoliť komentáre"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:254
+msgid "Enable fullscreen"
+msgstr "Povoliť celú obrazovku"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:222
+msgid "Enable PayPal Standard"
+msgstr "Povoliť službu PayPal Standard"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:114
+msgid "Enable proofing?"
+msgstr "Povoliť kontrolu?"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:246
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:161
+msgid "Enable sharing"
+msgstr "Povoliť zdieľanie"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:270
+msgid "Enable Twitter Cards"
+msgstr "Povoliť Twitter karty"
+
+#: modules/coupons/package.module.coupons.php:39
+msgid "Ending date"
+msgstr "Dátum ukončenia"
+
+#: modules/coupons/package.module.coupons.php:101
+msgid "Ending date must be in the form (Year)-(Month)-(Day)"
+msgstr "Dátum ukončenia musí byť vo formáte (Rok)-(Mesiac)-(Deň)"
+
+#: modules/coupons/package.module.coupons.php:98
+msgid "Ending date must not be blank"
+msgstr "Dátum ukončenia nesmie byť prázdny"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:342
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:266
+msgid "Exclude Small Screens"
+msgstr "Vylúčiť malé obrazovky"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:242
+msgid "Facebook App ID"
+msgstr "ID aplikácie Facebook"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:296
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:81
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:199
+msgid "Fade between images and slide slightly at the same time"
+msgstr ""
+"Prechod medzi jednotlivými obrázkami ich zoslabuje a zároveň mierne posúva"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+msgid "Fade in"
+msgstr "Zoslabiť"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:296
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:81
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:199
+msgid "Fades into background color between images"
+msgstr "Zoslabenie farby pozadia medzi obrázkami"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:346
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:270
+msgid "Fancy"
+msgstr "Ozdobný"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:66
+msgid ""
+"Feature only available when the Pro Lightbox has been selected as the "
+"lightbox effect in Other Options"
+msgstr ""
+"Funkcia je k dispozícii iba vtedy, ak bola v časti Ďalšie možnosti vybratá "
+"funkcia Pro Lightbox ako efekt lightbox"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:236
+msgid "Filename"
+msgstr "Názov súboru"
+
+#: modules/coupons/package.module.coupons.php:24
+msgid "Flat"
+msgstr "Celkový"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:202
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:121
+msgid "Floating elements color"
+msgstr "Farba pohyblivých prvkov"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:278
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:181
+msgid ""
+"For performance gallery images are localized as javascript. Galleries with "
+"more images this limit will make an AJAX call to load the rest at startup. "
+"Set to 0 to include every image in displayed galleries."
+msgstr ""
+"Pre vyšší výkon sú obrázkové galérie lokalizované ako javascript. Galérie s "
+"viacerými obrázkami ako limit volajú AJAX na načítanie ich zvyšku pri štarte."
+" Nastavte na 0, aby ste sem zahrnuli každý obrázok v zobrazených galériách."
+
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:125
+msgid "Frame color"
+msgstr "Farba rámu"
+
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:121
+msgid "Frame size"
+msgstr "Veľkosť rámu"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:338
+msgid "Fraud"
+msgstr "Podvod"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:281
+msgid "Free"
+msgstr "Zadarmo"
+
+#: modules/free_gateway/package.module.free_gateway.php:82
+msgid "Free checkout"
+msgstr "Bezplatná pokladňa"
+
+#: modules/nextgen_pro_sidescroll/package.module.nextgen_pro_sidescroll.php:59
+msgid "Gallery Height"
+msgstr "Výška galérie"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:233
+msgid "Gallery source url"
+msgstr "Zdrojová adresa galérie"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:53
+msgid "Gallery width"
+msgstr "Šírka galérie"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:362
+#, php-format
+msgid ""
+"Hello %%user_name%%,\n"
+"\n"
+"This is confirmation that you have selected and submitted the following\n"
+"images from one of our proofing galleries: %%proof_link%%\n"
+"\n"
+"Thanks very much!"
+msgstr ""
+"Dobrý deň %%user_name%%,\n"
+"\n"
+"Toto je potvrdenie, že ste vybrali a odoslali nasledujúce\n"
+"obrázky z jednej z našich kontrolných galérií: %%proof_link%%\n"
+"\n"
+"Ďakujem veľmi pekne!"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:351
+#, php-format
+msgid ""
+"Hi %%admin%% Administrator,\n"
+"\n"
+"%%user_name%% has submitted images from a proofing gallery.\n"
+"\n"
+"You can find the proofed images at %%proof_link%%\n"
+"\n"
+"Here is a comma separated list of the image file names. You can copy and\n"
+"paste this in your favorite image management software to quickly search for\n"
+"and find all selected images.\n"
+"\n"
+"Files: %%file_list%%"
+msgstr ""
+"Ahoj administrátor %%admin%%,\n"
+"\n"
+"%%user_name%% odoslal obrázky z kontrolnej galérie.\n"
+"\n"
+"Kontrolované obrázky nájdete na %%proof_link%%\n"
+"\n"
+"Tu je zoznam názvov obrázkových súborov oddelený čiarkou. Môžete to "
+"skopírovať\n"
+"a vložiť do svojho obľúbeného softvéru na správu obrázkov, aby ste mohli "
+"rýchlo\n"
+"vyhľadať a nájsť všetky vybrané obrázky.\n"
+"\n"
+"Súbory: %%file_list%%"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:87
+msgid "Hide"
+msgstr "Skryť"
+
+#: modules/coupons/package.module.coupons.php:62
+msgid "Hide coupons on checkout"
+msgstr "Skryť kupóny v pokladni"
+
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:150
+msgid "How would you like galleries to be displayed?"
+msgstr "Ako by ste chceli zobraziť galérie?"
+
+# Plugin URI of the plugin/theme
+msgid "http://www.nextgen-gallery.com"
+msgstr "http://www.nextgen-gallery.com"
+
+# Author URI
+msgid "https://www.imagely.com"
+msgstr "https://www.imagely.com"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:190
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:109
+msgid "Icon background"
+msgstr "Pozadie ikony"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:186
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:105
+msgid "Icon color"
+msgstr "Farba ikony"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:252
+msgid "ID"
+msgstr "ID"
+
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:79
+msgid "Image display size"
+msgstr "Veľkosť zobrazenia obrázka"
+
+#: modules/comments/module.comments.php:118
+#, php-format
+msgid "Image in gallery '%s'"
+msgstr "Obrázok v galérii '%s'"
+
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:83
+msgid "Image maximum height"
+msgstr "Maximálna výška obrázka"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:502
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:453
+msgid "Image not found"
+msgstr "Obrázok sa nenašiel"
+
+#: modules/nextgen_pro_masonry/package.module.nextgen_pro_masonry.php:88
+msgid "Image padding"
+msgstr "Výplň obrázkov"
+
+#: modules/image_protection/package.module.image_protection.php:31
+msgid "Image Protection"
+msgstr "Ochrana obrázkov"
+
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:129
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:87
+msgid "Image spacing"
+msgstr "Rozostup obrázkov"
+
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:79
+msgid "image width"
+msgstr "šírka obrázka"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:219
+msgid "Imagely"
+msgstr "Imagely"
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:220
+msgid "Imagely Updates"
+msgstr "Aktualizácie Imagely"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:100
+#: modules/nextgen_pro_film/package.module.nextgen_pro_film.php:109
+msgid "Images per page"
+msgstr "Obrázkov na stranu"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:98
+msgid "Images to display at start"
+msgstr "Obrázky, ktoré sa majú zobraziť na začiatku"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:103
+msgid "Images to load when scrolling"
+msgstr "Obrázky, ktoré sa majú načítať pri rolovaní"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Images will be scaled down until the entire image fits"
+msgstr "Obrázky budú zmenšené, kým sa nezmení celý obrázok"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Images will be scaled to fill the display, centered and cropped"
+msgstr "Obrázky sa zmenia tak, aby vyplnili displej, centrované a orezané"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Images will scale to fill the height of the display"
+msgstr "Obrázky sa zmenia tak, aby vyplnili výšku displeja"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Images will scale to fill the width of the display"
+msgstr "Obrázky sa zmenia tak, aby vyplnili šírku displeja"
+
+#: modules/free_gateway/package.module.free_gateway.php:33
+#: modules/cheque/package.module.cheque.php:24
+msgid "Invalid country selected, please try again."
+msgstr "Neplatný výber krajiny, skúste to znova."
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:84
+#: modules/free_gateway/package.module.free_gateway.php:19
+#: modules/paypal_standard/package.module.paypal_standard.php:16
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:187
+#: modules/stripe/package.module.stripe.php:70
+#: modules/stripe/package.module.stripe.php:80
+#: modules/stripe/package.module.stripe.php:100
+#: modules/cheque/package.module.cheque.php:36
+msgid "Invalid request"
+msgstr "Neplatná požiadavka"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:87
+msgid "Justify"
+msgstr "Zdôvodnenie"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:87
+msgid "Justify last row"
+msgstr "Zdôvodniť posledný riadok"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Landscape images will fill the display, but scale portraits to fit"
+msgstr ""
+"Obrázky na šírku vyplnia displej, ale obrázky na výšku sa zmenšia, aby sa "
+"zmestili"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:139
+msgid "Lightbox and image sizing"
+msgstr "Lightbox a veľkosť obrázku"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:176
+msgid "Lightbox padding"
+msgstr "Lightbox výplň"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:278
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:181
+msgid "Localize limit"
+msgstr "Lokalizovať limit"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:66
+msgid "Manual Pricelist"
+msgstr "Manuálny cenník"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:82
+msgid "Margins"
+msgstr "Okraje"
+
+#: modules/nextgen_pro_masonry/package.module.nextgen_pro_masonry.php:84
+msgid "Maximum image width"
+msgstr "Maximálna šírka obrázku"
+
+#: modules/nextgen_pro_masonry/package.module.nextgen_pro_masonry.php:84
+#: modules/nextgen_pro_masonry/package.module.nextgen_pro_masonry.php:88
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:73
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:79
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:87
+msgid "Measured in pixels"
+msgstr "Merané v pixeloch"
+
+#: modules/nextgen_pro_blog_gallery/package.module.nextgen_pro_blog_gallery.php:83
+msgid "Measured in pixels. Empty or 0 will not impose a limit."
+msgstr "Merané v pixeloch. Prázdne alebo 0 neuloží limit."
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:282
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:286
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:77
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:85
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:185
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:189
+msgid "Measured in seconds"
+msgstr "Merané v sekundách"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+#: modules/free_gateway/package.module.free_gateway.php:86
+#: modules/cheque/package.module.cheque.php:77
+msgid "Name"
+msgstr "Názov"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:238
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:157
+msgid "Necessary for commenting to be enabled"
+msgstr "Potrebné pre komentáre, ktoré majú byť povolené"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:342
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:266
+msgid "Never"
+msgstr "Nikdy"
+
+#: modules/coupons/package.module.coupons.php:200
+#: modules/coupons/package.module.coupons.php:277
+msgid "New Coupon"
+msgstr "Nový kupón"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:941
+msgid "New Order"
+msgstr "Nová objednávka"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:916
+msgid "New Pricelist"
+msgstr "Nový cenník"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:161
+msgid "New Proof"
+msgstr "Nový kontrola"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1213
+msgid "New Purchase!"
+msgstr "Nový nákup!"
+
+#: modules/comments/package.module.comments.php:186
+#, php-format
+msgid "NextGEN Comment Link - %s - %s"
+msgstr "Link na NextGEN komentár - %s - %s"
+
+#: nggallery-pro.php:247
+#, php-format
+msgid ""
+"NextGEN Gallery %s is incompatible with NextGEN Pro %s. Please update <a "
+"class='thickbox' href='%s'>NextGEN Gallery</a> to version %s or higher. "
+"NextGEN Pro has been deactivated."
+msgstr ""
+"NextGEN Gallery %s nie je kompatibilná s nástrojom NextGEN Pro %s. "
+"Aktualizujte <a class='thickbox' href='%s'>NextGEN Gallery</a> na verziu %s "
+"alebo vyššiu. NextGEN Pro bol deaktivovaný."
+
+# Plugin Name of the plugin/theme
+msgid "NextGEN Pro"
+msgstr "NextGEN Pro"
+
+#: modules/nextgen_pro_blog_gallery/module.nextgen_pro_blog_gallery.php:81
+msgid "NextGEN Pro Blog Style"
+msgstr "NextGEN Pro Blog Style"
+
+#: modules/nextgen_pro_film/module.nextgen_pro_film.php:79
+msgid "NextGEN Pro Film"
+msgstr "NextGEN Pro Film"
+
+#: modules/nextgen_pro_albums/module.nextgen_pro_albums.php:161
+msgid "NextGEN Pro Grid Album"
+msgstr "NextGEN Pro Grid Album"
+
+#: modules/nextgen_pro_horizontal_filmstrip/module.nextgen_pro_horizontal_filmstrip.php:77
+msgid "NextGEN Pro Horizontal Filmstrip"
+msgstr "NextGEN Pro Horizontal Filmstrip"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:120
+#: modules/nextgen_pro_lightbox_legacy/module.nextgen_pro_lightbox_legacy.php:244
+msgid "NextGEN Pro Lightbox"
+msgstr "NextGEN Pro Lightbox"
+
+#: modules/nextgen_pro_albums/module.nextgen_pro_albums.php:145
+msgid "NextGEN Pro List Album"
+msgstr "NextGEN Pro List Album"
+
+#: modules/nextgen_pro_masonry/module.nextgen_pro_masonry.php:84
+msgid "NextGEN Pro Masonry"
+msgstr "NextGEN Pro Masonry"
+
+#: modules/nextgen_pro_mosaic/module.mosaic.php:77
+msgid "NextGen Pro Mosaic"
+msgstr "NextGen Pro Mosaic"
+
+#: modules/nextgen_pro_sidescroll/module.nextgen_pro_sidescroll.php:75
+msgid "NextGEN Pro Sidescroll"
+msgstr "NextGEN Pro Sidescroll"
+
+#: modules/nextgen_pro_slideshow/module.nextgen_pro_slideshow.php:83
+msgid "NextGEN Pro Slideshow"
+msgstr "NextGEN Pro Slideshow"
+
+#: modules/nextgen_pro_thumbnail_grid/module.nextgen_pro_thumbnail_grid.php:82
+msgid "NextGEN Pro Thumbnail Grid"
+msgstr "NextGEN Pro Thumbnail Grid"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:274
+msgid "No coupon."
+msgstr "Žiadny kupón."
+
+#: modules/test_gateway/package.module.test_gateway.php:22
+msgid "No email"
+msgstr "Žiadny e-mail"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:79
+msgid "No images selected"
+msgstr "Nie sú vybraté žiadne obrázky"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:944
+msgid "No orders found"
+msgstr "Neboli nájdené žiadne objednávky"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:919
+msgid "No pricelists found"
+msgstr "Neboli nájdené cenníky"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1142
+msgid "None"
+msgstr "Žiadne"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1110
+msgid "None (not for sale)"
+msgstr "Žiadne (nepredajné)"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:222
+msgid ""
+"Not all currencies are supported by all payment gateways. Please be sure to "
+"confirm your desired currency is supported by PayPal"
+msgstr ""
+"Nie všetky meny sú podporované všetkými platobnými bránami. Nezabudnite "
+"potvrdiť, že požadovaná mena je podporovaná službou PayPal"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:228
+msgid "Not found message"
+msgstr "Nenašla sa správa"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:164
+msgid "Nothing found"
+msgstr "Nič nebolo nájdené"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:165
+msgid "Nothing found in Trash"
+msgstr "V koši sa nič nenašlo"
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:112
+msgid "Number of columns to display"
+msgstr "Počet stĺpcov, ktoré sa majú zobraziť"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:350
+msgid ""
+"Oops! This page usually displays details for image proofs, but you have not "
+"proofed any images yet. Please feel free to continue browsing. Thanks for "
+"visiting."
+msgstr ""
+"Och! Táto stránka zvyčajne zobrazuje podrobnosti o kontrolovaných obrázkoch, "
+"ale ešte ste nevykonali žiadne kontroly. Neváhajte a pokračujte v "
+"prehliadaní. Ďakujeme za návštevu."
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:534
+msgid ""
+"Oops! This page usually displays details for image purchases, but you have "
+"not ordered any images yet. Please feel free to continue browsing. Thanks "
+"for visiting."
+msgstr ""
+"Och! Táto stránka zvyčajne zobrazuje podrobnosti o nákupoch obrázkov, ale "
+"ešte ste si nevybrali žiadne obrázky. Neváhajte a pokračujte v prehliadaní. "
+"Ďakujeme za návštevu."
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:66
+msgid "Open gallery in Pro Lightbox"
+msgstr "Otvoriť galériu v Pro Lightbox"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:937
+msgid "Order"
+msgstr "Objednať"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:478
+msgid "Order Cancelled"
+msgstr "Objednávka bola zrušená"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:465
+msgid "Order Details"
+msgstr "Podrobnosti objednávky"
+
+#: modules/stripe/package.module.stripe.php:87
+#, php-format
+msgid "Order from %s for %s (%s)"
+msgstr "Objednávka od %s pre %s (%s)"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:254
+msgid "Order Status"
+msgstr "Stav objednávky"
+
+#: modules/free_gateway/package.module.free_gateway.php:55
+msgid "Order was free; no payment was charged"
+msgstr "Objednávka bola bezplatná; žiadna platba nebola zrealizovaná"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:936
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:938
+msgid "Orders"
+msgstr "Objednávky"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:155
+msgid "Other settings"
+msgstr "Ďalšie nastavenia"
+
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:181
+msgid "Padding"
+msgstr "Výplň"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:230
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:149
+msgid "Pan cropped images"
+msgstr "Panoramaticky orezané obrázky"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:61
+msgid "Pan images"
+msgstr "Panoramatické obrázky"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:234
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:153
+msgid "Pause on interaction"
+msgstr "Pozastaviť interakciu"
+
+#: modules/cheque/package.module.cheque.php:73
+msgid "Pay by check"
+msgstr "Zaplatiť šekom"
+
+#: modules/stripe/package.module.stripe.php:27
+msgid "Pay with Card"
+msgstr "Zaplatiť kartou"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:76
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:32
+msgid "Pay with PayPal"
+msgstr "Zaplatiť cez PayPal"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:255
+msgid "Payment Gateway"
+msgstr "Zaplatiť cez platobnú bránu"
+
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:142
+msgid ""
+"Payment was successfully made via PayPal Express Checkout, with no further "
+"payment action required."
+msgstr ""
+"Platba bola úspešne zrealizovaná cez službu PayPal Express Checkout, nie sú "
+"potrebné ďalšie platobné kroky."
+
+#: modules/paypal_standard/package.module.paypal_standard.php:26
+msgid ""
+"Payment was successfully made via PayPal Standard, with no further payment "
+"action required."
+msgstr ""
+"Platba bola úspešne zrealizovaná cez službu PayPal Standard, nie sú potrebné "
+"ďalšie platobné kroky."
+
+#: modules/stripe/package.module.stripe.php:84
+msgid ""
+"Payment was successfully made via Stripe, with no further payment action "
+"required."
+msgstr ""
+"Platba bola úspešne zrealizovaná cez službu Strip, nie sú potrebné ďalšie "
+"platobné kroky."
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:288
+msgid "PayPal"
+msgstr "PayPal"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:23
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:194
+msgid "PayPal Customer"
+msgstr "Zákazník služby PayPal"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:242
+msgid "PayPal does not support your currently chosen currency"
+msgstr "Služba PayPal nepodporuje aktuálne zvolenú menu"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:53
+#: modules/coupons/package.module.coupons.php:24
+msgid "Percent"
+msgstr "Percento"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:53
+msgid "Pixels"
+msgstr "Pixelov"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:73
+msgid "pixels"
+msgstr "pixelov"
+
+#: modules/test_gateway/package.module.test_gateway.php:49
+#: modules/free_gateway/package.module.free_gateway.php:83
+#: modules/cheque/package.module.cheque.php:74
+msgid "Place order"
+msgstr "Miesto objednávky"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:346
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:270
+msgid "Plain"
+msgstr "Jednoduchý"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:148
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Play / Pause"
+msgstr "Prehrať / Pozastaviť"
+
+#: modules/free_gateway/package.module.free_gateway.php:42
+#: modules/cheque/package.module.cheque.php:17
+msgid "Please fill all fields and try again"
+msgstr "Vyplňte všetky polia a skúste to znova"
+
+#: nggallery-pro.php:240
+msgid ""
+"Please install &amp; activate <a href=\"http://wordpress.org/plugins/nextgen-"
+"gallery/\" target=\"_blank\">NextGEN Gallery</a> to allow NextGEN Pro to "
+"work."
+msgstr ""
+"Inštalujte prosím &amp; aktivujte <a href=\"http://wordpress."
+"org/plugins/nextgen-gallery/\" target=\"_blank\">NextGEN Gallery</a>, aby "
+"ste mohli pracovať s NextGEN Pro."
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:75
+msgid "Please provide a name and e-mail address"
+msgstr "Uveďte meno a e-mailovú adresu"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:308
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:211
+msgid "Portrait images will fill the display, but scale landscapes to fit"
+msgstr "Obrázky na výšku zaplnia displej, ale na šírku sa prispôsobia"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:222
+msgid "Possible substition fields: user_name, user_email, proof_link"
+msgstr "Možné polia nahradenia: user_name, user_email, proof_link"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:234
+msgid ""
+"Possible substition fields: user_name, user_email, proof_link, proof_details"
+msgstr ""
+"Možné polia nahradenia: user_name, user_email, proof_link, proof_details"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:204
+msgid ""
+"Possible substitution fields: admin, file_list, proof_link, user_name, "
+"user_email"
+msgstr ""
+"Možné polia nahradenia: admin, file_list, proof_link, user_name, user_email"
+
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:195
+msgid ""
+"Preset styles to customize the display. Selecting an option may reset some "
+"color fields"
+msgstr ""
+"Predvolené štýly na prispôsobenie zobrazenia. Výberom možnosti sa môžu "
+"obnoviť niektoré farebné polia"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:292
+msgid ""
+"Preset styles to customize the display. Selecting an option may reset some "
+"color fields."
+msgstr ""
+"Predvolené štýly na prispôsobenie zobrazenia. Výberom možnosti sa môžu "
+"obnoviť niektoré farebné polia."
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:912
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:913
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1064
+msgid "Pricelist"
+msgstr "Cenník"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:928
+msgid "Pricelist Item"
+msgstr "Položka cenníku"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:911
+msgid "Pricelists"
+msgstr "Cenníky"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:192
+msgid "Pro Lightbox icon color"
+msgstr "Farba ikony Pro Lightbox"
+
+#: modules/test_gateway/package.module.test_gateway.php:50
+#: modules/free_gateway/package.module.free_gateway.php:85
+#: modules/paypal_standard/package.module.paypal_standard.php:76
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:32
+#: modules/cheque/package.module.cheque.php:76
+msgid "Processing..."
+msgstr "Spracováva sa ..."
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:158
+msgid "Proof"
+msgstr "Kontrola"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+msgid "Proof image?"
+msgstr "Skontrolovať obrázok?"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:71
+msgid "Proof post could not be created"
+msgstr "Nepodarilo sa vytvoriť kontrolovaný príspevok"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:37
+#, php-format
+msgid "Proof request by %1$s (%2$d images)"
+msgstr "Potvrdenie žiadosti kontroly na %1$s (%2$d obrázkov)"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:195
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:265
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:146
+msgid "Proofed Images"
+msgstr "Skontrolované obrázky"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:125
+msgid "Proofing"
+msgstr "Kontrolovanie"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:157
+msgid "Proofs"
+msgstr "Kontroly"
+
+#: modules/image_protection/package.module.image_protection.php:46
+msgid "Protect images"
+msgstr "Chránené obrázky"
+
+#: modules/image_protection/package.module.image_protection.php:46
+msgid ""
+"Protect images from being downloaded both by right click or drag &amp; drop"
+msgstr ""
+"Chránené obrázky pred sťahovaním kliknutím pravým tlačidlom myši alebo "
+"chytením &amp; potiahnutím"
+
+#: modules/nextgen_pro_sidescroll/package.module.nextgen_pro_sidescroll.php:59
+msgid "Provide desired gallery height in pixels."
+msgstr "Zadajte požadovanú výšku galérie v pixeloch."
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:81
+msgid ""
+"Quickly move the image into the background color, then fade into the next "
+"image"
+msgstr ""
+"Rýchlo presunie obrázok na farbu pozadia a potom prejde plynulo do ďalšieho "
+"obrázku"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:296
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:199
+msgid ""
+"Quickly removes the image into background color, then fades the next image"
+msgstr ""
+"Rýchlo vymaže obrázok na farbe pozadia a potom prejde plynulo do ďalšieho "
+"obrázku"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid ""
+"Replace all existing options (except ecommerce) with their default setting"
+msgstr ""
+"Nahraďte všetky existujúce možnosti (okrem elektronického obchodu) s ich "
+"predvoleným nastavením"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Replace NextGen Pro ecommerce options with their default setting"
+msgstr ""
+"Nahradiť možnosti elektronického obchodu NextGen Pro s ich predvoleným "
+"nastavením"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:274
+msgid "Required by twitter for Twitter Card analytics"
+msgstr "Vyžaduje sa služba twitter pre Twitter Card analytics"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid ""
+"Reset all ecommerce options to default settings?\n"
+"\n"
+"Choose [Cancel] to Stop, [OK] to proceed."
+msgstr ""
+"Obnoviť všetky možnosti elektronického obchodu na predvolené nastavenia?\n"
+"\n"
+"Zvoľte [Zrušiť] na zastavenie, [OK] na pokračovanie."
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid ""
+"Reset all non ecommerce options to default settings?\n"
+"\n"
+"Choose [Cancel] to Stop, [OK] to proceed."
+msgstr ""
+"Chcete obnoviť všetky predvolené nastavenia okrem elektronického obchodu?\n"
+"\n"
+"Zvoľte [Zrušiť] na zastavenie, [OK] na pokračovanie."
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Reset ecommerce options to default settings"
+msgstr "Obnovte nastavenia elektronického obchodu na predvolené nastavenia"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Reset non ecommerce options to default settings"
+msgstr "Obnovte predvolené nastavenia okrem elektronického obchodu"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Reset non ecommerce settings"
+msgstr "Obnovte nastavenia okrem elektronického obchodu"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Reset only ecommerce settings"
+msgstr "Obnovte iba nastavenia elektronického obchodu"
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:13
+msgid ""
+"Resets all NextGEN and NextGEN Pro settings to default values, including "
+"ecommerce."
+msgstr ""
+"Obnoví všetky nastavenia NextGEN a NextGEN Pro na predvolené hodnoty, "
+"vrátane elektronického obchodu."
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Resets all settings except ecommerce to default values."
+msgstr ""
+"Obnoví všetky nastavenia okrem elektronického obchodu na predvolené hodnoty."
+
+#: modules/nextgen_pro_settings/package.module.nextgen_pro_settings.php:19
+msgid "Resets only ecommerce settings to default values."
+msgstr "Obnoví iba nastavenia elektronického obchodu na predvolené hodnoty."
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:165
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:95
+msgid "Router slug"
+msgstr "Router slug"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:77
+msgid "Row height"
+msgstr "Výška riadku"
+
+#: modules/ecommerce/templates/manage_pricelist.php:32
+#: modules/coupons/templates/edit.php:34
+msgid "Save"
+msgstr "Uložiť"
+
+#: modules/coupons/package.module.coupons.php:277
+msgid "Search Coupon"
+msgstr "Vyhľadať kupón"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:943
+msgid "Search Orders"
+msgstr "Vyhľadať objednávky"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:918
+msgid "Search Pricelists"
+msgstr "Vyhľadať cenníky"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:163
+msgid "Search Proof"
+msgstr "Vyhľadať konrolu"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:282
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:286
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:77
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:85
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:185
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:189
+msgid "seconds"
+msgstr "sekúnd"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+msgid "Send"
+msgstr "Odoslať"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:210
+msgid "Send confirmation to users"
+msgstr "Odoslať potvrdenie používateľom"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:155
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Share on Facebook"
+msgstr "Zdielať na Facebook-u"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:154
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Share on Google+"
+msgstr "Zdielať na Google+"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:156
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Share on Pinterest"
+msgstr "Zdielať na Pinterest-e"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:153
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Share on Twitter"
+msgstr "Zdielať na Twitter-i"
+
+#: modules/free_gateway/package.module.free_gateway.php:81
+#: modules/cheque/package.module.cheque.php:72
+msgid "Shipping information"
+msgstr "Prepravné informácie"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:65
+msgid "Show captions"
+msgstr "Zobraziť titulky"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:101
+msgid "Show play controls"
+msgstr "Zobraziť ovládacie prvky prehrávania"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:226
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:145
+msgid "Sidebar background color"
+msgstr "Farba pozadia bočného panela"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:210
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:129
+msgid "Sidebar button background"
+msgstr "Farba pozadia bočného tlačidla"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:206
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:125
+msgid "Sidebar button text color"
+msgstr "Farba textu tlačidla bočného panela"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+msgid "Slide down"
+msgstr "Posunúť nadol"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:81
+msgid "Slide images depending on image position"
+msgstr "Posunúť obrázky v závislosti od umiestnenia obrázka"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+msgid "Slide left"
+msgstr "Posunúť doľava"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+msgid "Slide up"
+msgstr "Posunúť nahor"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:296
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:199
+msgid "Slides the images depending on image position"
+msgstr "Posunúť obrázky v závislosti od umiestnenia obrázku"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:286
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:77
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:189
+msgid "Slideshow speed"
+msgstr "Rýchlosť prezentácie"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:143
+msgid "Social"
+msgstr "Sociálne"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1219
+msgid "Sorry, this image is not currently for sale."
+msgstr "Ospravedlňujeme sa, tento obrázok momentálne nie je na predaj."
+
+#: modules/nextgen_pro_thumbnail_grid/package.module.nextgen_pro_thumbnail_grid.php:108
+#: modules/nextgen_pro_albums/package.module.nextgen_pro_albums.php:185
+msgid "Spacing"
+msgstr "Vzdialenosť"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:97
+msgid "Stage aspect ratio"
+msgstr "Druhy pomeru strán"
+
+#: modules/coupons/package.module.coupons.php:34
+msgid "Starting date"
+msgstr "Dátum začatia"
+
+#: modules/coupons/package.module.coupons.php:100
+msgid "Starting date must be in the form (Year)-(Month)-(Day)"
+msgstr "Dátum začatia musí byť vo formáte (Rok)-(Mesiac)-(Deň)"
+
+#: modules/coupons/package.module.coupons.php:102
+msgid "Starting date must come before the ending date"
+msgstr "Dátum začatia musí byť skorší ako koncový dátum"
+
+#: modules/coupons/package.module.coupons.php:97
+msgid "Starting date must not be blank"
+msgstr "Dátum začatia nesmie byť prázdny"
+
+#: modules/free_gateway/package.module.free_gateway.php:90
+#: modules/cheque/package.module.cheque.php:81
+msgid "State"
+msgstr "Stav"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:501
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:452
+msgid "Status: 404 Image not found"
+msgstr "Stav: 404 Obrázok nebol nájdený"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:291
+msgid "Stripe"
+msgstr "Pruh"
+
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:195
+msgid "Style"
+msgstr "Štýl"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:347
+msgid "Submit proofs"
+msgstr "Odoslať na kontrolu"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+msgid "Submitting {0} image{1}"
+msgstr "Odosielanie {0} obrázku{1}"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:272
+msgid "Submitting..."
+msgstr "Odosielanie..."
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:294
+msgid "Test"
+msgstr "Test"
+
+#: modules/test_gateway/package.module.test_gateway.php:22
+msgid "Test Customer"
+msgstr "Testovací zákazník"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1217
+#, php-format
+msgid ""
+"Thank you for your order, %%customer_name%%.\n"
+"\n"
+"You ordered %%item_count%% items, and have been billed a total of "
+"%%total_amount%%.\n"
+"\n"
+"To review your order, please go to %%order_details_page%%.\n"
+"\n"
+"Thanks for shopping at %%site_url%%!"
+msgstr ""
+"Ďakujeme za Vašu objednávku, %%customer_name%%.\n"
+"\n"
+"Objednali ste %%item_count%% položiek a bolo účtovaných celkovo "
+"%%total_amount%%.\n"
+"\n"
+"Ak chcete skontrolovať svoju objednávku, prejdite na %%order_details_page%%."
+"\n"
+"\n"
+"Ďakujeme za nákup na stránke %%site_url%%!"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:556
+msgid ""
+"Thank you for your order, [customer_name]. You ordered the following items:\n"
+"                [items]\n"
+"\n"
+"                <h3>Order Details</h3>\n"
+"                <p>\n"
+"                Subtotal: [subtotal_amount]<br/>\n"
+"                [if_used_coupon]Discount: [discount_amount]<br/>"
+"[/if_used_coupon]\n"
+"                [if_ordered_shippable_items]Shipping: [shipping_amount]<br/>"
+"[/if_ordered_shippable_items]\n"
+"                [if_has_tax]Tax: [tax_amount]<br/>[/if_has_tax]\n"
+"                Total: [total_amount]<br/>\n"
+"                </p>\n"
+"\n"
+"                [if_ordered_shippable_items]\n"
+"                <p>\n"
+"                We will be shipping your items to:<br/>\n"
+"                [shipping_street_address]<br/>\n"
+"                [shipping_city], [shipping_state] [shipping_zip]<br/>\n"
+"                [shipping_country]\n"
+"                </p>\n"
+"                [/if_ordered_shippable_items]\n"
+"\n"
+"                [if_ordered_digital_downloads]\n"
+"                <h3>Digital Downloads</h3>\n"
+"                <p>You may download your digital products <a "
+"href='[digital_downloads_page_url]'>here.</a></p>\n"
+"                [/if_ordered_digital_downloads]\n"
+"            "
+msgstr ""
+"Ďakujeme za vašu objednávku [customer_name]. Objednali ste si nasledujúce "
+"položky:\n"
+"                [items]\n"
+"\n"
+"                <h3>Podrobnosti objednávky</ h3>\n"
+"                <p>\n"
+"                Medzisúčet: [subtotal_amount]<br/>\n"
+"                [if_used_coupon]Zľava: [discount_amount]<br/>"
+"[/if_used_coupon]\n"
+"                [if_ordered_shippable_items]Doprava: [shipping_amount]<br/>"
+"[/if_ordered_shippable_items]\n"
+"                [if_has_tax]Daň: [tax_amount]<br/>[/if_has_tax]\n"
+"                Spolu: [total_amount]<br/>\n"
+"                </p>\n"
+"\n"
+"                [if_ordered_shippable_items]\n"
+"                <p>\n"
+"                Miesto doručenia:<br/>\n"
+"                [shipping_street_address]<br/>\n"
+"                [shipping_city], [shipping_state] [shipping_zip]<br/>\n"
+"                [shipping_country]\n"
+"                </p>\n"
+"                [/if_ordered_shippable_items]\n"
+"\n"
+"                [if_ordered_digital_downloads]\n"
+"                <h3>Digitálne sťahovanie</h3>\n"
+"                <p>Môžete si stiahnuť svoje digitálne produkty <a "
+"href='[digital_downloads_page_url]'>TU.</a></p>\n"
+"                [/if_ordered_digital_downloads]\n"
+"            "
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1216
+msgid "Thank you for your purchase!"
+msgstr "Ďakujem za Váš nákup!"
+
+# Description of the plugin/theme
+msgid ""
+"The complete \"Pro\" add-on for NextGEN Gallery. Enjoy ecommerce, beautiful "
+"new gallery displays, and a responsive Pro Lightbox with social "
+"sharing and commenting."
+msgstr ""
+"Kompletný doplnok \"Pro\" pre galériu NextGEN. Vychutnajte si elektronický "
+"obchod, krásne nové zobrazenia galérií a celoobrazovkový, ľahko reagujúcu "
+"Pro Lightbox so sociálnym zdieľaním a komentovaním."
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:304
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:207
+msgid ""
+"The transition to use on touch devices if the default transition is too "
+"intense"
+msgstr ""
+"Prechod na použitie na dotykových zariadeniach, ak je predvolený prechod "
+"príliš intenzívny"
+
+#: nggallery-pro.php:187
+#, php-format
+msgid "There are updates available. You can <a href=\"%s\">Update Now</a>."
+msgstr ""
+"K dispozícii sú aktualizácie. Môžete <a href=\"%s\">aktualizovať teraz</a>."
+
+#: modules/coupons/package.module.coupons.php:19
+msgid "This field must be unique from every other coupon code"
+msgstr "Toto pole musí byť jedinečné pre každý ďalší kupón"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:228
+msgid ""
+"This is displayed to users viewing the proofing page without a valid "
+"proofing to view"
+msgstr ""
+"Toto sa zobrazuje používateľom zobrazujúcim stránku kontroly bez platného "
+"otestovania"
+
+#: modules/paypal_express_checkout/module.paypal_express_checkout.php:56
+msgid "This order has been marked as fraud and has been reported."
+msgstr "Táto objednávka bola označená ako podvod a bola nahlásená."
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:186
+msgid ""
+"This page requires the [ngg_pro_proofing] shortcode, which will be "
+"automatically added if not already present. Selecting \"Create new\" will "
+"create a new page that will appear in your Primary Menu unless you've "
+"customized your menu settings: http://codex.wordpress."
+"org/Appearance_Menus_SubPanel"
+msgstr ""
+"Na tejto stránke je potrebný krátky kód [ngg_pro_proofing], ktorý sa "
+"automaticky pridá, ak ešte nie je k dispozícii. Výberom položky \"Vytvoriť "
+"novú\" sa vytvorí nová stránka, ktorá sa zobrazí vo vašom primárnom menu, "
+"pokiaľ ste neprispôsobili nastavenia ponuky: http://codex.wordpress."
+"org/Appearance_Menus_SubPanel"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:236
+msgid "Thumbnail"
+msgstr "Náhľad"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:147
+msgid "Thumbnail carousel"
+msgstr "Náhľad karusel"
+
+#: modules/coupons/package.module.coupons.php:261
+msgid "Times Used"
+msgstr "Použité časy"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:236
+msgid "Title"
+msgstr "Nadpis"
+
+#: modules/coupons/package.module.coupons.php:90
+msgid "Title must not be blank"
+msgstr "Nadpis nesmie byť prázdny"
+
+#: modules/nextgen_pro_captions/package.module.nextgen_pro_captions.php:43
+msgid "Titlebar"
+msgstr "Titulok"
+
+#: nggallery-pro.php:257
+msgid ""
+"To activate the NextGEN Pro Lightbox please go to Gallery > Other Options > "
+"Lightbox Effects."
+msgstr ""
+"Ak chcete aktivovať Lightbox NextGEN Pro, prejdite do Galérie > Ďalšie "
+"možnosti > Lightbox Effects."
+
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Toggle fullscreen"
+msgstr "Zobraziť na celú obrazovku"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:149
+msgid "Toggle fullsize"
+msgstr "Zobraziť v plnej veľkosti"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:150
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Toggle image info"
+msgstr "Zobraziť informácie o obrázku"
+
+#: modules/nextgen_pro_lightbox/module.nextgen_pro_lightbox.php:147
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:245
+msgid "Toggle social sidebar"
+msgstr "Zobraziť sociálny postranný panel"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:69
+msgid "Top"
+msgstr "Najvyššie"
+
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:69
+msgid "Top (Overlay)"
+msgstr "Najvyššie (prekrytie)"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:257
+msgid "Total"
+msgstr "Súhrn"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:304
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:207
+msgid "Touch transition effect"
+msgstr "Dotykový efekt prechodu"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:300
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:81
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:203
+msgid "Transition effect"
+msgstr "Prechodový efekt"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:151
+msgid "Transition effects"
+msgstr "Prechodové efekty"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:282
+#: modules/nextgen_pro_slideshow/package.module.nextgen_pro_slideshow.php:85
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:185
+msgid "Transition speed"
+msgstr "Rýchlosť prechodu"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:114
+msgid ""
+"Trigger buttons or hover captions need to be enabled for proofing to work"
+msgstr ""
+"Spúšťacie tlačidlá alebo podčiarknuté značky musia byť povolené na vykonanie "
+"kontroly"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:198
+msgid "Trigger text"
+msgstr "Spúšťací text"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:346
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:270
+msgid "Triggers Style"
+msgstr "Spúšťacie štýly"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:274
+msgid "Twitter username"
+msgstr "Používateľské meno služby Twitter"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:23
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:194
+msgid "Unknown"
+msgstr "Neznáme"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:337
+msgid "Unverified"
+msgstr "Neoverené"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1106
+msgid "Use gallery's pricelist"
+msgstr "Použite cenník galérie"
+
+#: modules/paypal_standard/package.module.paypal_standard.php:228
+msgid "Use Sandbox?"
+msgstr "Použiť Sandbox?"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:165
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:95
+msgid "Used to route JS actions to the URL"
+msgstr "Používa sa na smerovanie akcií JS na adresu URL"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:231
+msgid "User confirmation"
+msgstr "Potvrdenie používateľa"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:336
+msgid "Verified"
+msgstr "Overené"
+
+#: modules/cheque/module.cheque.php:69 modules/cheque/module.cheque.php:70
+msgid "Verify check payment"
+msgstr "Overiť platbu šekom"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:491
+msgid "Verifying order"
+msgstr "Overiť objednávku"
+
+#: modules/coupons/package.module.coupons.php:277
+msgid "View Coupon"
+msgstr "Zobraziť kupón"
+
+#: modules/comments/module.comments.php:159
+msgid "View Gallery"
+msgstr "Zobraziť galériu"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:940
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:942
+msgid "View Order"
+msgstr "Zobraziť objednávku"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:917
+msgid "View Pricelist"
+msgstr "Zobraziť cenník"
+
+#: modules/nextgen_pro_proofing/module.nextgen_pro_proofing.php:162
+msgid "View Proof"
+msgstr "Zobraziť kontrolu"
+
+#: nggallery-pro.php:262
+msgid ""
+"Warning: your server does not have BCMath enabled. Please enable BCMath to "
+"prevent possible issues with ecommerce orders"
+msgstr ""
+"Upozornenie: Váš server nemá povolený BCMath. Ak chcete zabrániť možným "
+"problémom s objednávkami v elektronickom obchode, povoľte službu BCMath"
+
+#: modules/paypal_express_checkout/module.paypal_express_checkout.php:59
+msgid ""
+"We're sorry, but something went wrong processing your order. Please try "
+"again."
+msgstr ""
+"Je nám ľúto, ale pri spracovaní vašej objednávky došlo k chybe. Prosím "
+"skúste to znova."
+
+#: modules/autoupdate_admin/module.autoupdate_admin.php:240
+msgid "Welcome to Imagely"
+msgstr "Vitajte v Imagely"
+
+#: modules/nextgen_pro_mosaic/package.module.mosaic.php:87
+msgid ""
+"When aligning the last row some images may appear cropped. Select \"Do not "
+"justify\" to allow the last row to appear flush but \"unfinished\". \"Hide\" "
+"will omit any images that can not be justified without cropping."
+msgstr ""
+"Pri zarovnávaní posledného riadku sa niektoré obrázky môžu zobraziť orezané. "
+"Zvoľte možnosť \"Neoprávňujte\", aby sa posledný riadok mohol objaviť ako "
+"\"nedokončený\". \"Skryť\" vynechá všetky obrázky, ktoré nemožno nastaviť "
+"bez orezania."
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:242
+msgid "When available this enables a more advanced sharing backend"
+msgstr "Ak je k dispozícii, umožňuje to zdokonalený zdieľaný backend"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:266
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:177
+msgid ""
+"When disabled the navigation carousel will be docked and hidden offscreen at "
+"startup"
+msgstr ""
+"Po vypnutí navigačného karuselu sa pri spúšťaní ukotví a skryje obrazovka"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:234
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:153
+msgid ""
+"When enabled image display will be paused if the user presses a thumbnail or "
+"any navigational link"
+msgstr ""
+"Ak je povolené zobrazenie obrázka, bude pozastavené, ak používateľ stlačí "
+"miniatúru alebo ľubovoľný navigačný odkaz"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:230
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:149
+msgid "When enabled images can be panned with the mouse"
+msgstr "Ak je povolené zobrazenie obrázkov pomocou myši"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:246
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:161
+msgid "When enabled social-media sharing icons will be displayed"
+msgstr "Ak je povolené, zobrazia sa ikony zdieľania sociálnych médií"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:262
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:173
+msgid "When on the captions toolbar will be opened at startup"
+msgstr "Keď sa pri štarte otvorí nástrojov s titulkami"
+
+#: modules/nextgen_pro_lightbox/package.module.nextgen_pro_lightbox.php:258
+#: modules/nextgen_pro_lightbox_legacy/package.module.nextgen_pro_lightbox_legacy.php:169
+msgid "When on the commenting sidebar will be opened at startup"
+msgstr "Keď sa pri štarte otvorí bočný panel komentárov"
+
+#: modules/nextgen_pro_proofing/package.module.nextgen_pro_proofing.php:192
+msgid ""
+"When the NextGen Pro Lightbox is active an additional icon is added for "
+"image proofing, this controls the color of that icon for chosen images"
+msgstr ""
+"Keď je funkcia NextGen Pro Lightbox aktívna, pridáva sa ďalšia ikona pre "
+"overenie obrázka, ktorá riadi farbu tejto ikony pre vybrané obrázky"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:1218
+#, php-format
+msgid ""
+"You received a payment of %%total_amount%% from %%customer_name%%. For more "
+"details, visit: %%order_details_page%%\n"
+"\n"
+"%%gateway_admin_note%%\n"
+"\n"
+"Here is a comma separated list of the image file names. You can copy and\n"
+"paste this in your favorite image management software to quickly search for\n"
+"and find all selected images.\n"
+"\n"
+"Files: %%file_list%%"
+msgstr ""
+"Obdržali ste platbu %%total_amount%% od %%customer_name%%. Pre viac "
+"informácií navštívte: %%order_details_page%%\n"
+"\n"
+"%%gateway_admin_note%%\n"
+"\n"
+"Tu je zoznam názvov obrázkových súborov oddelených čiarkou. Môžete ich "
+"skopírovať a\n"
+"vložiť do svojho obľúbeného softvéru pre správu obrázkov a rýchlo vyhľadať \n"
+"a nájsť všetky vybraté obrázky\n"
+"\n"
+"Súbory: %%file_list%%"
+
+#: modules/test_gateway/package.module.test_gateway.php:9
+#: modules/test_gateway/package.module.test_gateway.php:31
+#: modules/free_gateway/package.module.free_gateway.php:9
+#: modules/free_gateway/package.module.free_gateway.php:23
+#: modules/paypal_standard/package.module.paypal_standard.php:41
+#: modules/paypal_express_checkout/package.module.paypal_express_checkout.php:262
+#: modules/cheque/package.module.cheque.php:9
+#: modules/cheque/package.module.cheque.php:40
+msgid "Your cart is empty"
+msgstr "Váš košík je prázdny"
+
+#: modules/ecommerce/module.nextgen_pro_ecommerce.php:480
+msgid "Your order was cancelled"
+msgstr "Vaša objednávka bola zrušená"
+
+#: modules/free_gateway/package.module.free_gateway.php:91
+#: modules/cheque/package.module.cheque.php:82
+msgid "Zip"
+msgstr "Zip"

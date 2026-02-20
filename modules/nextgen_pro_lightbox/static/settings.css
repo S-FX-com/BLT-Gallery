@@ -1,0 +1,31 @@
+#lightbox_library_photocrati-nextgen_pro_lightbox tr td input[type='text'],
+#lightbox_library_photocrati-nextgen_pro_lightbox tr td input[type='number'] {
+    width: 200px;
+}
+
+/* Override the select2 styling for our settings form here.. */
+#ngg_page_content .ngg_page_content_main div[data-id="lightbox_effects"] #tr_photocrati-nextgen_pro_lightbox_style .select2-container,
+#ngg_page_content .ngg_page_content_main div[data-id="lightbox_effects"] #tr_photocrati-nextgen_pro_lightbox_transition_effect .select2-container,
+#ngg_page_content .ngg_page_content_main div[data-id="lightbox_effects"] #tr_photocrati-nextgen_pro_lightbox_image_crop .select2-container {
+    width: 100% !important;
+}
+#select2-photocrati-nextgen_pro_lightbox_style-container,
+#select2-photocrati-nextgen_pro_lightbox_transition_effect-container,
+#select2-photocrati-nextgen_pro_lightbox_image_crop-container {
+    font-size: 14px;
+    font-family: "Lato", sans-serif;
+}
+
+#lightbox_effects_content table tr.nextgen_pro_lightbox_admin_header h3 {
+    margin: 1.5em 0 .5em 0;
+}
+
+#photocrati-nextgen_pro_lightbox_padding {
+    max-width: 55px;
+    width: 55px;
+    text-align: center;
+}
+
+#ngg_page_content .ngg_page_content_main div[data-id="lightbox_effects"] #photocrati-nextgen_pro_lightbox_padding_unit {
+    width: 60px;
+}

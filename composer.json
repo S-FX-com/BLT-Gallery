@@ -1,0 +1,19 @@
+{
+    "name": "imagely/nextgen-gallery-pro",
+    "description": "A premium add-on for NextGEN Gallery with beautiful new gallery displays and a responsive Pro Lightbox with social sharing and commenting.",
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "Imagely",
+            "email": "support@imagely.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "nikic/php-parser": "^4.12"
+    },
+    "repositories": [
+        {"type": "composer", "url": "https://repo.packagist.com/imagely/"},
+        {"packagist.org": false}
+    ]
+}

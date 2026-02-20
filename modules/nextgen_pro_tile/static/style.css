@@ -1,0 +1,72 @@
+.tiled-gallery {
+    clear: both;
+    margin: 0 auto 20px auto !important;
+    overflow: hidden;
+    max-width: 100% !important;
+}
+
+.tiled-gallery img {
+    margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
+}
+
+.tiled-gallery .gallery-group {
+    float: left;
+    position: relative;
+}
+
+.tiled-gallery .tiled-gallery-item {
+    float: left;
+    margin: 0;
+    position: relative;
+    width: inherit; /* prevents ie8 bug with inline width styles */
+}
+
+.tiled-gallery .gallery-row {
+    overflow: hidden;
+    margin: 0 auto 0 auto;
+}
+
+/* Needs to reset some properties for theme compatibility */
+.tiled-gallery .tiled-gallery-item a {
+    background: transparent;
+    border: none;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    width: auto;
+}
+
+/* Needs to reset some properties for theme compatibility */
+.tiled-gallery .tiled-gallery-item img,
+.tiled-gallery .tiled-gallery-item img:hover {
+    background: none;
+    border: none;
+    box-shadow: none;
+    max-width: 100%;
+    padding: 0;
+    vertical-align: middle;
+}
+
+/* Prevent the hover captions module from messing with the tiled layout */
+.tiled-gallery .tiled-gallery-item figure.ngg-figure img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Hide galleries in widgets until they've been resized to fit. Gallery widgets are almost guaranteed to need resizing,
+   and the jump is a little more obvious than galleries in content. */
+.widget-gallery .tiled-gallery-unresized {
+    visibility: hidden;
+    height: 0px;
+    overflow: hidden;
+}
+
+/* The next two rules are because '.tiled-gallery img' is given 'margin: 2px !important' */
+.tiled-gallery-item a figure.ngg-figure {
+    margin: 2px;
+}
+
+.tiled-gallery-item a figure.ngg-figure img {
+    margin: 0 !important;
+}
