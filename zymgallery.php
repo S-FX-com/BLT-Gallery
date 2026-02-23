@@ -26,6 +26,19 @@ define( 'ZYMGALLERY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 // Autoloader.
 if ( file_exists( ZYMGALLERY_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 	require_once ZYMGALLERY_PLUGIN_DIR . 'vendor/autoload.php';
+} else {
+	// Fallback PSR-4 autoloader for ZymGallery\ namespace.
+	spl_autoload_register( function ( string $class ): void {
+		$prefix = 'ZymGallery\\';
+		if ( strncmp( $prefix, $class, strlen( $prefix ) ) !== 0 ) {
+			return;
+		}
+		$relative = substr( $class, strlen( $prefix ) );
+		$file     = ZYMGALLERY_PLUGIN_DIR . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
+		if ( file_exists( $file ) ) {
+			require_once $file;
+		}
+	} );
 }
 
 // Bootstrap.

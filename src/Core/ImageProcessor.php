@@ -51,25 +51,22 @@ class ImageProcessor {
 			throw new \RuntimeException( 'Could not move uploaded file.' );
 		}
 
-		// Load via WP image editor.
+		// Read dimensions via WP image editor.
 		$editor = wp_get_image_editor( $dest_path );
 		if ( is_wp_error( $editor ) ) {
 			throw new \RuntimeException( 'Image editor error: ' . $editor->get_error_message() );
 		}
 
-		// Strip EXIF data for privacy and to reduce file size.
-		if ( method_exists( $editor, 'strip_meta' ) ) {
-			$editor->strip_meta();
-		}
-
 		$size     = $editor->get_size();
 		$width    = (int) ( $size['width'] ?? 0 );
 		$height   = (int) ( $size['height'] ?? 0 );
+		unset( $editor ); // No longer needed; thumbnails open their own instances.
+
 		$filesize = (int) filesize( $dest_path );
-		$mime     = wp_check_filetype( $dest_path )['type'] ?? 'image/jpeg';
+		$mime     = wp_check_filetype( $dest_path )['type'] ?: 'image/jpeg';
 
 		// Generate thumbnails and WebP variants.
-		$thumbs = $this->generate_thumbnails( $editor, $dest_dir, basename( $dest_path ) );
+		$thumbs = $this->generate_thumbnails( $dest_dir, basename( $dest_path ) );
 
 		// Build the Image model.
 		$image                 = new Image();
@@ -94,17 +91,19 @@ class ImageProcessor {
 	 * @param string           $base_name  Original file name (with extension)
 	 * @return array  Keyed by size name; each value has 'path', 'url', 'width', 'height'.
 	 */
-	private function generate_thumbnails( \WP_Image_Editor $editor, string $dest_dir, string $base_name ): array {
-		$upload_dir = wp_upload_dir();
-		$base_url   = trailingslashit( $upload_dir['baseurl'] ) . 'zymgallery/';
-
+	private function generate_thumbnails( string $dest_dir, string $base_name ): array {
+		$upload_dir       = wp_upload_dir();
+		$src_path         = $dest_dir . $base_name;
 		$name_without_ext = pathinfo( $base_name, PATHINFO_FILENAME );
+
+		// Detect WebP support via wp_image_editor_supports() – public WP API.
+		$webp_supported = wp_image_editor_supports( [ 'mime_type' => 'image/webp' ] );
 
 		$thumbs = [];
 
 		foreach ( self::THUMBNAIL_SIZES as $size_name => [ $w, $h, $crop ] ) {
-			// Work from a fresh clone each iteration so resize calls do not stack.
-			$thumb_editor = wp_get_image_editor( $editor->get_file() ?? '' );
+			// Fresh editor instance per size so resize calls don't stack.
+			$thumb_editor = wp_get_image_editor( $src_path );
 			if ( is_wp_error( $thumb_editor ) ) {
 				continue;
 			}
@@ -114,22 +113,27 @@ class ImageProcessor {
 				continue;
 			}
 
-			$actual_size  = $thumb_editor->get_size();
-			$thumb_name   = "{$name_without_ext}-{$size_name}.webp";
-			$thumb_path   = $dest_dir . $thumb_name;
+			$actual_size = $thumb_editor->get_size();
 
-			// Save as WebP when supported, otherwise fall back to original format.
-			$supported_types = $thumb_editor->get_supported_mime_types();
-			$save_mime       = in_array( 'image/webp', $supported_types, true ) ? 'image/webp' : null;
+			if ( $webp_supported ) {
+				$thumb_name = "{$name_without_ext}-{$size_name}.webp";
+				$save_mime  = 'image/webp';
+			} else {
+				$ext        = pathinfo( $base_name, PATHINFO_EXTENSION );
+				$thumb_name = "{$name_without_ext}-{$size_name}.{$ext}";
+				$save_mime  = null;
+			}
 
-			$saved = $thumb_editor->save( $thumb_path, $save_mime );
+			$saved = $thumb_editor->save( $dest_dir . $thumb_name, $save_mime );
 			if ( is_wp_error( $saved ) ) {
 				continue;
 			}
 
-			$saved_path      = $saved['path'] ?? $thumb_path;
-			$gallery_id_part = dirname( str_replace( $upload_dir['basedir'] . '/zymgallery/', '', $saved_path ) );
-			$saved_url       = $upload_dir['baseurl'] . '/zymgallery/' . $gallery_id_part . '/' . basename( $saved_path );
+			$saved_path = $saved['path'] ?? ( $dest_dir . $thumb_name );
+			$saved_url  = $upload_dir['baseurl'] . '/' . ltrim(
+				str_replace( $upload_dir['basedir'], '', $saved_path ),
+				'/\\'
+			);
 
 			$thumbs[ $size_name ] = [
 				'path'   => $saved_path,

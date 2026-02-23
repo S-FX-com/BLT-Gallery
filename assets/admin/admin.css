@@ -1,0 +1,194 @@
+/* ZymGallery – Admin styles (no build required) */
+
+:root {
+	--zym-accent:       #2563eb;
+	--zym-accent-hover: #1d4ed8;
+	--zym-radius:       6px;
+}
+
+/* ── Wrap ─────────────────────────────────────────────────────────────── */
+
+.zymgallery-wrap { max-width: 1200px; }
+
+.zymgallery-page-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.zymgallery-page-header h1 { margin: 0; flex: 1; }
+
+/* ── Panel ────────────────────────────────────────────────────────────── */
+
+.zymgallery-panel {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: var(--zym-radius);
+	margin-bottom: 1.5rem;
+}
+
+.zymgallery-panel__header {
+	padding: 0.75rem 1rem;
+	border-bottom: 1px solid #eee;
+}
+
+.zymgallery-panel__header h2 { margin: 0; font-size: 1rem; }
+
+.zymgallery-panel__body { padding: 1.25rem 1rem; }
+
+/* ── Fields ───────────────────────────────────────────────────────────── */
+
+.zymgallery-field {
+	margin-bottom: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	max-width: 480px;
+}
+
+.zymgallery-field label { font-weight: 600; font-size: 0.875rem; }
+
+.zymgallery-field--toggle { flex-direction: row; align-items: center; max-width: none; }
+.zymgallery-field--toggle label { font-weight: normal; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+
+/* ── Table ────────────────────────────────────────────────────────────── */
+
+.zymgallery-table code {
+	background: #f1f5f9;
+	padding: 0.15rem 0.4rem;
+	border-radius: 4px;
+	font-size: 0.8rem;
+}
+
+/* ── Empty / loading / error ──────────────────────────────────────────── */
+
+.zymgallery-empty {
+	padding: 4rem;
+	text-align: center;
+	background: #f8fafc;
+	border: 2px dashed #cbd5e1;
+	border-radius: var(--zym-radius);
+	color: #64748b;
+}
+
+.zymgallery-loading { color: #888; font-style: italic; }
+.zymgallery-error   { color: #c0392b; }
+
+.zymgallery-notice { margin-top: 1rem !important; }
+
+/* ── Uploader ─────────────────────────────────────────────────────────── */
+
+.zymgallery-uploader { margin-bottom: 1.5rem; }
+
+.zymgallery-uploader__zone {
+	border: 2px dashed #94a3b8;
+	border-radius: var(--zym-radius);
+	padding: 2.5rem;
+	text-align: center;
+	cursor: pointer;
+	transition: border-color .2s, background .2s;
+}
+
+.zymgallery-uploader__zone:hover,
+.zymgallery-uploader__zone.is-dragging {
+	border-color: var(--zym-accent);
+	background: #eff6ff;
+}
+
+.zymgallery-uploader__icon  { font-size: 2rem; display: block; margin-bottom: .5rem; }
+.zymgallery-uploader__hint  { color: #94a3b8; font-size: .8rem; margin: 0; }
+
+.zymgallery-uploader__progress-list {
+	list-style: none;
+	margin: 1rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+}
+
+.zymgallery-uploader__progress-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.zymgallery-uploader__filename {
+	flex: 0 0 180px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: .85rem;
+}
+
+.zymgallery-uploader__bar {
+	flex: 1;
+	height: 6px;
+	border-radius: 99px;
+	overflow: hidden;
+}
+
+/* ── Image Grid ───────────────────────────────────────────────────────── */
+
+.zymgallery-image-grid__hint  { color: #64748b; font-size: .8rem; margin-bottom: .75rem; }
+.zymgallery-image-grid__empty { color: #64748b; font-style: italic; }
+
+.zymgallery-image-grid__list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+	gap: .75rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.zymgallery-image-grid__item {
+	border: 2px solid transparent;
+	border-radius: var(--zym-radius);
+	overflow: hidden;
+	cursor: grab;
+	transition: border-color .15s;
+	background: #f8fafc;
+}
+
+.zymgallery-image-grid__item.is-dragging {
+	border-color: var(--zym-accent);
+	opacity: .6;
+}
+
+.zymgallery-image-grid__item img {
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+	display: block;
+}
+
+.zymgallery-image-grid__meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: .25rem .4rem;
+	font-size: .72rem;
+	overflow: hidden;
+}
+
+.zymgallery-image-grid__meta span {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.zyg-img-delete {
+	color: #c0392b;
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+	background: none;
+	border: none;
+	padding: 0 .2rem;
+}
+
+.zyg-img-delete:hover { color: #922b21; }

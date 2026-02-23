@@ -102,28 +102,18 @@ final class Plugin {
 	}
 
 	public function enqueue_frontend_assets(): void {
-		$asset_file = ZYMGALLERY_PLUGIN_DIR . 'assets/build/frontend/index.asset.php';
-		$deps       = [];
-		$version    = ZYMGALLERY_VERSION;
-
-		if ( file_exists( $asset_file ) ) {
-			$asset   = require $asset_file;
-			$deps    = $asset['dependencies'] ?? [];
-			$version = $asset['version'] ?? $version;
-		}
-
 		wp_register_style(
 			'zymgallery-frontend',
-			ZYMGALLERY_PLUGIN_URL . 'assets/build/frontend/style.css',
+			ZYMGALLERY_PLUGIN_URL . 'assets/frontend/frontend.css',
 			[],
-			$version
+			ZYMGALLERY_VERSION
 		);
 
 		wp_register_script(
 			'zymgallery-frontend',
-			ZYMGALLERY_PLUGIN_URL . 'assets/build/frontend/index.js',
-			$deps,
-			$version,
+			ZYMGALLERY_PLUGIN_URL . 'assets/frontend/frontend.js',
+			[],
+			ZYMGALLERY_VERSION,
 			true
 		);
 	}
