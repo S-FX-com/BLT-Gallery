@@ -20,7 +20,7 @@ class Image {
 	public int    $height         = 0;
 	public int    $filesize       = 0;
 	public string $mime_type      = '';
-	public string $storage_driver = 'local'; // 'local' | 's3'
+	public string $storage_driver = 'local'; // 'local' | 's3' | 'r2'
 	public ?string $local_path    = null;
 	public ?string $s3_key        = null;
 	public ?string $s3_bucket     = null;

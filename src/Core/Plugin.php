@@ -8,6 +8,7 @@ use ZymGallery\Admin\AdminMenu;
 use ZymGallery\Api\GalleryEndpoint;
 use ZymGallery\Api\ImageEndpoint;
 use ZymGallery\Api\SettingsEndpoint;
+use ZymGallery\Api\ImportEndpoint;
 use ZymGallery\Api\UploadEndpoint;
 use ZymGallery\Display\LightboxDisplay;
 use ZymGallery\Display\MasonryDisplay;
@@ -55,6 +56,7 @@ final class Plugin {
 			$db->drop_tables();
 			delete_option( 'zymgallery_settings' );
 			delete_option( 'zymgallery_aws_settings' );
+			delete_option( 'zymgallery_r2_settings' );
 			delete_option( 'zymgallery_delete_data_on_uninstall' );
 			delete_option( 'zymgallery_db_version' );
 		}
@@ -99,6 +101,7 @@ final class Plugin {
 		( new ImageEndpoint() )->register();
 		( new SettingsEndpoint() )->register();
 		( new UploadEndpoint() )->register();
+		( new ImportEndpoint() )->register();
 	}
 
 	public function enqueue_frontend_assets(): void {

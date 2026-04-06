@@ -13,7 +13,7 @@ namespace ZymGallery\Core;
  */
 class Database {
 
-	const DB_VERSION = '2.0.0';
+	const DB_VERSION = '2.1.0';
 
 	// ------------------------------------------------------------------
 	// Public API
@@ -55,7 +55,7 @@ class Database {
 			height          INT                 NOT NULL DEFAULT 0,
 			filesize        BIGINT(20)          NOT NULL DEFAULT 0,
 			mime_type       VARCHAR(100)        NOT NULL DEFAULT '',
-			storage_driver  ENUM('local','s3')  NOT NULL DEFAULT 'local',
+			storage_driver  ENUM('local','s3','r2') NOT NULL DEFAULT 'local',
 			local_path      VARCHAR(1000),
 			s3_key          VARCHAR(1000),
 			s3_bucket       VARCHAR(255),
@@ -79,7 +79,30 @@ class Database {
 		$installed = get_option( 'zymgallery_db_version', '0' );
 		if ( version_compare( $installed, self::DB_VERSION, '<' ) ) {
 			$this->install();
+			$this->run_migrations( $installed );
 		}
+	}
+
+	/**
+	 * Run version-specific ALTER TABLE migrations that dbDelta cannot handle
+	 * (e.g. ENUM expansions, column type changes).
+	 *
+	 * @param string $from_version The previously installed DB version.
+	 */
+	private function run_migrations( string $from_version ): void {
+		global $wpdb;
+		$images_table = $wpdb->prefix . 'zym_images';
+
+		// 2.0.x → 2.1.0: expand storage_driver ENUM to include 'r2'.
+		if ( version_compare( $from_version, '2.1.0', '<' ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query(
+				"ALTER TABLE {$images_table}
+				 MODIFY COLUMN storage_driver ENUM('local','s3','r2') NOT NULL DEFAULT 'local'"
+			);
+		}
+
+		update_option( 'zymgallery_db_version', self::DB_VERSION );
 	}
 
 	public function drop_tables(): void {

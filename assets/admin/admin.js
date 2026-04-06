@@ -423,14 +423,16 @@
 	async function initSettings() {
 		const genEl = document.getElementById( 'zymgallery-general-settings' );
 		const awsEl = document.getElementById( 'zymgallery-aws-settings' );
+		const r2El  = document.getElementById( 'zymgallery-r2-settings' );
 
-		if ( ! genEl && ! awsEl ) return;
+		if ( ! genEl && ! awsEl && ! r2El ) return;
 
-		let general, aws;
+		let general, aws, r2;
 		try {
-			[ general, aws ] = await Promise.all( [
+			[ general, aws, r2 ] = await Promise.all( [
 				api( '/settings' ),
 				api( '/settings/aws' ),
+				api( '/settings/r2' ),
 			] );
 		} catch ( e ) {
 			showNotice( e.message, 'error' );
@@ -439,6 +441,7 @@
 
 		renderGeneralSettings( genEl, general );
 		renderAwsSettings( awsEl, aws );
+		renderR2Settings( r2El, r2 );
 	}
 
 	function renderGeneralSettings( container, general ) {
@@ -586,6 +589,227 @@
 	}
 
 	// ------------------------------------------------------------------
+	// Cloudflare R2 Settings
+	// ------------------------------------------------------------------
+
+	function renderR2Settings( container, r2 ) {
+		if ( ! container ) return;
+		const a = r2 || {};
+		container.innerHTML = `
+			<p>Store original files on <strong>Cloudflare R2</strong> to minimise local disk usage.
+			R2 is S3-compatible and has no egress fees.</p>
+			<div class="zymgallery-field">
+				<label for="zyg-r2-account-id">Cloudflare Account ID</label>
+				<input type="text" id="zyg-r2-account-id" class="regular-text" value="${ escHtml( a.account_id ?? '' ) }" placeholder="Found in the Cloudflare dashboard">
+			</div>
+			<div class="zymgallery-field">
+				<label for="zyg-r2-access-key">R2 Access Key ID</label>
+				<input type="text" id="zyg-r2-access-key" class="regular-text" value="${ escHtml( a.access_key_id ?? '' ) }" autocomplete="off">
+			</div>
+			<div class="zymgallery-field">
+				<label for="zyg-r2-secret-key">R2 Secret Access Key</label>
+				<input type="password" id="zyg-r2-secret-key" class="regular-text" value="" autocomplete="new-password" placeholder="Leave blank to keep existing">
+			</div>
+			<div class="zymgallery-field">
+				<label for="zyg-r2-bucket">R2 Bucket Name</label>
+				<input type="text" id="zyg-r2-bucket" class="regular-text" value="${ escHtml( a.bucket ?? '' ) }">
+			</div>
+			<div class="zymgallery-field">
+				<label for="zyg-r2-prefix">Path Prefix (optional)</label>
+				<input type="text" id="zyg-r2-prefix" class="regular-text" value="${ escHtml( a.path_prefix ?? '' ) }" placeholder="gallery/">
+			</div>
+			<div class="zymgallery-field">
+				<label for="zyg-r2-public-url">Public Base URL</label>
+				<input type="text" id="zyg-r2-public-url" class="regular-text" value="${ escHtml( a.public_url ?? '' ) }" placeholder="https://assets.example.com">
+				<p class="description">Your bucket&rsquo;s custom domain or the <code>pub-&hellip;.r2.dev</code> URL.</p>
+			</div>
+			<div class="zymgallery-field zymgallery-field--toggle">
+				<label>
+					<input type="checkbox" id="zyg-r2-auto-offload"${ a.auto_offload ? ' checked' : '' }>
+					Auto-offload new uploads to R2
+				</label>
+			</div>
+			<div class="zymgallery-field zymgallery-field--toggle">
+				<label>
+					<input type="checkbox" id="zyg-r2-delete-local"${ a.delete_local_after_upload ? ' checked' : '' }>
+					Delete local files after upload to R2
+				</label>
+			</div>
+			<div class="zymgallery-field" style="display:flex;gap:12px;align-items:center">
+				<button class="button button-primary" id="zyg-save-r2">Save R2 Settings</button>
+				<button class="button button-secondary" id="zyg-test-r2">Test R2 Connection</button>
+			</div>
+			<div id="zyg-r2-test-result"></div>
+		`;
+
+		container.querySelector( '#zyg-save-r2' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Saving…';
+			const secret = container.querySelector( '#zyg-r2-secret-key' ).value;
+			const body = {
+				account_id:                container.querySelector( '#zyg-r2-account-id' ).value,
+				access_key_id:             container.querySelector( '#zyg-r2-access-key' ).value,
+				bucket:                    container.querySelector( '#zyg-r2-bucket' ).value,
+				path_prefix:               container.querySelector( '#zyg-r2-prefix' ).value,
+				public_url:                container.querySelector( '#zyg-r2-public-url' ).value,
+				auto_offload:              container.querySelector( '#zyg-r2-auto-offload' ).checked,
+				delete_local_after_upload: container.querySelector( '#zyg-r2-delete-local' ).checked,
+			};
+			if ( secret ) body.secret_access_key = secret;
+			try {
+				await api( '/settings/r2', { method: 'POST', body } );
+				showNotice( 'R2 settings saved.' );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				e.target.disabled = false;
+				e.target.textContent = 'Save R2 Settings';
+			}
+		} );
+
+		container.querySelector( '#zyg-test-r2' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Testing…';
+			const resultEl = container.querySelector( '#zyg-r2-test-result' );
+			try {
+				const result = await api( '/settings/r2/test', { method: 'POST' } );
+				resultEl.innerHTML = `<div class="notice notice-${ result.success ? 'success' : 'error' } inline"><p>${ escHtml( result.message ) }</p></div>`;
+			} catch ( err ) {
+				resultEl.innerHTML = `<div class="notice notice-error inline"><p>${ escHtml( err.message ) }</p></div>`;
+			} finally {
+				e.target.disabled = false;
+				e.target.textContent = 'Test R2 Connection';
+			}
+		} );
+	}
+
+	// ------------------------------------------------------------------
+	// NextGEN Gallery Importer
+	// ------------------------------------------------------------------
+
+	async function initImporter() {
+		const container = document.getElementById( 'zymgallery-nextgen-importer' );
+		if ( ! container ) return;
+
+		let status;
+		try {
+			status = await api( '/import/nextgen/status' );
+		} catch ( e ) {
+			container.innerHTML = `<p class="zymgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		if ( ! status.available ) {
+			container.innerHTML = `
+				<div class="notice notice-warning inline"><p>${ escHtml( status.message ) }</p></div>
+				<p>Install and activate <strong>Imagely NextGEN Gallery</strong> and create at least one gallery, then return to this page.</p>
+			`;
+			return;
+		}
+
+		// Load gallery preview.
+		let preview;
+		try {
+			preview = await api( '/import/nextgen/preview' );
+		} catch ( e ) {
+			container.innerHTML = `<p class="zymgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		renderImporterGalleryList( container, preview.galleries );
+	}
+
+	function renderImporterGalleryList( container, galleries ) {
+		if ( ! galleries || galleries.length === 0 ) {
+			container.innerHTML = '<p>No galleries found in NextGEN Gallery.</p>';
+			return;
+		}
+
+		const rows = galleries.map( ( g ) => `
+			<tr>
+				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g.gid ) ) }" checked></td>
+				<td><strong>${ escHtml( g.title || g.name ) }</strong></td>
+				<td>${ escHtml( g.galdesc || '—' ) }</td>
+				<td>${ escHtml( String( g.image_count ) ) }</td>
+			</tr>
+		` ).join( '' );
+
+		container.innerHTML = `
+			<div class="notice notice-success inline"><p>NextGEN Gallery detected. Select galleries to import below.</p></div>
+			<p><strong>Note:</strong> Your original NextGEN Gallery data and files will not be modified. ZymGallery copies files into its own upload directory.</p>
+			<table class="wp-list-table widefat fixed striped zymgallery-table" style="margin-bottom:1rem">
+				<thead>
+					<tr>
+						<th style="width:40px"><input type="checkbox" id="zyg-import-check-all" checked></th>
+						<th>Gallery Title</th>
+						<th>Description</th>
+						<th>Images</th>
+					</tr>
+				</thead>
+				<tbody>${ rows }</tbody>
+			</table>
+			<div style="display:flex;gap:12px;align-items:center">
+				<button class="button button-primary" id="zyg-run-import">Import Selected Galleries</button>
+				<span id="zyg-import-status"></span>
+			</div>
+			<div id="zyg-import-results"></div>
+		`;
+
+		// Select all toggle.
+		container.querySelector( '#zyg-import-check-all' ).addEventListener( 'change', ( e ) => {
+			container.querySelectorAll( '.zyg-import-check' ).forEach( ( cb ) => {
+				cb.checked = e.target.checked;
+			} );
+		} );
+
+		container.querySelector( '#zyg-run-import' ).addEventListener( 'click', async ( e ) => {
+			const checked = [ ...container.querySelectorAll( '.zyg-import-check:checked' ) ];
+			if ( checked.length === 0 ) {
+				showNotice( 'Please select at least one gallery to import.', 'error' );
+				return;
+			}
+
+			const gallery_ids = checked.map( ( cb ) => parseInt( cb.value, 10 ) );
+
+			e.target.disabled = true;
+			const statusEl  = container.querySelector( '#zyg-import-status' );
+			const resultsEl = container.querySelector( '#zyg-import-results' );
+			statusEl.textContent = 'Importing… this may take a while for large galleries.';
+			resultsEl.innerHTML  = '';
+
+			try {
+				const result = await api( '/import/nextgen/run', {
+					method: 'POST',
+					body:   { gallery_ids },
+				} );
+
+				statusEl.textContent = '';
+				const errorHtml = result.errors.length
+					? `<details style="margin-top:.5rem"><summary>${ result.errors.length } warning(s)</summary><ul>${ result.errors.map( ( e ) => `<li>${ escHtml( e ) }</li>` ).join( '' ) }</ul></details>`
+					: '';
+
+				resultsEl.innerHTML = `
+					<div class="notice notice-success inline" style="margin-top:1rem">
+						<p>
+							Import complete: <strong>${ result.galleries_imported }</strong> ${ result.galleries_imported === 1 ? 'gallery' : 'galleries' } imported,
+							<strong>${ result.images_imported }</strong> ${ result.images_imported === 1 ? 'image' : 'images' } imported
+							${ result.images_skipped > 0 ? `, ${ result.images_skipped } skipped` : '' }.
+						</p>
+					</div>
+					${ errorHtml }
+				`;
+
+				showNotice( `Import complete. ${ result.images_imported } image(s) imported.` );
+			} catch ( err ) {
+				statusEl.textContent = '';
+				showNotice( err.message, 'error' );
+			} finally {
+				e.target.disabled = false;
+			}
+		} );
+	}
+
+	// ------------------------------------------------------------------
 	// Auto-init settings page
 	// ------------------------------------------------------------------
 
@@ -603,6 +827,7 @@
 		initGalleryList,
 		initGalleryEditor,
 		initSettings,
+		initImporter,
 	};
 
 } )();
