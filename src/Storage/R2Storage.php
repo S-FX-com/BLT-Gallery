@@ -4,16 +4,15 @@ declare( strict_types=1 );
 
 namespace ZymGallery\Storage;
 
-use Aws\Exception\AwsException;
-use Aws\S3\S3Client;
 use ZymGallery\Models\Image;
 
 /**
  * Handles uploading images to Cloudflare R2 using the S3-compatible API.
  *
- * R2 uses the same AWS SDK S3Client with a custom endpoint.
- * There is no region concept in R2; 'auto' is used.
- * ACLs are not supported; bucket visibility is managed in the Cloudflare dashboard.
+ * Uses S3HttpClient (pure HTTP + AWS SigV4) – no SDK or Composer required.
+ *
+ * R2 uses path-style endpoints and does not support ACLs; bucket visibility
+ * is managed in the Cloudflare dashboard.
  *
  * Settings (stored in 'zymgallery_r2_settings' option):
  *   account_id              – Cloudflare account ID (found in the dashboard)
@@ -22,14 +21,13 @@ use ZymGallery\Models\Image;
  *   bucket                  – R2 bucket name
  *   path_prefix             – optional key prefix, e.g. 'gallery/'
  *   public_url              – public base URL, e.g. 'https://assets.example.com'
- *                             (custom domain, or the r2.dev URL for public buckets)
  *   auto_offload            – bool; auto-upload to R2 on ingest
  *   delete_local_after_upload – bool; remove local file after successful R2 upload
  */
 class R2Storage {
 
-	private S3Client $client;
-	private array    $settings;
+	private S3HttpClient $client;
+	private array        $settings;
 
 	public function __construct() {
 		$this->settings = $this->load_settings();
@@ -55,17 +53,14 @@ class R2Storage {
 		$bucket = $this->settings['bucket'];
 		$mime   = mime_content_type( $local_path ) ?: 'application/octet-stream';
 
-		try {
-			$this->client->putObject( [
-				'Bucket'       => $bucket,
-				'Key'          => $key,
-				'SourceFile'   => $local_path,
-				'ContentType'  => $mime,
-				'CacheControl' => 'max-age=31536000',
-			] );
-		} catch ( AwsException $e ) {
-			throw new \RuntimeException( 'R2 upload failed: ' . $e->getMessage() );
-		}
+		$this->client->put_object(
+			$bucket,
+			$key,
+			$local_path,
+			$mime,
+			'max-age=31536000'
+			// No ACL – R2 does not support ACLs
+		);
 
 		return $key;
 	}
@@ -114,11 +109,8 @@ class R2Storage {
 
 	public function delete( string $r2_key ): void {
 		try {
-			$this->client->deleteObject( [
-				'Bucket' => $this->settings['bucket'],
-				'Key'    => $r2_key,
-			] );
-		} catch ( AwsException $e ) {
+			$this->client->delete_object( $this->settings['bucket'], $r2_key );
+		} catch ( \RuntimeException $e ) {
 			// Log but do not throw – deletion failure should not block UI.
 			error_log( "ZymGallery R2 delete failed for {$r2_key}: " . $e->getMessage() );
 		}
@@ -144,6 +136,15 @@ class R2Storage {
 	// Configuration helpers
 	// ------------------------------------------------------------------
 
+	/**
+	 * Verify credentials and bucket access by sending a HEAD request.
+	 *
+	 * @throws \RuntimeException with a human-readable message on failure.
+	 */
+	public function check_connection(): void {
+		$this->client->head_bucket( $this->settings['bucket'] ?? '' );
+	}
+
 	public static function is_configured(): bool {
 		$settings = self::load_settings_static();
 		return ! empty( $settings['account_id'] )
@@ -152,19 +153,16 @@ class R2Storage {
 			&& ! empty( $settings['bucket'] );
 	}
 
-	private function build_client(): S3Client {
+	private function build_client(): S3HttpClient {
 		$account_id = $this->settings['account_id'] ?? '';
+		$endpoint   = "https://{$account_id}.r2.cloudflarestorage.com";
 
-		return new S3Client( [
-			'version'                 => 'latest',
-			'region'                  => 'auto',
-			'endpoint'                => "https://{$account_id}.r2.cloudflarestorage.com",
-			'use_path_style_endpoint' => true,
-			'credentials'             => [
-				'key'    => $this->settings['access_key_id'],
-				'secret' => $this->settings['secret_access_key'],
-			],
-		] );
+		return new S3HttpClient(
+			$this->settings['access_key_id']     ?? '',
+			$this->settings['secret_access_key'] ?? '',
+			'auto',
+			$endpoint
+		);
 	}
 
 	private function load_settings(): array {

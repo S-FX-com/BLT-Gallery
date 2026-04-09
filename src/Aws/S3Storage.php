@@ -4,12 +4,13 @@ declare( strict_types=1 );
 
 namespace ZymGallery\Aws;
 
-use Aws\Exception\AwsException;
-use Aws\S3\S3Client;
 use ZymGallery\Models\Image;
+use ZymGallery\Storage\S3HttpClient;
 
 /**
- * Handles uploading images to AWS S3 and generating pre-signed URLs.
+ * Handles uploading images to AWS S3.
+ *
+ * Uses S3HttpClient (pure HTTP + AWS SigV4) – no SDK or Composer required.
  *
  * Settings (stored in 'zymgallery_aws_settings' option):
  *   access_key_id     – IAM access key
@@ -18,11 +19,12 @@ use ZymGallery\Models\Image;
  *   bucket            – S3 bucket name
  *   path_prefix       – optional key prefix, e.g. 'gallery/'
  *   acl               – canned ACL, default 'public-read'
+ *   delete_local_after_upload – bool
  */
 class S3Storage {
 
-	private S3Client $client;
-	private array    $settings;
+	private S3HttpClient $client;
+	private array        $settings;
 
 	public function __construct() {
 		$this->settings = $this->load_settings();
@@ -52,18 +54,14 @@ class S3Storage {
 		$acl    = $this->settings['acl'] ?? 'public-read';
 		$mime   = mime_content_type( $local_path ) ?: 'application/octet-stream';
 
-		try {
-			$this->client->putObject( [
-				'Bucket'      => $bucket,
-				'Key'         => $key,
-				'SourceFile'  => $local_path,
-				'ContentType' => $mime,
-				'ACL'         => $acl,
-				'CacheControl' => 'max-age=31536000',
-			] );
-		} catch ( AwsException $e ) {
-			throw new \RuntimeException( 'S3 upload failed: ' . $e->getMessage() );
-		}
+		$this->client->put_object(
+			$bucket,
+			$key,
+			$local_path,
+			$mime,
+			'max-age=31536000',
+			$acl
+		);
 
 		return $key;
 	}
@@ -76,7 +74,6 @@ class S3Storage {
 			throw new \RuntimeException( 'Image has no local file to upload.' );
 		}
 
-		// Build a deterministic key from gallery_id + filename.
 		$base_key = "galleries/{$image->gallery_id}/{$image->filename}";
 		$key      = $this->upload( $image->local_path, $base_key );
 
@@ -97,7 +94,7 @@ class S3Storage {
 			$image->meta['thumbs'][ $size ]['url']    = $this->get_public_url( $uploaded );
 		}
 
-		// Remove local files after successful upload if configured to do so.
+		// Remove local files after successful upload if configured.
 		if ( ! empty( $this->settings['delete_local_after_upload'] ) ) {
 			@unlink( $image->local_path );
 			$image->local_path = null;
@@ -112,11 +109,8 @@ class S3Storage {
 
 	public function delete( string $s3_key ): void {
 		try {
-			$this->client->deleteObject( [
-				'Bucket' => $this->settings['bucket'],
-				'Key'    => $s3_key,
-			] );
-		} catch ( AwsException $e ) {
+			$this->client->delete_object( $this->settings['bucket'], $s3_key );
+		} catch ( \RuntimeException $e ) {
 			// Log but do not throw – deletion failure should not block UI.
 			error_log( "ZymGallery S3 delete failed for {$s3_key}: " . $e->getMessage() );
 		}
@@ -127,7 +121,7 @@ class S3Storage {
 	// ------------------------------------------------------------------
 
 	/**
-	 * Returns the public URL for an S3 key (not pre-signed; requires public-read ACL).
+	 * Returns the public URL for an S3 key (requires public-read ACL or public bucket).
 	 */
 	public function get_public_url( string $s3_key ): string {
 		$region = $this->settings['region'] ?? 'us-east-1';
@@ -135,22 +129,18 @@ class S3Storage {
 		return "https://{$bucket}.s3.{$region}.amazonaws.com/{$s3_key}";
 	}
 
-	/**
-	 * Generate a pre-signed URL valid for the given number of seconds.
-	 */
-	public function get_presigned_url( string $s3_key, int $expires_in = 3600 ): string {
-		$cmd = $this->client->getCommand( 'GetObject', [
-			'Bucket' => $this->settings['bucket'],
-			'Key'    => $s3_key,
-		] );
-
-		$request = $this->client->createPresignedRequest( $cmd, "+{$expires_in} seconds" );
-		return (string) $request->getUri();
-	}
-
 	// ------------------------------------------------------------------
 	// Helpers
 	// ------------------------------------------------------------------
+
+	/**
+	 * Verify credentials and bucket access by sending a HEAD request.
+	 *
+	 * @throws \RuntimeException with a human-readable message on failure.
+	 */
+	public function check_connection(): void {
+		$this->client->head_bucket( $this->settings['bucket'] ?? '' );
+	}
 
 	public static function is_configured(): bool {
 		$settings = self::load_settings_static();
@@ -159,15 +149,16 @@ class S3Storage {
 			&& ! empty( $settings['bucket'] );
 	}
 
-	private function build_client(): S3Client {
-		return new S3Client( [
-			'version'     => 'latest',
-			'region'      => $this->settings['region'] ?? 'us-east-1',
-			'credentials' => [
-				'key'    => $this->settings['access_key_id'],
-				'secret' => $this->settings['secret_access_key'],
-			],
-		] );
+	private function build_client(): S3HttpClient {
+		$region   = $this->settings['region'] ?? 'us-east-1';
+		$endpoint = "https://s3.{$region}.amazonaws.com";
+
+		return new S3HttpClient(
+			$this->settings['access_key_id']     ?? '',
+			$this->settings['secret_access_key'] ?? '',
+			$region,
+			$endpoint
+		);
 	}
 
 	private function load_settings(): array {

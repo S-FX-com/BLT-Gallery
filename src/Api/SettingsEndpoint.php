@@ -201,9 +201,8 @@ class SettingsEndpoint {
 		}
 
 		try {
-			$s3  = new S3Storage();
-			// HeadBucket verifies credentials and bucket access without transferring data.
-			$s3->get_presigned_url( '_zymgallery_test_', 10 );
+			$s3 = new S3Storage();
+			$s3->check_connection();
 
 			return new WP_REST_Response( [
 				'success' => true,
@@ -277,8 +276,7 @@ class SettingsEndpoint {
 
 		try {
 			$r2 = new R2Storage();
-			// Attempt a head-bucket to verify credentials and bucket access.
-			$r2->get_public_url( '_zymgallery_test_' );
+			$r2->check_connection();
 
 			return new WP_REST_Response( [
 				'success' => true,

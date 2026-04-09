@@ -9,8 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=8.1",
-        "aws/aws-sdk-php": "^3.300"
+        "php": ">=8.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.9",

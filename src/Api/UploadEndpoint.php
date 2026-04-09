@@ -21,7 +21,7 @@ use ZymGallery\Storage\R2Storage;
  *
  * Accepts:
  *   - file   : the uploaded file (multipart/form-data)
- *   - offload: 1|0 – whether to push to S3 after local processing (default: per settings)
+ *   - storage: 'local' | 's3' | 'r2' – override the default storage driver for this upload
  */
 class UploadEndpoint {
 
@@ -78,9 +78,10 @@ class UploadEndpoint {
 			return new WP_Error( 'processing_failed', $e->getMessage(), [ 'status' => 500 ] );
 		}
 
-		// Optionally offload to a cloud provider.
-		// S3 takes priority if both are configured; only one provider runs per upload.
-		if ( $this->should_offload_s3( $request ) && S3Storage::is_configured() ) {
+		// Upload to the configured storage driver.
+		$driver = $this->resolve_storage_driver( $request );
+
+		if ( 's3' === $driver && S3Storage::is_configured() ) {
 			try {
 				$s3    = new S3Storage();
 				$image = $s3->upload_image( $image );
@@ -90,16 +91,17 @@ class UploadEndpoint {
 					$image = $cf->apply_to_image( $image );
 				}
 			} catch ( \Throwable $e ) {
-				error_log( 'ZymGallery S3 offload failed: ' . $e->getMessage() );
+				error_log( 'ZymGallery S3 upload failed: ' . $e->getMessage() );
 			}
-		} elseif ( $this->should_offload_r2( $request ) && R2Storage::is_configured() ) {
+		} elseif ( 'r2' === $driver && R2Storage::is_configured() ) {
 			try {
 				$r2    = new R2Storage();
 				$image = $r2->upload_image( $image );
 			} catch ( \Throwable $e ) {
-				error_log( 'ZymGallery R2 offload failed: ' . $e->getMessage() );
+				error_log( 'ZymGallery R2 upload failed: ' . $e->getMessage() );
 			}
 		}
+		// 'local' driver: image already saved locally by ImageProcessor, nothing else to do.
 
 		// Persist.
 		$image = ImageRepository::save( $image );
@@ -144,22 +146,25 @@ class UploadEndpoint {
 		return true;
 	}
 
-	private function should_offload_s3( WP_REST_Request $request ): bool {
-		$param = $request->get_param( 'offload' );
-		if ( null !== $param ) {
-			return filter_var( $param, FILTER_VALIDATE_BOOLEAN );
+	/**
+	 * Determine which storage driver to use for this upload.
+	 *
+	 * Reads the "Auto-offload" checkbox from each provider's settings.
+	 * S3 takes priority if both are enabled.
+	 * Falls back to 'local' if neither is enabled.
+	 */
+	private function resolve_storage_driver( WP_REST_Request $request ): string {
+		$aws = get_option( 'zymgallery_aws_settings', [] );
+		if ( ! empty( $aws['auto_offload'] ) && S3Storage::is_configured() ) {
+			return 's3';
 		}
-		$settings = get_option( 'zymgallery_aws_settings', [] );
-		return ! empty( $settings['auto_offload'] );
-	}
 
-	private function should_offload_r2( WP_REST_Request $request ): bool {
-		$param = $request->get_param( 'offload' );
-		if ( null !== $param ) {
-			return filter_var( $param, FILTER_VALIDATE_BOOLEAN );
+		$r2 = get_option( 'zymgallery_r2_settings', [] );
+		if ( ! empty( $r2['auto_offload'] ) && R2Storage::is_configured() ) {
+			return 'r2';
 		}
-		$settings = get_option( 'zymgallery_r2_settings', [] );
-		return ! empty( $settings['auto_offload'] );
+
+		return 'local';
 	}
 
 	public function permission(): bool {
