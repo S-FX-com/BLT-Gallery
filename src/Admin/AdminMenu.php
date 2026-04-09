@@ -45,6 +45,15 @@ class AdminMenu {
 			self::MENU_SLUG . '-settings',
 			[ $this, 'render_settings_page' ]
 		);
+
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Import', 'zymgallery' ),
+			__( 'Import', 'zymgallery' ),
+			'manage_options',
+			self::MENU_SLUG . '-import',
+			[ $this, 'render_import_page' ]
+		);
 	}
 
 	public function enqueue_assets( string $hook ): void {
@@ -110,7 +119,7 @@ class AdminMenu {
 				</div>
 			</div>
 
-			<!-- AWS Settings -->
+			<!-- AWS S3 & CloudFront Settings -->
 			<div class="zymgallery-panel">
 				<div class="zymgallery-panel__header">
 					<h2><?php esc_html_e( 'AWS S3 &amp; CloudFront', 'zymgallery' ); ?></h2>
@@ -119,7 +128,42 @@ class AdminMenu {
 					<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
 				</div>
 			</div>
+
+			<!-- Cloudflare R2 Settings -->
+			<div class="zymgallery-panel">
+				<div class="zymgallery-panel__header">
+					<h2><?php esc_html_e( 'Cloudflare R2', 'zymgallery' ); ?></h2>
+				</div>
+				<div class="zymgallery-panel__body" id="zymgallery-r2-settings">
+					<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+				</div>
+			</div>
 		</div>
+		<?php
+	}
+
+	public function render_import_page(): void {
+		?>
+		<div class="wrap zymgallery-wrap">
+			<h1><?php esc_html_e( 'Import Galleries', 'zymgallery' ); ?></h1>
+			<div id="zymgallery-notice"></div>
+
+			<!-- NextGEN Gallery Importer -->
+			<div class="zymgallery-panel">
+				<div class="zymgallery-panel__header">
+					<h2><?php esc_html_e( 'Import from Imagely NextGEN Gallery', 'zymgallery' ); ?></h2>
+				</div>
+				<div class="zymgallery-panel__body" id="zymgallery-nextgen-importer">
+					<p class="zymgallery-loading"><?php esc_html_e( 'Checking for NextGEN Gallery…', 'zymgallery' ); ?></p>
+				</div>
+			</div>
+		</div>
+
+		<script>
+		document.addEventListener( 'DOMContentLoaded', function () {
+			ZymGalleryAdmin.initImporter();
+		} );
+		</script>
 		<?php
 	}
 

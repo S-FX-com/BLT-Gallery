@@ -12,6 +12,7 @@ use ZymGallery\Core\ImageProcessor;
 use ZymGallery\Core\ImageRepository;
 use ZymGallery\Aws\CloudFrontCDN;
 use ZymGallery\Aws\S3Storage;
+use ZymGallery\Storage\R2Storage;
 
 /**
  * Handles multipart image uploads.
@@ -77,10 +78,9 @@ class UploadEndpoint {
 			return new WP_Error( 'processing_failed', $e->getMessage(), [ 'status' => 500 ] );
 		}
 
-		// Optionally offload to S3 + CloudFront.
-		$should_offload = $this->should_offload( $request );
-
-		if ( $should_offload && S3Storage::is_configured() ) {
+		// Optionally offload to a cloud provider.
+		// S3 takes priority if both are configured; only one provider runs per upload.
+		if ( $this->should_offload_s3( $request ) && S3Storage::is_configured() ) {
 			try {
 				$s3    = new S3Storage();
 				$image = $s3->upload_image( $image );
@@ -90,8 +90,14 @@ class UploadEndpoint {
 					$image = $cf->apply_to_image( $image );
 				}
 			} catch ( \Throwable $e ) {
-				// Log and continue; local version is still usable.
 				error_log( 'ZymGallery S3 offload failed: ' . $e->getMessage() );
+			}
+		} elseif ( $this->should_offload_r2( $request ) && R2Storage::is_configured() ) {
+			try {
+				$r2    = new R2Storage();
+				$image = $r2->upload_image( $image );
+			} catch ( \Throwable $e ) {
+				error_log( 'ZymGallery R2 offload failed: ' . $e->getMessage() );
 			}
 		}
 
@@ -138,15 +144,21 @@ class UploadEndpoint {
 		return true;
 	}
 
-	private function should_offload( WP_REST_Request $request ): bool {
+	private function should_offload_s3( WP_REST_Request $request ): bool {
 		$param = $request->get_param( 'offload' );
-
 		if ( null !== $param ) {
 			return filter_var( $param, FILTER_VALIDATE_BOOLEAN );
 		}
-
-		// Fall back to global setting.
 		$settings = get_option( 'zymgallery_aws_settings', [] );
+		return ! empty( $settings['auto_offload'] );
+	}
+
+	private function should_offload_r2( WP_REST_Request $request ): bool {
+		$param = $request->get_param( 'offload' );
+		if ( null !== $param ) {
+			return filter_var( $param, FILTER_VALIDATE_BOOLEAN );
+		}
+		$settings = get_option( 'zymgallery_r2_settings', [] );
 		return ! empty( $settings['auto_offload'] );
 	}
 
