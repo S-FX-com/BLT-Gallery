@@ -1,10 +1,10 @@
 /**
- * ZymGallery Admin – vanilla JS, no build step required.
+ * BltGallery Admin – vanilla JS, no build step required.
  */
 ( function () {
 	'use strict';
 
-	const cfg = window.zymGalleryConfig || {};
+	const cfg = window.bltGalleryConfig || {};
 
 	// ------------------------------------------------------------------
 	// API helper
@@ -42,9 +42,9 @@
 	// ------------------------------------------------------------------
 
 	function showNotice( msg, type = 'success' ) {
-		const el = document.getElementById( 'zymgallery-notice' );
+		const el = document.getElementById( 'bltgallery-notice' );
 		if ( ! el ) return;
-		el.innerHTML = `<div class="notice notice-${ type } is-dismissible zymgallery-notice"><p>${ escHtml( msg ) }</p><button type="button" class="notice-dismiss" onclick="this.parentElement.remove()"><span class="screen-reader-text">Dismiss</span></button></div>`;
+		el.innerHTML = `<div class="notice notice-${ type } is-dismissible bltgallery-notice"><p>${ escHtml( msg ) }</p><button type="button" class="notice-dismiss" onclick="this.parentElement.remove()"><span class="screen-reader-text">Dismiss</span></button></div>`;
 		el.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
 	}
 
@@ -57,8 +57,8 @@
 	// ------------------------------------------------------------------
 
 	async function initGalleryList( listUrl ) {
-		const container = document.getElementById( 'zymgallery-gallery-list' );
-		const newBtn    = document.getElementById( 'zymgallery-new-gallery-btn' );
+		const container = document.getElementById( 'bltgallery-gallery-list' );
+		const newBtn    = document.getElementById( 'bltgallery-new-gallery-btn' );
 
 		newBtn?.addEventListener( 'click', async () => {
 			const title = window.prompt( 'Gallery title:' );
@@ -78,18 +78,18 @@
 	}
 
 	async function loadGalleryList( container, listUrl ) {
-		container.innerHTML = '<p class="zymgallery-loading">Loading…</p>';
+		container.innerHTML = '<p class="bltgallery-loading">Loading…</p>';
 		try {
 			const galleries = await api( '/galleries?per_page=100' );
 			renderGalleryTable( container, galleries, listUrl );
 		} catch ( e ) {
-			container.innerHTML = `<p class="zymgallery-error">${ escHtml( e.message ) }</p>`;
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
 		}
 	}
 
 	function renderGalleryTable( container, galleries, listUrl ) {
 		if ( galleries.length === 0 ) {
-			container.innerHTML = '<div class="zymgallery-empty"><p>No galleries yet. Create your first one!</p></div>';
+			container.innerHTML = '<div class="bltgallery-empty"><p>No galleries yet. Create your first one!</p></div>';
 			return;
 		}
 
@@ -97,17 +97,17 @@
 			<tr>
 				<td><strong><a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
 				<td>${ escHtml( g.display_type ) }</td>
-				<td><code>[zymgallery id="${ escHtml( String( g.id ) ) }"]</code></td>
+				<td><code>[blt_gallery id="${ escHtml( String( g.id ) ) }"]</code></td>
 				<td>${ escHtml( new Date( g.created_at ).toLocaleDateString() ) }</td>
 				<td>
 					<a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }" class="button button-secondary">Edit</a>
-					<button class="button zymgallery-delete-btn" data-id="${ g.id }" data-title="${ escHtml( g.title ) }">Delete</button>
+					<button class="button bltgallery-delete-btn" data-id="${ g.id }" data-title="${ escHtml( g.title ) }">Delete</button>
 				</td>
 			</tr>
 		` ).join( '' );
 
 		container.innerHTML = `
-			<table class="wp-list-table widefat fixed striped zymgallery-table">
+			<table class="wp-list-table widefat fixed striped bltgallery-table">
 				<thead>
 					<tr>
 						<th>Title</th>
@@ -121,7 +121,7 @@
 			</table>
 		`;
 
-		container.querySelectorAll( '.zymgallery-delete-btn' ).forEach( ( btn ) => {
+		container.querySelectorAll( '.bltgallery-delete-btn' ).forEach( ( btn ) => {
 			btn.addEventListener( 'click', async () => {
 				const id    = btn.dataset.id;
 				const title = btn.dataset.title;
@@ -153,10 +153,10 @@
 	];
 
 	async function initGalleryEditor( galleryId ) {
-		const titleEl     = document.getElementById( 'zymgallery-editor-title' );
-		const shortcodeEl = document.getElementById( 'zymgallery-shortcode' );
-		const settingsEl  = document.getElementById( 'zymgallery-editor-settings' );
-		const gridEl      = document.getElementById( 'zymgallery-image-grid' );
+		const titleEl     = document.getElementById( 'bltgallery-editor-title' );
+		const shortcodeEl = document.getElementById( 'bltgallery-shortcode' );
+		const settingsEl  = document.getElementById( 'bltgallery-editor-settings' );
+		const gridEl      = document.getElementById( 'bltgallery-image-grid' );
 
 		let gallery, images;
 
@@ -167,12 +167,12 @@
 			] );
 		} catch ( e ) {
 			showNotice( e.message, 'error' );
-			settingsEl.innerHTML = `<p class="zymgallery-error">${ escHtml( e.message ) }</p>`;
+			settingsEl.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
 			return;
 		}
 
 		if ( titleEl )     titleEl.textContent = gallery.title;
-		if ( shortcodeEl ) shortcodeEl.textContent = `[zymgallery id="${ galleryId }"]`;
+		if ( shortcodeEl ) shortcodeEl.textContent = `[blt_gallery id="${ galleryId }"]`;
 
 		renderEditorSettings( settingsEl, gallery, galleryId );
 		renderImageGrid( gridEl, images, galleryId );
@@ -193,23 +193,23 @@
 		const speed    = settings.speed ?? 4000;
 
 		container.innerHTML = `
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-title">Title</label>
 				<input type="text" id="zyg-title" class="regular-text" value="${ escHtml( gallery.title ) }">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-description">Description</label>
 				<textarea id="zyg-description" rows="3" class="large-text">${ escHtml( gallery.description || '' ) }</textarea>
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-display-type">Display Type</label>
 				<select id="zyg-display-type">${ typeOptions }</select>
 			</div>
-			<div class="zymgallery-field" id="zyg-columns-row">
+			<div class="bltgallery-field" id="zyg-columns-row">
 				<label for="zyg-columns">Columns</label>
 				<input type="number" id="zyg-columns" class="small-text" min="1" max="6" value="${ cols }">
 			</div>
-			<div class="zymgallery-field" id="zyg-slideshow-row" style="display:none">
+			<div class="bltgallery-field" id="zyg-slideshow-row" style="display:none">
 				<label for="zyg-autoplay">Autoplay</label>
 				<select id="zyg-autoplay">
 					<option value="0"${ autoplay === '0' ? ' selected' : '' }>Off</option>
@@ -218,7 +218,7 @@
 				<label for="zyg-speed" style="margin-left:1rem">Speed (ms)</label>
 				<input type="number" id="zyg-speed" class="small-text" min="1000" value="${ speed }">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<button class="button button-primary" id="zyg-save-btn">Save Settings</button>
 			</div>
 		`;
@@ -254,7 +254,7 @@
 			try {
 				await api( `/galleries/${ galleryId }`, { method: 'PUT', body } );
 				showNotice( 'Settings saved.' );
-				document.getElementById( 'zymgallery-editor-title' ).textContent = body.title;
+				document.getElementById( 'bltgallery-editor-title' ).textContent = body.title;
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
@@ -270,25 +270,25 @@
 
 	function renderImageGrid( container, images, galleryId ) {
 		if ( images.length === 0 ) {
-			container.innerHTML = '<p class="zymgallery-image-grid__empty">No images yet. Upload some above.</p>';
+			container.innerHTML = '<p class="bltgallery-image-grid__empty">No images yet. Upload some above.</p>';
 			return;
 		}
 
 		container.innerHTML = `
-			<p class="zymgallery-image-grid__hint">Drag images to reorder.</p>
-			<ul class="zymgallery-image-grid__list" id="zyg-img-list"></ul>
+			<p class="bltgallery-image-grid__hint">Drag images to reorder.</p>
+			<ul class="bltgallery-image-grid__list" id="zyg-img-list"></ul>
 		`;
 
 		const list = container.querySelector( '#zyg-img-list' );
 
 		images.forEach( ( img ) => {
 			const li = document.createElement( 'li' );
-			li.className    = 'zymgallery-image-grid__item';
+			li.className    = 'bltgallery-image-grid__item';
 			li.draggable    = true;
 			li.dataset.id   = img.id;
 			li.innerHTML = `
 				<img src="${ escHtml( img.thumb_url || img.url ) }" alt="${ escHtml( img.alt_text || img.filename ) }" loading="lazy" width="100" height="100">
-				<div class="zymgallery-image-grid__meta">
+				<div class="bltgallery-image-grid__meta">
 					<span title="${ escHtml( img.filename ) }">${ escHtml( img.filename ) }</span>
 					<button class="button-link-delete zyg-img-delete" aria-label="Delete ${ escHtml( img.filename ) }">&times;</button>
 				</div>
@@ -302,7 +302,7 @@
 					const idx = images.findIndex( ( i ) => i.id === img.id );
 					if ( idx > -1 ) images.splice( idx, 1 );
 					if ( list.children.length === 0 ) {
-						container.innerHTML = '<p class="zymgallery-image-grid__empty">No images yet. Upload some above.</p>';
+						container.innerHTML = '<p class="bltgallery-image-grid__empty">No images yet. Upload some above.</p>';
 					}
 				} catch ( e ) {
 					showNotice( e.message, 'error' );
@@ -350,9 +350,9 @@
 	// ------------------------------------------------------------------
 
 	function initUploader( galleryId, onUploaded ) {
-		const dropZone    = document.getElementById( 'zymgallery-drop-zone' );
-		const fileInput   = document.getElementById( 'zymgallery-file-input' );
-		const progressList = document.getElementById( 'zymgallery-progress-list' );
+		const dropZone    = document.getElementById( 'bltgallery-drop-zone' );
+		const fileInput   = document.getElementById( 'bltgallery-file-input' );
+		const progressList = document.getElementById( 'bltgallery-progress-list' );
 
 		if ( ! dropZone || ! fileInput ) return;
 
@@ -376,10 +376,10 @@
 			const id   = Math.random().toString( 36 ).slice( 2 );
 			const li   = document.createElement( 'li' );
 			li.id        = 'zyg-upload-' + id;
-			li.className = 'zymgallery-uploader__progress-item';
+			li.className = 'bltgallery-uploader__progress-item';
 			li.innerHTML = `
-				<span class="zymgallery-uploader__filename">${ escHtml( file.name ) }</span>
-				<progress value="0" max="100" class="zymgallery-uploader__bar"></progress>
+				<span class="bltgallery-uploader__filename">${ escHtml( file.name ) }</span>
+				<progress value="0" max="100" class="bltgallery-uploader__bar"></progress>
 			`;
 			progressList.appendChild( li );
 
@@ -404,12 +404,12 @@
 				} else {
 					let msg = 'Upload failed.';
 					try { msg = JSON.parse( xhr.responseText )?.message ?? msg; } catch {}
-					li.innerHTML = `<span class="zymgallery-uploader__filename">${ escHtml( file.name ) }</span><span class="zymgallery-error"> — ${ escHtml( msg ) }</span>`;
+					li.innerHTML = `<span class="bltgallery-uploader__filename">${ escHtml( file.name ) }</span><span class="bltgallery-error"> — ${ escHtml( msg ) }</span>`;
 				}
 			};
 
 			xhr.onerror = () => {
-				li.innerHTML = `<span class="zymgallery-uploader__filename">${ escHtml( file.name ) }</span><span class="zymgallery-error"> — Network error.</span>`;
+				li.innerHTML = `<span class="bltgallery-uploader__filename">${ escHtml( file.name ) }</span><span class="bltgallery-error"> — Network error.</span>`;
 			};
 
 			xhr.send( body );
@@ -421,9 +421,9 @@
 	// ------------------------------------------------------------------
 
 	async function initSettings() {
-		const genEl = document.getElementById( 'zymgallery-general-settings' );
-		const awsEl = document.getElementById( 'zymgallery-aws-settings' );
-		const r2El  = document.getElementById( 'zymgallery-r2-settings' );
+		const genEl = document.getElementById( 'bltgallery-general-settings' );
+		const awsEl = document.getElementById( 'bltgallery-aws-settings' );
+		const r2El  = document.getElementById( 'bltgallery-r2-settings' );
 
 		if ( ! genEl && ! awsEl && ! r2El ) return;
 
@@ -447,29 +447,29 @@
 	function renderGeneralSettings( container, general ) {
 		const g = general || {};
 		container.innerHTML = `
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-default-display">Default Display Type</label>
 				<select id="zyg-default-display">
 					${ DISPLAY_TYPES.map( ( t ) => `<option value="${ t.value }"${ t.value === g.default_display_type ? ' selected' : '' }>${ escHtml( t.label ) }</option>` ).join( '' ) }
 				</select>
 			</div>
-			<div class="zymgallery-field zymgallery-field--toggle">
+			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-lazy-load"${ g.lazy_load ? ' checked' : '' }>
 					Lazy-load images
 				</label>
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-webp-quality">WebP quality (1–100)</label>
 				<input type="number" id="zyg-webp-quality" class="small-text" min="1" max="100" value="${ g.webp_quality ?? 85 }">
 			</div>
-			<div class="zymgallery-field zymgallery-field--toggle">
+			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-delete-data"${ g.delete_data_on_uninstall ? ' checked' : '' }>
 					Delete all data on uninstall
 				</label>
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<button class="button button-primary" id="zyg-save-general">Save General Settings</button>
 			</div>
 		`;
@@ -497,33 +497,33 @@
 	function renderAwsSettings( container, aws ) {
 		const a = aws || {};
 		container.innerHTML = `
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-access-key">AWS Access Key ID</label>
 				<input type="text" id="zyg-access-key" class="regular-text" value="${ escHtml( a.access_key_id ?? '' ) }" autocomplete="off">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-secret-key">AWS Secret Access Key</label>
 				<input type="password" id="zyg-secret-key" class="regular-text" value="" autocomplete="new-password" placeholder="Leave blank to keep existing">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-region">AWS Region</label>
 				<input type="text" id="zyg-region" class="regular-text" value="${ escHtml( a.region ?? 'us-east-1' ) }" placeholder="us-east-1">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-bucket">S3 Bucket Name</label>
 				<input type="text" id="zyg-bucket" class="regular-text" value="${ escHtml( a.bucket ?? '' ) }">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-prefix">S3 Path Prefix (optional)</label>
 				<input type="text" id="zyg-prefix" class="regular-text" value="${ escHtml( a.path_prefix ?? '' ) }" placeholder="gallery/">
 			</div>
-			<div class="zymgallery-field zymgallery-field--toggle">
+			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-auto-offload"${ a.auto_offload ? ' checked' : '' }>
 					Auto-offload new uploads to S3
 				</label>
 			</div>
-			<div class="zymgallery-field zymgallery-field--toggle">
+			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-delete-local"${ a.delete_local_after_upload ? ' checked' : '' }>
 					Delete local files after upload to S3
@@ -531,15 +531,15 @@
 			</div>
 			<hr>
 			<h3>CloudFront CDN (optional)</h3>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-cf-domain">CloudFront Domain</label>
 				<input type="text" id="zyg-cf-domain" class="regular-text" value="${ escHtml( a.cloudfront_domain ?? '' ) }" placeholder="d1234abcd.cloudfront.net">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-cf-id">CloudFront Distribution ID</label>
 				<input type="text" id="zyg-cf-id" class="regular-text" value="${ escHtml( a.cloudfront_distribution_id ?? '' ) }">
 			</div>
-			<div class="zymgallery-field" style="display:flex;gap:12px;align-items:center">
+			<div class="bltgallery-field" style="display:flex;gap:12px;align-items:center">
 				<button class="button button-primary" id="zyg-save-aws">Save AWS Settings</button>
 				<button class="button button-secondary" id="zyg-test-conn">Test S3 Connection</button>
 			</div>
@@ -598,44 +598,44 @@
 		container.innerHTML = `
 			<p>Store original files on <strong>Cloudflare R2</strong> to minimise local disk usage.
 			R2 is S3-compatible and has no egress fees.</p>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-r2-account-id">Cloudflare Account ID</label>
 				<input type="text" id="zyg-r2-account-id" class="regular-text" value="${ escHtml( a.account_id ?? '' ) }" placeholder="Found in the Cloudflare dashboard">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-r2-access-key">R2 Access Key ID</label>
 				<input type="text" id="zyg-r2-access-key" class="regular-text" value="${ escHtml( a.access_key_id ?? '' ) }" autocomplete="off">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-r2-secret-key">R2 Secret Access Key</label>
 				<input type="password" id="zyg-r2-secret-key" class="regular-text" value="" autocomplete="new-password" placeholder="Leave blank to keep existing">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-r2-bucket">R2 Bucket Name</label>
 				<input type="text" id="zyg-r2-bucket" class="regular-text" value="${ escHtml( a.bucket ?? '' ) }">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-r2-prefix">Path Prefix (optional)</label>
 				<input type="text" id="zyg-r2-prefix" class="regular-text" value="${ escHtml( a.path_prefix ?? '' ) }" placeholder="gallery/">
 			</div>
-			<div class="zymgallery-field">
+			<div class="bltgallery-field">
 				<label for="zyg-r2-public-url">Public Base URL</label>
 				<input type="text" id="zyg-r2-public-url" class="regular-text" value="${ escHtml( a.public_url ?? '' ) }" placeholder="https://assets.example.com">
 				<p class="description">Your bucket&rsquo;s custom domain or the <code>pub-&hellip;.r2.dev</code> URL.</p>
 			</div>
-			<div class="zymgallery-field zymgallery-field--toggle">
+			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-r2-auto-offload"${ a.auto_offload ? ' checked' : '' }>
 					Auto-offload new uploads to R2
 				</label>
 			</div>
-			<div class="zymgallery-field zymgallery-field--toggle">
+			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-r2-delete-local"${ a.delete_local_after_upload ? ' checked' : '' }>
 					Delete local files after upload to R2
 				</label>
 			</div>
-			<div class="zymgallery-field" style="display:flex;gap:12px;align-items:center">
+			<div class="bltgallery-field" style="display:flex;gap:12px;align-items:center">
 				<button class="button button-primary" id="zyg-save-r2">Save R2 Settings</button>
 				<button class="button button-secondary" id="zyg-test-r2">Test R2 Connection</button>
 			</div>
@@ -688,14 +688,14 @@
 	// ------------------------------------------------------------------
 
 	async function initImporter() {
-		const container = document.getElementById( 'zymgallery-nextgen-importer' );
+		const container = document.getElementById( 'bltgallery-nextgen-importer' );
 		if ( ! container ) return;
 
 		let status;
 		try {
 			status = await api( '/import/nextgen/status' );
 		} catch ( e ) {
-			container.innerHTML = `<p class="zymgallery-error">${ escHtml( e.message ) }</p>`;
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
 			return;
 		}
 
@@ -712,7 +712,7 @@
 		try {
 			preview = await api( '/import/nextgen/preview' );
 		} catch ( e ) {
-			container.innerHTML = `<p class="zymgallery-error">${ escHtml( e.message ) }</p>`;
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
 			return;
 		}
 
@@ -736,8 +736,8 @@
 
 		container.innerHTML = `
 			<div class="notice notice-success inline"><p>NextGEN Gallery detected. Select galleries to import below.</p></div>
-			<p><strong>Note:</strong> Your original NextGEN Gallery data and files will not be modified. ZymGallery copies files into its own upload directory.</p>
-			<table class="wp-list-table widefat fixed striped zymgallery-table" style="margin-bottom:1rem">
+			<p><strong>Note:</strong> Your original NextGEN Gallery data and files will not be modified. BltGallery copies files into its own upload directory.</p>
+			<table class="wp-list-table widefat fixed striped bltgallery-table" style="margin-bottom:1rem">
 				<thead>
 					<tr>
 						<th style="width:40px"><input type="checkbox" id="zyg-import-check-all" checked></th>
@@ -814,7 +814,7 @@
 	// ------------------------------------------------------------------
 
 	document.addEventListener( 'DOMContentLoaded', function () {
-		if ( document.getElementById( 'zymgallery-general-settings' ) ) {
+		if ( document.getElementById( 'bltgallery-general-settings' ) ) {
 			initSettings();
 		}
 	} );
@@ -823,7 +823,7 @@
 	// Public API
 	// ------------------------------------------------------------------
 
-	window.ZymGalleryAdmin = {
+	window.BltGalleryAdmin = {
 		initGalleryList,
 		initGalleryEditor,
 		initSettings,

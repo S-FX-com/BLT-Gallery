@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Display;
+namespace BltGallery\Display;
 
-use ZymGallery\Models\Gallery;
-use ZymGallery\Models\Image;
+use BltGallery\Models\Gallery;
+use BltGallery\Models\Image;
 
 /**
  * Tile grid display type.
@@ -28,14 +28,20 @@ class TileGridDisplay extends AbstractDisplay {
 			return;
 		}
 
-		$columns   = (int) ( $gallery->settings['columns'] ?? 4 );
-		$gutter    = (int) ( $gallery->settings['gutter'] ?? 8 );
-		$show_captions = ! empty( $gallery->settings['show_captions'] );
+		$columns       = (int) ( $gallery->settings['columns'] ?? 4 );
+		$gutter        = (int) ( $gallery->settings['gutter'] ?? 8 );
+		$captions_mode = sanitize_key( (string) ( $gallery->settings['captions'] ?? '' ) );
+		$show_captions = $captions_mode
+			? 'off' !== $captions_mode
+			: ! empty( $gallery->settings['show_captions'] );
+		$lightbox      = ( $gallery->settings['lightbox'] ?? '1' );
+		$lightbox      = ( '0' === (string) $lightbox || false === $lightbox ) ? '0' : '1';
 
 		printf(
-			'<ul class="zymgallery-tile__grid" style="--zym-cols:%d; --zym-gutter:%dpx;" data-lightbox="1">',
+			'<ul class="bltgallery-tile__grid" style="--blt-cols:%d; --blt-gutter:%dpx;" data-lightbox="%s">',
 			$columns,
-			$gutter
+			$gutter,
+			esc_attr( $lightbox )
 		);
 
 		foreach ( $images as $image ) {
@@ -49,9 +55,9 @@ class TileGridDisplay extends AbstractDisplay {
 	private function render_item( Image $image, bool $show_caption ): void {
 		$full_url = esc_url( $image->get_url() );
 
-		echo '<li class="zymgallery-tile__item">';
+		echo '<li class="bltgallery-tile__item">';
 		printf(
-			'<a href="%s" class="zymgallery__link" data-image-id="%d" aria-label="%s">',
+			'<a href="%s" class="bltgallery__link" data-image-id="%d" aria-label="%s">',
 			$full_url,
 			(int) $image->id,
 			esc_attr( $image->alt_text ?: $image->filename )
@@ -62,7 +68,7 @@ class TileGridDisplay extends AbstractDisplay {
 
 		if ( $show_caption && $image->caption ) {
 			printf(
-				'<span class="zymgallery-tile__caption">%s</span>',
+				'<span class="bltgallery-tile__caption">%s</span>',
 				wp_kses_post( $image->caption )
 			);
 		}

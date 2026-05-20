@@ -2,19 +2,19 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Api;
+namespace BltGallery\Api;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use ZymGallery\Core\GalleryRepository;
-use ZymGallery\Core\ImageRepository;
-use ZymGallery\Models\Gallery;
+use BltGallery\Core\GalleryRepository;
+use BltGallery\Core\ImageRepository;
+use BltGallery\Models\Gallery;
 
 /**
  * REST API endpoints for Galleries.
  *
- * Namespace : zymgallery/v1
+ * Namespace : bltgallery/v1
  * Base route: /galleries
  *
  * GET    /galleries           – paginated list
@@ -25,7 +25,7 @@ use ZymGallery\Models\Gallery;
  */
 class GalleryEndpoint {
 
-	const NAMESPACE = 'zymgallery/v1';
+	const NAMESPACE = 'bltgallery/v1';
 	const BASE      = '/galleries';
 
 	public function register(): void {
@@ -104,7 +104,7 @@ class GalleryEndpoint {
 		$gallery->settings     = (array) ( $request->get_param( 'settings' ) ?? [] );
 
 		if ( empty( $gallery->title ) ) {
-			return new WP_Error( 'missing_title', __( 'Title is required.', 'zymgallery' ), [ 'status' => 422 ] );
+			return new WP_Error( 'missing_title', __( 'Title is required.', 'bltgallery' ), [ 'status' => 422 ] );
 		}
 
 		$gallery = GalleryRepository::save( $gallery );
@@ -116,7 +116,7 @@ class GalleryEndpoint {
 		$gallery = GalleryRepository::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $gallery ) {
-			return new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] );
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
 		$data               = $gallery->to_array();
@@ -129,7 +129,7 @@ class GalleryEndpoint {
 		$gallery = GalleryRepository::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $gallery ) {
-			return new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] );
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
 		if ( null !== $request->get_param( 'title' ) ) {
@@ -157,7 +157,7 @@ class GalleryEndpoint {
 		$deleted = GalleryRepository::delete( (int) $request->get_param( 'id' ) );
 
 		if ( ! $deleted ) {
-			return new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] );
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
 		return new WP_REST_Response( [ 'deleted' => true ] );

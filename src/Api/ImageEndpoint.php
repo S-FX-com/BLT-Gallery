@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Api;
+namespace BltGallery\Api;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use ZymGallery\Core\GalleryRepository;
-use ZymGallery\Core\ImageRepository;
-use ZymGallery\Aws\S3Storage;
-use ZymGallery\Models\Image;
+use BltGallery\Core\GalleryRepository;
+use BltGallery\Core\ImageRepository;
+use BltGallery\Aws\S3Storage;
+use BltGallery\Models\Image;
 
 /**
  * REST API endpoints for Images within a Gallery.
@@ -23,7 +23,7 @@ use ZymGallery\Models\Image;
  */
 class ImageEndpoint {
 
-	const NAMESPACE = 'zymgallery/v1';
+	const NAMESPACE = 'bltgallery/v1';
 
 	public function register(): void {
 		// Collection.
@@ -87,7 +87,7 @@ class ImageEndpoint {
 		$gallery_id = (int) $request->get_param( 'gallery_id' );
 
 		if ( ! GalleryRepository::find( $gallery_id ) ) {
-			return new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] );
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
 		$images = ImageRepository::find_by_gallery( $gallery_id );
@@ -157,7 +157,7 @@ class ImageEndpoint {
 		$gallery_id = (int) $request->get_param( 'gallery_id' );
 
 		if ( ! GalleryRepository::find( $gallery_id ) ) {
-			return new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] );
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
 		$ordered_ids = array_map( 'intval', (array) $request->get_param( 'order' ) );
@@ -175,12 +175,12 @@ class ImageEndpoint {
 		$image_id   = (int) $request->get_param( 'id' );
 
 		if ( ! GalleryRepository::find( $gallery_id ) ) {
-			return [ 'image' => null, 'error' => new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] ) ];
+			return [ 'image' => null, 'error' => new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] ) ];
 		}
 
 		$image = ImageRepository::find( $image_id );
 		if ( ! $image || $image->gallery_id !== $gallery_id ) {
-			return [ 'image' => null, 'error' => new WP_Error( 'not_found', __( 'Image not found.', 'zymgallery' ), [ 'status' => 404 ] ) ];
+			return [ 'image' => null, 'error' => new WP_Error( 'not_found', __( 'Image not found.', 'bltgallery' ), [ 'status' => 404 ] ) ];
 		}
 
 		return [ 'image' => $image, 'error' => null ];

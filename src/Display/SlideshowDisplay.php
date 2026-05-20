@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Display;
+namespace BltGallery\Display;
 
-use ZymGallery\Models\Gallery;
-use ZymGallery\Models\Image;
+use BltGallery\Models\Gallery;
+use BltGallery\Models\Image;
 
 /**
  * Slideshow display type.
@@ -29,20 +29,26 @@ class SlideshowDisplay extends AbstractDisplay {
 			return;
 		}
 
-		$autoplay = ! empty( $gallery->settings['autoplay'] );
-		$speed    = (int) ( $gallery->settings['speed'] ?? 4000 );
-		$show_nav = ! isset( $gallery->settings['show_nav'] ) || $gallery->settings['show_nav'];
-		$show_dots = ! isset( $gallery->settings['show_dots'] ) || $gallery->settings['show_dots'];
+		$autoplay  = ! empty( $gallery->settings['autoplay'] );
+		$speed     = (int) ( $gallery->settings['speed'] ?? 4000 );
+		// `arrows`/`dots` (new shortcode names) take precedence over the
+		// legacy `show_nav`/`show_dots` settings.
+		$show_nav  = isset( $gallery->settings['arrows'] )
+			? '0' !== (string) $gallery->settings['arrows']
+			: ( ! isset( $gallery->settings['show_nav'] ) || $gallery->settings['show_nav'] );
+		$show_dots = isset( $gallery->settings['dots'] )
+			? '0' !== (string) $gallery->settings['dots']
+			: ( ! isset( $gallery->settings['show_dots'] ) || $gallery->settings['show_dots'] );
 
 		printf(
-			'<div class="zymgallery-slideshow" data-autoplay="%s" data-speed="%d" role="group" aria-roledescription="carousel" aria-label="%s">',
+			'<div class="bltgallery-slideshow" data-autoplay="%s" data-speed="%d" role="group" aria-roledescription="carousel" aria-label="%s">',
 			$autoplay ? 'true' : 'false',
 			$speed,
 			esc_attr( $gallery->title )
 		);
 
 		// Slides.
-		echo '<ul class="zymgallery-slideshow__track">';
+		echo '<ul class="bltgallery-slideshow__track">';
 		foreach ( $images as $idx => $image ) {
 			$this->render_slide( $image, $idx );
 		}
@@ -50,23 +56,23 @@ class SlideshowDisplay extends AbstractDisplay {
 
 		// Navigation arrows.
 		if ( $show_nav ) {
-			echo '<button class="zymgallery-slideshow__prev" aria-label="' . esc_attr__( 'Previous slide', 'zymgallery' ) . '">';
+			echo '<button class="bltgallery-slideshow__prev" aria-label="' . esc_attr__( 'Previous slide', 'bltgallery' ) . '">';
 			echo '<span aria-hidden="true">&#8249;</span>';
 			echo '</button>';
-			echo '<button class="zymgallery-slideshow__next" aria-label="' . esc_attr__( 'Next slide', 'zymgallery' ) . '">';
+			echo '<button class="bltgallery-slideshow__next" aria-label="' . esc_attr__( 'Next slide', 'bltgallery' ) . '">';
 			echo '<span aria-hidden="true">&#8250;</span>';
 			echo '</button>';
 		}
 
 		// Dot indicators.
 		if ( $show_dots && count( $images ) <= 20 ) {
-			echo '<ol class="zymgallery-slideshow__dots" aria-label="' . esc_attr__( 'Slide indicators', 'zymgallery' ) . '">';
+			echo '<ol class="bltgallery-slideshow__dots" aria-label="' . esc_attr__( 'Slide indicators', 'bltgallery' ) . '">';
 			foreach ( $images as $idx => $image ) {
 				printf(
-					'<li><button class="zymgallery-slideshow__dot%s" data-slide="%d" aria-label="%s"></button></li>',
+					'<li><button class="bltgallery-slideshow__dot%s" data-slide="%d" aria-label="%s"></button></li>',
 					0 === $idx ? ' is-active' : '',
 					$idx,
-					sprintf( esc_attr__( 'Go to slide %d', 'zymgallery' ), $idx + 1 )
+					sprintf( esc_attr__( 'Go to slide %d', 'bltgallery' ), $idx + 1 )
 				);
 			}
 			echo '</ol>';
@@ -80,16 +86,16 @@ class SlideshowDisplay extends AbstractDisplay {
 		$full_url = esc_url( $image->get_url() );
 
 		printf(
-			'<li class="zymgallery-slideshow__slide%s" role="group" aria-roledescription="slide" aria-label="%s">',
+			'<li class="bltgallery-slideshow__slide%s" role="group" aria-roledescription="slide" aria-label="%s">',
 			0 === $idx ? ' is-active' : '',
-			sprintf( esc_attr__( 'Slide %d', 'zymgallery' ), $idx + 1 )
+			sprintf( esc_attr__( 'Slide %d', 'bltgallery' ), $idx + 1 )
 		);
 
 		echo $this->img_tag( $image, 'large', $idx > 0 );
 
 		if ( $image->caption ) {
 			printf(
-				'<p class="zymgallery-slideshow__caption">%s</p>',
+				'<p class="bltgallery-slideshow__caption">%s</p>',
 				wp_kses_post( $image->caption )
 			);
 		}

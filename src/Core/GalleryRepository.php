@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Core;
+namespace BltGallery\Core;
 
-use ZymGallery\Models\Gallery;
+use BltGallery\Models\Gallery;
 
 /**
  * Data-access layer for galleries.

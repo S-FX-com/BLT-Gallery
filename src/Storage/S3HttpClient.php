@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Storage;
+namespace BltGallery\Storage;
 
 /**
  * Minimal S3-compatible HTTP client using AWS Signature Version 4.

@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Models;
+namespace BltGallery\Models;
 
 /**
  * Value object representing a gallery row.

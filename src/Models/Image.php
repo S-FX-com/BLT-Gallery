@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Models;
+namespace BltGallery\Models;
 
 /**
  * Value object representing an image row.
@@ -87,9 +87,20 @@ class Image {
 
 	/**
 	 * Returns a thumbnail URL if stored as meta (generated during upload).
+	 * When Cloudflare Image Resizing is enabled, the full-size URL is
+	 * rewritten through `/cdn-cgi/image/` at the requested width.
 	 */
 	public function get_thumb_url( string $size = 'medium' ): string {
-		return $this->meta['thumbs'][ $size ]['url'] ?? $this->get_url();
+		$baked = $this->meta['thumbs'][ $size ]['url'] ?? null;
+
+		if ( \BltGallery\Storage\CloudflareImages::is_enabled() ) {
+			$widths = [ 'thumb' => 320, 'medium' => 800, 'large' => 1600 ];
+			$width  = $widths[ $size ] ?? 800;
+			$src    = $baked ?: $this->get_url();
+			return \BltGallery\Storage\CloudflareImages::transform( $src, [ 'width' => $width ] );
+		}
+
+		return $baked ?? $this->get_url();
 	}
 
 	// ------------------------------------------------------------------

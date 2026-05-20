@@ -1,5 +1,5 @@
 /**
- * ZymGallery – Frontend JS (no build required, vanilla ES2020).
+ * BltGallery – Frontend JS (no build required, vanilla ES2020).
  * Combines: masonry, slideshow, lightbox.
  */
 ( function () {
@@ -12,18 +12,18 @@
 	// ------------------------------------------------------------------
 
 	function initMasonry() {
-		document.querySelectorAll( '.zymgallery--masonry' ).forEach( function ( container ) {
-			var grid = container.querySelector( '.zymgallery-masonry__grid' );
+		document.querySelectorAll( '.bltgallery--masonry' ).forEach( function ( container ) {
+			var grid = container.querySelector( '.bltgallery-masonry__grid' );
 			if ( ! grid ) return;
 			if ( grid.dataset.lightbox ) {
 				grid.addEventListener( 'click', function ( e ) {
-					var link = e.target.closest( '.zymgallery__link' );
+					var link = e.target.closest( '.bltgallery__link' );
 					if ( ! link ) return;
-					var c = link.closest( '.zymgallery' );
-					if ( c && c._zymLightbox ) {
+					var c = link.closest( '.bltgallery' );
+					if ( c && c._bltLightbox ) {
 						e.preventDefault();
-						var links = [ ...c.querySelectorAll( '.zymgallery__link' ) ];
-						c._zymLightbox.open( Math.max( 0, links.indexOf( link ) ) );
+						var links = [ ...c.querySelectorAll( '.bltgallery__link' ) ];
+						c._bltLightbox.open( Math.max( 0, links.indexOf( link ) ) );
 					}
 				} );
 			}
@@ -35,15 +35,15 @@
 	// ------------------------------------------------------------------
 
 	function initSlideshow() {
-		document.querySelectorAll( '.zymgallery--slideshow' ).forEach( function ( container ) {
-			var ss     = container.querySelector( '.zymgallery-slideshow' );
+		document.querySelectorAll( '.bltgallery--slideshow' ).forEach( function ( container ) {
+			var ss     = container.querySelector( '.bltgallery-slideshow' );
 			if ( ! ss ) return;
 
-			var track  = ss.querySelector( '.zymgallery-slideshow__track' );
-			var slides = [ ...ss.querySelectorAll( '.zymgallery-slideshow__slide' ) ];
-			var dots   = [ ...ss.querySelectorAll( '.zymgallery-slideshow__dot' ) ];
-			var prev   = ss.querySelector( '.zymgallery-slideshow__prev' );
-			var next   = ss.querySelector( '.zymgallery-slideshow__next' );
+			var track  = ss.querySelector( '.bltgallery-slideshow__track' );
+			var slides = [ ...ss.querySelectorAll( '.bltgallery-slideshow__slide' ) ];
+			var dots   = [ ...ss.querySelectorAll( '.bltgallery-slideshow__dot' ) ];
+			var prev   = ss.querySelector( '.bltgallery-slideshow__prev' );
+			var next   = ss.querySelector( '.bltgallery-slideshow__next' );
 
 			if ( slides.length < 2 ) return;
 
@@ -111,7 +111,7 @@
 	var FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 	function trapFocus( container ) {
-		container._zymFocusTrap = function ( e ) {
+		container._bltFocusTrap = function ( e ) {
 			if ( e.key !== 'Tab' ) return;
 			var focusable = [ ...container.querySelectorAll( FOCUSABLE ) ];
 			var first = focusable[ 0 ];
@@ -119,13 +119,13 @@
 			if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last && last.focus(); }
 			else if ( ! e.shiftKey && document.activeElement === last ) { e.preventDefault(); first && first.focus(); }
 		};
-		document.addEventListener( 'keydown', container._zymFocusTrap );
+		document.addEventListener( 'keydown', container._bltFocusTrap );
 	}
 
 	function releaseFocus( container ) {
-		if ( container._zymFocusTrap ) {
-			document.removeEventListener( 'keydown', container._zymFocusTrap );
-			delete container._zymFocusTrap;
+		if ( container._bltFocusTrap ) {
+			document.removeEventListener( 'keydown', container._bltFocusTrap );
+			delete container._bltFocusTrap;
 		}
 	}
 
@@ -141,11 +141,11 @@
 		var current  = 0;
 		var openerEl = null;
 
-		var closeBtn  = modal.querySelector( '.zymgallery-lightbox__close' );
-		var prevBtn   = modal.querySelector( '.zymgallery-lightbox__prev' );
-		var nextBtn   = modal.querySelector( '.zymgallery-lightbox__next' );
-		var imgEl     = modal.querySelector( '.zymgallery-lightbox__img' );
-		var captionEl = modal.querySelector( '.zymgallery-lightbox__caption' );
+		var closeBtn  = modal.querySelector( '.bltgallery-lightbox__close' );
+		var prevBtn   = modal.querySelector( '.bltgallery-lightbox__prev' );
+		var nextBtn   = modal.querySelector( '.bltgallery-lightbox__next' );
+		var imgEl     = modal.querySelector( '.bltgallery-lightbox__img' );
+		var captionEl = modal.querySelector( '.bltgallery-lightbox__caption' );
 
 		function show( idx ) {
 			current = ( idx + images.length ) % images.length;
@@ -164,14 +164,14 @@
 			openerEl     = document.activeElement;
 			show( idx );
 			modal.hidden = false;
-			document.body.classList.add( 'zym-lightbox-open' );
+			document.body.classList.add( 'blt-lightbox-open' );
 			if ( closeBtn ) closeBtn.focus();
 			trapFocus( modal );
 		}
 
 		function close() {
 			modal.hidden = true;
-			document.body.classList.remove( 'zym-lightbox-open' );
+			document.body.classList.remove( 'blt-lightbox-open' );
 			releaseFocus( modal );
 			if ( openerEl ) openerEl.focus();
 		}
@@ -204,17 +204,17 @@
 	// ------------------------------------------------------------------
 
 	function initLightbox() {
-		document.querySelectorAll( '.zymgallery--lightbox' ).forEach( function ( container ) {
-			var modal    = container.querySelector( '.zymgallery-lightbox__modal' );
-			var template = container.querySelector( '.zymgallery-lightbox__data' );
-			var triggers = [ ...container.querySelectorAll( '.zymgallery-lightbox__trigger' ) ];
+		document.querySelectorAll( '.bltgallery--lightbox' ).forEach( function ( container ) {
+			var modal    = container.querySelector( '.bltgallery-lightbox__modal' );
+			var template = container.querySelector( '.bltgallery-lightbox__data' );
+			var triggers = [ ...container.querySelectorAll( '.bltgallery-lightbox__trigger' ) ];
 			if ( ! modal || ! template ) return;
 
 			var images = [];
 			try { images = JSON.parse( template.textContent ); } catch {}
 
 			var lb = createLightbox( modal, images );
-			container._zymLightbox = lb;
+			container._bltLightbox = lb;
 
 			triggers.forEach( function ( btn ) {
 				btn.addEventListener( 'click', function () { lb.open( parseInt( btn.dataset.index, 10 ) || 0 ); } );
@@ -223,47 +223,47 @@
 
 		// Masonry/tile grids with data-lightbox="1".
 		document.querySelectorAll( '[data-lightbox="1"]' ).forEach( function ( grid ) {
-			var container = grid.closest( '.zymgallery' );
-			if ( ! container || container.classList.contains( 'zymgallery--lightbox' ) ) return;
+			var container = grid.closest( '.bltgallery' );
+			if ( ! container || container.classList.contains( 'bltgallery--lightbox' ) ) return;
 
-			var links  = [ ...grid.querySelectorAll( '.zymgallery__link' ) ];
+			var links  = [ ...grid.querySelectorAll( '.bltgallery__link' ) ];
 			var images = links.map( function ( link ) {
 				var img = link.querySelector( 'img' );
 				return {
 					src:     link.href,
 					thumb:   img ? img.src : '',
 					alt:     img ? img.alt : '',
-					caption: ( link.querySelector( '.zymgallery__caption' ) || {} ).textContent || '',
+					caption: ( link.querySelector( '.bltgallery__caption' ) || {} ).textContent || '',
 				};
 			} );
 
 			var modal = document.createElement( 'div' );
-			modal.className = 'zymgallery-lightbox__modal';
+			modal.className = 'bltgallery-lightbox__modal';
 			modal.setAttribute( 'role', 'dialog' );
 			modal.setAttribute( 'aria-modal', 'true' );
 			modal.setAttribute( 'aria-label', 'Image lightbox' );
 			modal.hidden = true;
-			modal.innerHTML = '<button class="zymgallery-lightbox__close" aria-label="Close lightbox">&times;</button>' +
-				'<button class="zymgallery-lightbox__prev" aria-label="Previous image">&#8249;</button>' +
-				'<button class="zymgallery-lightbox__next" aria-label="Next image">&#8250;</button>' +
-				'<figure class="zymgallery-lightbox__figure">' +
-				'<img class="zymgallery-lightbox__img" src="" alt="">' +
-				'<figcaption class="zymgallery-lightbox__caption"></figcaption>' +
+			modal.innerHTML = '<button class="bltgallery-lightbox__close" aria-label="Close lightbox">&times;</button>' +
+				'<button class="bltgallery-lightbox__prev" aria-label="Previous image">&#8249;</button>' +
+				'<button class="bltgallery-lightbox__next" aria-label="Next image">&#8250;</button>' +
+				'<figure class="bltgallery-lightbox__figure">' +
+				'<img class="bltgallery-lightbox__img" src="" alt="">' +
+				'<figcaption class="bltgallery-lightbox__caption"></figcaption>' +
 				'</figure>';
 			document.body.appendChild( modal );
 
 			var lb = createLightbox( modal, images );
-			container._zymLightbox = lb;
+			container._bltLightbox = lb;
 
 			links.forEach( function ( link, idx ) {
 				link.addEventListener( 'click', function ( e ) { e.preventDefault(); lb.open( idx ); } );
 			} );
 		} );
 
-		document.addEventListener( 'zym:open-lightbox', function ( e ) {
-			var container = e.target.closest( '.zymgallery' );
-			if ( container && container._zymLightbox ) {
-				container._zymLightbox.open( ( e.detail && e.detail.idx ) || 0 );
+		document.addEventListener( 'blt:open-lightbox', function ( e ) {
+			var container = e.target.closest( '.bltgallery' );
+			if ( container && container._bltLightbox ) {
+				container._bltLightbox.open( ( e.detail && e.detail.idx ) || 0 );
 			}
 		} );
 	}

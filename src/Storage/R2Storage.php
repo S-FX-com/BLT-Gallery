@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Storage;
+namespace BltGallery\Storage;
 
-use ZymGallery\Models\Image;
+use BltGallery\Models\Image;
 
 /**
  * Handles uploading images to Cloudflare R2 using the S3-compatible API.
@@ -14,7 +14,7 @@ use ZymGallery\Models\Image;
  * R2 uses path-style endpoints and does not support ACLs; bucket visibility
  * is managed in the Cloudflare dashboard.
  *
- * Settings (stored in 'zymgallery_r2_settings' option):
+ * Settings (stored in 'bltgallery_r2_settings' option):
  *   account_id              – Cloudflare account ID (found in the dashboard)
  *   access_key_id           – R2 API token access key
  *   secret_access_key       – R2 API token secret
@@ -112,7 +112,7 @@ class R2Storage {
 			$this->client->delete_object( $this->settings['bucket'], $r2_key );
 		} catch ( \RuntimeException $e ) {
 			// Log but do not throw – deletion failure should not block UI.
-			error_log( "ZymGallery R2 delete failed for {$r2_key}: " . $e->getMessage() );
+			error_log( "BltGallery R2 delete failed for {$r2_key}: " . $e->getMessage() );
 		}
 	}
 
@@ -170,7 +170,7 @@ class R2Storage {
 	}
 
 	private static function load_settings_static(): array {
-		$raw = get_option( 'zymgallery_r2_settings', [] );
+		$raw = get_option( 'bltgallery_r2_settings', [] );
 		return is_array( $raw ) ? $raw : [];
 	}
 }
