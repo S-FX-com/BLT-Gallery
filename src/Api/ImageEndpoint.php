@@ -146,6 +146,9 @@ class ImageEndpoint {
 		if ( null !== $request->get_param( 'description' ) ) {
 			$image->description = wp_kses_post( $request->get_param( 'description' ) );
 		}
+		if ( null !== $request->get_param( 'title' ) ) {
+			$image->meta['title'] = sanitize_text_field( $request->get_param( 'title' ) );
+		}
 
 		$image = ImageRepository::save( $image );
 

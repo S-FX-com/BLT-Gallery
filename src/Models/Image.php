@@ -107,6 +107,10 @@ class Image {
 	// Serialisation
 	// ------------------------------------------------------------------
 
+	public function get_title(): string {
+		return (string) ( $this->meta['title'] ?? '' );
+	}
+
 	public function to_array(): array {
 		$thumbs = [];
 		foreach ( [ 'thumb', 'medium', 'large' ] as $size ) {
@@ -122,6 +126,7 @@ class Image {
 			'id'             => $this->id,
 			'gallery_id'     => $this->gallery_id,
 			'filename'       => $this->filename,
+			'title'          => $this->get_title(),
 			'alt_text'       => $this->alt_text,
 			'caption'        => $this->caption,
 			'description'    => $this->description,

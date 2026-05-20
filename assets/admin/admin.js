@@ -150,18 +150,27 @@
 		}
 
 		const rows = galleries.map( ( g ) => {
-			const cat  = ( g.settings && g.settings.category ) || '';
-			const date = ( g.settings && g.settings.gallery_date ) || g.created_at;
+			const albums = Array.isArray( g.settings && g.settings.albums )
+				? g.settings.albums
+				: ( g.settings && g.settings.category ? [ g.settings.category ] : [] );
+			const date   = ( g.settings && g.settings.gallery_date ) || g.created_at;
+			const shortcode = `[blt_gallery id="${ g.id }"]`;
 			return `
 				<tr>
-					<td><strong><a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
+					<td><strong><a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
 					<td>${ escHtml( g.display_type ) }</td>
-					<td>${ cat ? `<span class="bltgallery-cat-pill">${ escHtml( cat ) }</span>` : '<span class="bltgallery-muted">—</span>' }</td>
-					<td><code>[blt_gallery id="${ escHtml( String( g.id ) ) }"]</code></td>
+					<td>${ albums.length
+						? albums.map( ( a ) => `<span class="bltgallery-cat-pill">${ escHtml( a ) }</span>` ).join( ' ' )
+						: '<span class="bltgallery-muted">—</span>' }</td>
+					<td>
+						<button type="button" class="bltgallery-shortcode-copy" data-copy="${ escAttr( shortcode ) }" title="Click to copy">
+							<code>${ escHtml( shortcode ) }</code>
+						</button>
+					</td>
 					<td>${ escHtml( date ? new Date( date ).toLocaleDateString() : '' ) }</td>
 					<td>
-						<a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }" class="button button-secondary">Edit</a>
-						<button class="button bltgallery-delete-btn" data-id="${ g.id }" data-title="${ escHtml( g.title ) }">Delete</button>
+						<a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }" class="button button-secondary">Edit</a>
+						<button class="button bltgallery-delete-btn" data-id="${ g.id }" data-title="${ escAttr( g.title ) }">Delete</button>
 					</td>
 				</tr>
 			`;
@@ -201,6 +210,46 @@
 				}
 			} );
 		} );
+
+		container.querySelectorAll( '.bltgallery-shortcode-copy' ).forEach( ( btn ) => {
+			btn.addEventListener( 'click', () => copyToClipboard( btn.dataset.copy, btn ) );
+		} );
+	}
+
+	/**
+	 * Promotes a static <code> element into a click-to-copy button so we
+	 * can reuse it from the gallery editor header.
+	 */
+	function makeCopyable( el ) {
+		if ( ! el ) return;
+		el.setAttribute( 'role', 'button' );
+		el.setAttribute( 'tabindex', '0' );
+		el.classList.add( 'bltgallery-copyable' );
+		el.title = 'Click to copy';
+		const fire = () => copyToClipboard( el.textContent, el );
+		el.addEventListener( 'click', fire );
+		el.addEventListener( 'keydown', ( e ) => {
+			if ( e.key === 'Enter' || e.key === ' ' ) { e.preventDefault(); fire(); }
+		} );
+	}
+
+	async function copyToClipboard( text, sourceEl ) {
+		if ( ! text ) return;
+		try {
+			await navigator.clipboard.writeText( text );
+			if ( sourceEl ) {
+				sourceEl.classList.add( 'is-copied' );
+				const label = sourceEl.dataset.flashLabel || 'Copied!';
+				const original = sourceEl.innerHTML;
+				sourceEl.innerHTML = `<code>${ escHtml( label ) }</code>`;
+				setTimeout( () => {
+					sourceEl.classList.remove( 'is-copied' );
+					sourceEl.innerHTML = original;
+				}, 1200 );
+			}
+		} catch {
+			// Clipboard API unavailable — silent fallback.
+		}
 	}
 
 	// ------------------------------------------------------------------
@@ -287,14 +336,118 @@
 		}
 
 		if ( titleEl )     titleEl.textContent = gallery.title;
-		if ( shortcodeEl ) shortcodeEl.textContent = `[blt_gallery id="${ galleryId }"]`;
+		if ( shortcodeEl ) {
+			shortcodeEl.textContent = `[blt_gallery id="${ galleryId }"]`;
+			makeCopyable( shortcodeEl );
+		}
 
 		renderEditorSettings( settingsEl, gallery, galleryId );
 		renderImageGrid( gridEl, images, galleryId );
+		renderAlbumsMetabox( gallery, galleryId );
 		initUploader( galleryId, ( newImage ) => {
 			images.push( newImage );
 			renderImageGrid( gridEl, images, galleryId );
 		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Albums sidebar metabox on the gallery editor
+	// ------------------------------------------------------------------
+
+	async function renderAlbumsMetabox( gallery, galleryId ) {
+		const box = document.getElementById( 'bltgallery-albums-metabox' );
+		if ( ! box ) return;
+
+		const selected = new Set( normaliseGalleryAlbums( gallery ) );
+
+		let albums = [];
+		try {
+			albums = await api( '/albums' );
+		} catch ( e ) {
+			box.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		box.innerHTML = `
+			<p class="description">Tick the albums this gallery belongs to. Render them with <code>[blt_album category="slug"]</code>.</p>
+			<ul class="bltgallery-album-list" id="zyg-album-list">
+				${ albums.length
+					? albums.map( ( a ) => `
+						<li>
+							<label>
+								<input type="checkbox" value="${ escAttr( a.slug ) }"${ selected.has( a.slug ) ? ' checked' : '' }>
+								<span>${ escHtml( a.name ) }</span>
+								<small>(${ a.gallery_count || 0 })</small>
+							</label>
+						</li>
+					` ).join( '' )
+					: `<li class="bltgallery-muted">No albums yet.</li>`
+				}
+			</ul>
+			<details class="bltgallery-album-add">
+				<summary>+ Add new album</summary>
+				<div class="bltgallery-album-add__row">
+					<input type="text" id="zyg-new-album" placeholder="Album name" class="regular-text">
+					<button type="button" class="button" id="zyg-add-album">Add</button>
+				</div>
+			</details>
+			<div class="bltgallery-album-save">
+				<button type="button" class="button button-primary" id="zyg-save-albums">Save album assignments</button>
+			</div>
+		`;
+
+		const list = box.querySelector( '#zyg-album-list' );
+
+		box.querySelector( '#zyg-add-album' ).addEventListener( 'click', async () => {
+			const input = box.querySelector( '#zyg-new-album' );
+			const name  = input.value.trim();
+			if ( ! name ) { input.focus(); return; }
+			try {
+				const album = await api( '/albums', { method: 'POST', body: { name } } );
+				// Insert into the list, pre-selected.
+				const li = document.createElement( 'li' );
+				li.innerHTML = `
+					<label>
+						<input type="checkbox" value="${ escAttr( album.slug ) }" checked>
+						<span>${ escHtml( album.name ) }</span>
+						<small>(0)</small>
+					</label>
+				`;
+				const muted = list.querySelector( '.bltgallery-muted' );
+				if ( muted ) muted.remove();
+				list.appendChild( li );
+				input.value = '';
+				input.focus();
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			}
+		} );
+
+		box.querySelector( '#zyg-save-albums' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Saving…';
+			const slugs = [ ...box.querySelectorAll( 'input[type="checkbox"]:checked' ) ]
+				.map( ( cb ) => cb.value );
+			try {
+				await api( `/galleries/${ galleryId }`, {
+					method: 'PUT',
+					body:   { settings: { albums: slugs } },
+				} );
+				showNotice( 'Album assignments saved.' );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				e.target.disabled = false;
+				e.target.textContent = 'Save album assignments';
+			}
+		} );
+	}
+
+	function normaliseGalleryAlbums( gallery ) {
+		const settings = gallery.settings || {};
+		if ( Array.isArray( settings.albums ) ) return settings.albums;
+		if ( settings.category )                return [ settings.category ];
+		return [];
 	}
 
 	function renderEditorSettings( container, gallery, galleryId ) {
@@ -302,7 +455,6 @@
 		const selected   = gallery.display_type || 'masonry';
 		const columns    = settings.columns ?? 4;
 		const galDate    = settings.gallery_date || '';
-		const category   = settings.category || '';
 		const pagination = settings.pagination || 'off';
 		const perPage    = settings.per_page ?? 24;
 		const autoplay   = settings.autoplay ? '1' : '0';
@@ -331,13 +483,7 @@
 			<div class="bltgallery-field">
 				<label for="zyg-gallery-date">Date (optional)</label>
 				<input type="date" id="zyg-gallery-date" value="${ escHtml( galDate ) }">
-				<p class="description">YYYY-MM-DD. Rendered above the gallery and used for sorting albums by date.</p>
-			</div>
-			<div class="bltgallery-field">
-				<label for="zyg-category">Album / Category (optional)</label>
-				<input type="text" id="zyg-category" class="regular-text" value="${ escHtml( category ) }" list="zyg-category-suggestions" placeholder="e.g. weddings">
-				<datalist id="zyg-category-suggestions"></datalist>
-				<p class="description">Group this gallery with others in <code>[blt_album category="…"]</code>.</p>
+				<p class="description">Rendered above the gallery using your site's date format and used for sorting albums by date.</p>
 			</div>
 			<div class="bltgallery-field">
 				<span class="bltgallery-field__label">Display Type</span>
@@ -358,8 +504,10 @@
 					<option value="numbered"${ pagination === 'numbered' ? ' selected' : '' }>Numbered pages</option>
 					<option value="infinite"${ pagination === 'infinite' ? ' selected' : '' }>Infinite scroll</option>
 				</select>
-				<label for="zyg-per-page" style="margin-left:1rem">Per page</label>
-				<input type="number" id="zyg-per-page" class="small-text" min="1" max="200" value="${ perPage }">
+				<span id="zyg-per-page-wrap" style="margin-left:1rem">
+					<label for="zyg-per-page">Per page</label>
+					<input type="number" id="zyg-per-page" class="small-text" min="1" max="200" value="${ perPage }">
+				</span>
 			</div>
 			<div class="bltgallery-field" id="zyg-slideshow-row" style="display:none">
 				<label for="zyg-autoplay">Autoplay</label>
@@ -375,28 +523,28 @@
 			</div>
 		`;
 
-		// Populate the category datalist by harvesting existing values from the API.
-		api( '/galleries?per_page=100' ).then( ( galleries ) => {
-			const dl = container.querySelector( '#zyg-category-suggestions' );
-			const cats = Array.from( new Set( galleries.map( ( g ) => g.settings?.category ).filter( Boolean ) ) );
-			dl.innerHTML = cats.map( ( c ) => `<option value="${ escHtml( c ) }">` ).join( '' );
-		} ).catch( () => {} );
-
-		const cardsWrap = container.querySelector( '.bltgallery-type-cards' );
-		const colsRow   = container.querySelector( '#zyg-cols-row' );
-		const pagRow    = container.querySelector( '#zyg-pagination-row' );
-		const ssRow     = container.querySelector( '#zyg-slideshow-row' );
+		const cardsWrap   = container.querySelector( '.bltgallery-type-cards' );
+		const colsRow     = container.querySelector( '#zyg-cols-row' );
+		const pagRow      = container.querySelector( '#zyg-pagination-row' );
+		const ssRow       = container.querySelector( '#zyg-slideshow-row' );
+		const paginationS = container.querySelector( '#zyg-pagination' );
+		const perPageWrap = container.querySelector( '#zyg-per-page-wrap' );
 
 		function selectedType() {
 			return cardsWrap.querySelector( 'input[name="bltgallery-display-type"]:checked' )?.value || 'masonry';
 		}
 
 		function updateTypeVisibility() {
-			const type = selectedType();
+			const type    = selectedType();
 			const isSlide = type === 'slideshow';
 			colsRow.style.display = isSlide ? 'none' : '';
 			pagRow.style.display  = isSlide ? 'none' : '';
 			ssRow.style.display   = isSlide ? '' : 'none';
+		}
+
+		// "Per page" only matters when pagination is on.
+		function updatePerPageVisibility() {
+			perPageWrap.style.display = ( paginationS.value === 'off' ) ? 'none' : '';
 		}
 
 		cardsWrap.addEventListener( 'change', ( e ) => {
@@ -406,20 +554,20 @@
 			} );
 			updateTypeVisibility();
 		} );
+		paginationS.addEventListener( 'change', updatePerPageVisibility );
 
 		updateTypeVisibility();
+		updatePerPageVisibility();
 
 		container.querySelector( '#zyg-save-btn' ).addEventListener( 'click', async ( e ) => {
 			e.target.disabled = true;
 			e.target.textContent = 'Saving…';
-			const type        = selectedType();
-			const isSlide     = type === 'slideshow';
-			const dateValue   = container.querySelector( '#zyg-gallery-date' ).value;
-			const catValue    = container.querySelector( '#zyg-category' ).value.trim();
+			const type      = selectedType();
+			const isSlide   = type === 'slideshow';
+			const dateValue = container.querySelector( '#zyg-gallery-date' ).value;
 
 			const baseSettings = {
 				gallery_date: dateValue,
-				category:     catValue,
 			};
 
 			const body = {
@@ -433,7 +581,7 @@
 					}
 					: { ...baseSettings,
 						columns:    parseInt( container.querySelector( '#zyg-columns' ).value, 10 ),
-						pagination: container.querySelector( '#zyg-pagination' ).value,
+						pagination: paginationS.value,
 						per_page:   parseInt( container.querySelector( '#zyg-per-page' ).value, 10 ),
 					},
 			};
@@ -473,70 +621,26 @@
 			li.draggable    = true;
 			li.dataset.id   = img.id;
 			li.innerHTML = `
-				<img src="${ escHtml( img.thumb_url || img.url ) }" alt="${ escHtml( img.alt_text || img.filename ) }" loading="lazy" width="100" height="100">
+				<img src="${ escAttr( img.thumb_url || img.url ) }" alt="${ escAttr( img.alt_text || img.filename ) }" loading="lazy" width="100" height="100">
 				<div class="bltgallery-image-grid__meta">
-					<span class="bltgallery-image-grid__name" title="${ escHtml( img.filename ) }">${ escHtml( img.alt_text || img.filename ) }</span>
+					<span class="bltgallery-image-grid__name" title="${ escAttr( img.filename ) }">${ escHtml( img.title || img.alt_text || img.filename ) }</span>
 					<div class="bltgallery-image-grid__actions">
-						<button class="button-link zyg-img-edit" aria-label="Edit ${ escHtml( img.filename ) }">Edit</button>
-						<button class="button-link-delete zyg-img-delete" aria-label="Delete ${ escHtml( img.filename ) }">&times;</button>
+						<button class="button button-secondary button-small zyg-img-edit" aria-label="Edit ${ escAttr( img.filename ) }">Edit</button>
+						<button class="button-link-delete zyg-img-delete" aria-label="Delete ${ escAttr( img.filename ) }">&times;</button>
 					</div>
 				</div>
-				<form class="bltgallery-image-grid__edit" hidden>
-					<label>
-						<span>Title / alt text</span>
-						<input type="text" name="alt_text" value="${ escHtml( img.alt_text || '' ) }" placeholder="${ escHtml( img.filename ) }">
-					</label>
-					<label>
-						<span>Caption</span>
-						<textarea name="caption" rows="2" placeholder="Shown in lightbox and on hover">${ escHtml( img.caption || '' ) }</textarea>
-					</label>
-					<div class="bltgallery-image-grid__edit-actions">
-						<button type="submit" class="button button-primary">Save</button>
-						<button type="button" class="button button-secondary zyg-img-cancel">Cancel</button>
-					</div>
-				</form>
 			`;
 
-			const form = li.querySelector( '.bltgallery-image-grid__edit' );
-			const name = li.querySelector( '.bltgallery-image-grid__name' );
+			const nameEl = li.querySelector( '.bltgallery-image-grid__name' );
 
 			li.querySelector( '.zyg-img-edit' ).addEventListener( 'click', () => {
-				const open = ! form.hidden;
-				form.hidden = open;
-				li.classList.toggle( 'is-editing', ! open );
-				if ( ! open ) form.querySelector( 'input[name="alt_text"]' ).focus();
-			} );
-
-			li.querySelector( '.zyg-img-cancel' ).addEventListener( 'click', () => {
-				form.hidden = true;
-				li.classList.remove( 'is-editing' );
-				form.querySelector( 'input[name="alt_text"]' ).value = img.alt_text || '';
-				form.querySelector( 'textarea[name="caption"]' ).value = img.caption || '';
-			} );
-
-			form.addEventListener( 'submit', async ( ev ) => {
-				ev.preventDefault();
-				const submit = form.querySelector( 'button[type="submit"]' );
-				submit.disabled = true;
-				submit.textContent = 'Saving…';
-				const body = {
-					alt_text: form.querySelector( 'input[name="alt_text"]' ).value.trim(),
-					caption:  form.querySelector( 'textarea[name="caption"]' ).value,
-				};
-				try {
-					const updated = await api( `/galleries/${ galleryId }/images/${ img.id }`, { method: 'PATCH', body } );
+				openImageEditor( img, galleryId, ( updated ) => {
+					// Keep the in-memory model in sync so re-opens show fresh values.
+					img.title    = updated.title;
 					img.alt_text = updated.alt_text;
 					img.caption  = updated.caption;
-					name.textContent  = updated.alt_text || updated.filename;
-					form.hidden = true;
-					li.classList.remove( 'is-editing' );
-					showNotice( 'Image updated.' );
-				} catch ( err ) {
-					showNotice( err.message, 'error' );
-				} finally {
-					submit.disabled = false;
-					submit.textContent = 'Save';
-				}
+					nameEl.textContent = updated.title || updated.alt_text || updated.filename;
+				} );
 			} );
 
 			li.querySelector( '.zyg-img-delete' ).addEventListener( 'click', async () => {
@@ -558,6 +662,69 @@
 		} );
 
 		initDragReorder( list, galleryId );
+	}
+
+	function escAttr( s ) { return escHtml( s ).replace( /"/g, '&quot;' ); }
+
+	// ------------------------------------------------------------------
+	// Image edit modal — opened by the Edit button on a tile.
+	// ------------------------------------------------------------------
+
+	function openImageEditor( img, galleryId, onSaved ) {
+		const dialog = document.getElementById( 'bltgallery-image-modal' );
+		if ( ! dialog ) return;
+
+		const form    = dialog.querySelector( '#bltgallery-image-form' );
+		const thumb   = dialog.querySelector( '#bltgallery-image-modal-thumb' );
+		const title   = dialog.querySelector( '#bltgallery-image-modal-title' );
+		const alt     = dialog.querySelector( '#bltgallery-image-modal-alt' );
+		const caption = dialog.querySelector( '#bltgallery-image-modal-caption' );
+		const submit  = dialog.querySelector( '#bltgallery-image-modal-save' );
+
+		thumb.src      = img.thumb_url || img.url || '';
+		thumb.alt      = img.alt_text || img.filename || '';
+		title.value    = img.title    || '';
+		alt.value      = img.alt_text || '';
+		caption.value  = img.caption  || '';
+		title.placeholder = img.filename || '';
+
+		dialog.querySelectorAll( '[data-close]' ).forEach( ( btn ) => {
+			btn.onclick = () => dialog.close();
+		} );
+
+		// Replace any prior submit handler so we don't double-save.
+		form.onsubmit = async ( e ) => {
+			e.preventDefault();
+			submit.disabled = true;
+			const originalText = submit.textContent;
+			submit.textContent = 'Saving…';
+			try {
+				const updated = await api( `/galleries/${ galleryId }/images/${ img.id }`, {
+					method: 'PATCH',
+					body:   {
+						title:    title.value.trim(),
+						alt_text: alt.value.trim(),
+						caption:  caption.value,
+					},
+				} );
+				onSaved( updated );
+				dialog.close();
+				showNotice( 'Image updated.' );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				submit.disabled = false;
+				submit.textContent = originalText;
+			}
+		};
+
+		if ( typeof dialog.showModal === 'function' ) {
+			dialog.showModal();
+			setTimeout( () => title.focus(), 50 );
+		} else {
+			dialog.setAttribute( 'open', '' );
+			title.focus();
+		}
 	}
 
 	function initDragReorder( list, galleryId ) {
@@ -673,12 +840,13 @@
 
 		if ( ! genEl && ! awsEl && ! r2El && ! cfEl ) return;
 
-		let general, aws, r2;
+		let general, aws, r2, cfImages;
 		try {
-			[ general, aws, r2 ] = await Promise.all( [
+			[ general, aws, r2, cfImages ] = await Promise.all( [
 				api( '/settings' ),
 				api( '/settings/aws' ),
 				api( '/settings/r2' ),
+				api( '/settings/cf-images' ),
 			] );
 		} catch ( e ) {
 			showNotice( e.message, 'error' );
@@ -690,6 +858,7 @@
 		renderGeneralSettings( genEl, general );
 		renderAwsSettings( awsEl, aws );
 		renderR2Settings( r2El, r2 );
+		renderCfImagesSettings( cfEl, cfImages );
 
 		applyIntegrationVisibility( {
 			s3:        !! general.enable_s3,
@@ -1436,7 +1605,192 @@
 	}
 
 	// ------------------------------------------------------------------
-	// Auto-init settings page
+	// Cloudflare Image Resizing settings
+	// ------------------------------------------------------------------
+
+	function renderCfImagesSettings( container, cf ) {
+		if ( ! container ) return;
+		const s = cf || {};
+		container.innerHTML = `
+			<p>Serve every gallery image through Cloudflare's <code>/cdn-cgi/image/</code> endpoint for on-the-fly resize and AVIF/WebP conversion. Requires a Cloudflare zone with Image Resizing enabled.</p>
+			<div class="bltgallery-field">
+				<label for="zyg-cfi-zone">Zone URL</label>
+				<input type="url" id="zyg-cfi-zone" class="regular-text" value="${ escAttr( s.zone_url || '' ) }" placeholder="https://example.com">
+				<p class="description">Your WordPress site's URL behind Cloudflare.</p>
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-cfi-format">Default format</label>
+				<select id="zyg-cfi-format">
+					${ [ 'auto', 'webp', 'avif', 'json' ].map( ( f ) => `<option value="${ f }"${ ( s.default_format || 'auto' ) === f ? ' selected' : '' }>${ f }</option>` ).join( '' ) }
+				</select>
+				<label for="zyg-cfi-quality" style="margin-left:1rem">Quality</label>
+				<input type="number" id="zyg-cfi-quality" class="small-text" min="1" max="100" value="${ s.default_quality ?? 85 }">
+				<label for="zyg-cfi-fit" style="margin-left:1rem">Fit</label>
+				<select id="zyg-cfi-fit">
+					${ [ 'cover', 'contain', 'scale-down', 'crop', 'pad' ].map( ( f ) => `<option value="${ f }"${ ( s.default_fit || 'cover' ) === f ? ' selected' : '' }>${ f }</option>` ).join( '' ) }
+				</select>
+			</div>
+			<div class="bltgallery-field">
+				<button class="button button-primary" id="zyg-save-cfi">Save Cloudflare Image Settings</button>
+			</div>
+		`;
+
+		container.querySelector( '#zyg-save-cfi' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Saving…';
+			try {
+				await api( '/settings/cf-images', { method: 'POST', body: {
+					enabled:         true,
+					zone_url:        container.querySelector( '#zyg-cfi-zone' ).value.trim(),
+					default_format:  container.querySelector( '#zyg-cfi-format' ).value,
+					default_quality: parseInt( container.querySelector( '#zyg-cfi-quality' ).value, 10 ),
+					default_fit:     container.querySelector( '#zyg-cfi-fit' ).value,
+				} } );
+				showNotice( 'Cloudflare Image Resizing settings saved.' );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				e.target.disabled = false;
+				e.target.textContent = 'Save Cloudflare Image Settings';
+			}
+		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Albums admin page (top-level submenu under Blt Gallery)
+	// ------------------------------------------------------------------
+
+	async function initAlbumsPage() {
+		const root = document.getElementById( 'bltgallery-albums-admin' );
+		if ( ! root ) return;
+
+		let albums = [];
+		try {
+			albums = await api( '/albums' );
+		} catch ( e ) {
+			root.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		root.innerHTML = `
+			<div class="bltgallery-albums-admin">
+				<aside class="bltgallery-albums-admin__create">
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header"><h2>Add a new album</h2></div>
+						<div class="bltgallery-panel__body">
+							<form id="zyg-album-create-form" class="bltgallery-field-stack">
+								<label>
+									<span>Name</span>
+									<input type="text" name="name" class="regular-text" required>
+								</label>
+								<label>
+									<span>Slug (optional)</span>
+									<input type="text" name="slug" class="regular-text" placeholder="auto-generated from name">
+								</label>
+								<label>
+									<span>Description (optional)</span>
+									<textarea name="description" rows="3" class="large-text"></textarea>
+								</label>
+								<button type="submit" class="button button-primary">Add album</button>
+							</form>
+						</div>
+					</div>
+				</aside>
+				<section class="bltgallery-albums-admin__list">
+					<table class="wp-list-table widefat fixed striped bltgallery-table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Slug</th>
+								<th>Galleries</th>
+								<th>Shortcode</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody id="zyg-album-rows">
+							${ renderAlbumRows( albums ) }
+						</tbody>
+					</table>
+				</section>
+			</div>
+		`;
+
+		const rowsEl = root.querySelector( '#zyg-album-rows' );
+
+		root.querySelector( '#zyg-album-create-form' ).addEventListener( 'submit', async ( e ) => {
+			e.preventDefault();
+			const form = e.target;
+			const data = {
+				name:        form.elements.name.value.trim(),
+				slug:        form.elements.slug.value.trim(),
+				description: form.elements.description.value.trim(),
+			};
+			if ( ! data.name ) return;
+			const submit = form.querySelector( 'button[type="submit"]' );
+			submit.disabled = true;
+			try {
+				const album = await api( '/albums', { method: 'POST', body: data } );
+				albums = albums.filter( ( a ) => a.slug !== album.slug );
+				albums.push( { ...album, gallery_count: 0 } );
+				albums.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+				rowsEl.innerHTML = renderAlbumRows( albums );
+				form.reset();
+				showNotice( `Album "${ album.name }" added.` );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				submit.disabled = false;
+			}
+		} );
+
+		rowsEl.addEventListener( 'click', async ( e ) => {
+			const del = e.target.closest( '.zyg-album-delete' );
+			if ( del ) {
+				const slug = del.dataset.slug;
+				if ( ! window.confirm( `Delete album "${ slug }"? Galleries currently in it stay; they just lose this album.` ) ) return;
+				try {
+					await api( `/albums/${ slug }`, { method: 'DELETE' } );
+					albums = albums.filter( ( a ) => a.slug !== slug );
+					rowsEl.innerHTML = renderAlbumRows( albums );
+					showNotice( 'Album deleted.' );
+				} catch ( err ) {
+					showNotice( err.message, 'error' );
+				}
+				return;
+			}
+			const copy = e.target.closest( '.bltgallery-shortcode-copy' );
+			if ( copy ) {
+				copyToClipboard( copy.dataset.copy, copy );
+			}
+		} );
+	}
+
+	function renderAlbumRows( albums ) {
+		if ( ! albums.length ) {
+			return `<tr><td colspan="5" class="bltgallery-muted">No albums yet. Add one on the left.</td></tr>`;
+		}
+		return albums.map( ( a ) => {
+			const sc = `[blt_album category="${ a.slug }" sort_by="date"]`;
+			return `
+				<tr>
+					<td><strong>${ escHtml( a.name ) }</strong>${ a.description ? `<br><small>${ escHtml( a.description ) }</small>` : '' }</td>
+					<td><code>${ escHtml( a.slug ) }</code></td>
+					<td>${ a.gallery_count || 0 }</td>
+					<td>
+						<button type="button" class="bltgallery-shortcode-copy" data-copy="${ escAttr( sc ) }" title="Click to copy">
+							<code>${ escHtml( sc ) }</code>
+						</button>
+					</td>
+					<td>
+						<button type="button" class="button button-link-delete zyg-album-delete" data-slug="${ escAttr( a.slug ) }">Delete</button>
+					</td>
+				</tr>
+			`;
+		} ).join( '' );
+	}
+
+	// ------------------------------------------------------------------
+	// Auto-init pages
 	// ------------------------------------------------------------------
 
 	document.addEventListener( 'DOMContentLoaded', function () {
@@ -1445,6 +1799,9 @@
 		}
 		if ( document.getElementById( 'bltgallery-shortcodes-doc' ) ) {
 			initShortcodesDoc();
+		}
+		if ( document.getElementById( 'bltgallery-albums-admin' ) ) {
+			initAlbumsPage();
 		}
 	} );
 
@@ -1458,6 +1815,7 @@
 		initSettings,
 		initImporter,
 		initShortcodesDoc,
+		initAlbumsPage,
 	};
 
 } )();

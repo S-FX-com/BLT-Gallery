@@ -39,6 +39,15 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
+			__( 'Albums', 'bltgallery' ),
+			__( 'Albums', 'bltgallery' ),
+			'manage_options',
+			self::MENU_SLUG . '-albums',
+			[ $this, 'render_albums_page' ]
+		);
+
+		add_submenu_page(
+			self::MENU_SLUG,
 			__( 'Settings', 'bltgallery' ),
 			__( 'Settings', 'bltgallery' ),
 			'manage_options',
@@ -74,6 +83,32 @@ class AdminMenu {
 			self::MENU_SLUG . '-import',
 			[ $this, 'render_import_page' ]
 		);
+	}
+
+	public function render_albums_page(): void {
+		?>
+		<div class="wrap bltgallery-wrap">
+			<h1><?php esc_html_e( 'Albums', 'bltgallery' ); ?></h1>
+			<p>
+				<?php esc_html_e(
+					'Albums group galleries the same way categories group posts. Galleries can belong to multiple albums; albums can then be rendered with',
+					'bltgallery'
+				); ?>
+				<code>[blt_album category="album-slug"]</code>.
+			</p>
+			<div id="bltgallery-notice"></div>
+			<div id="bltgallery-albums-admin">
+				<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+			</div>
+		</div>
+		<script>
+		document.addEventListener( 'DOMContentLoaded', function () {
+			if ( window.BltGalleryAdmin && BltGalleryAdmin.initAlbumsPage ) {
+				BltGalleryAdmin.initAlbumsPage();
+			}
+		} );
+		</script>
+		<?php
 	}
 
 	public function render_shortcodes_page(): void {
@@ -280,7 +315,7 @@ class AdminMenu {
 	public function render_settings_page(): void {
 		?>
 		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'BltGallery Settings', 'bltgallery' ); ?></h1>
+			<h1><?php esc_html_e( 'Blt Gallery Settings', 'bltgallery' ); ?></h1>
 			<div id="bltgallery-notice"></div>
 
 			<!-- General Settings -->
@@ -412,40 +447,91 @@ class AdminMenu {
 			</div>
 			<div id="bltgallery-notice"></div>
 
-			<!-- Settings panel -->
-			<div class="bltgallery-panel">
-				<div class="bltgallery-panel__header">
-					<h2><?php esc_html_e( 'Gallery Settings', 'bltgallery' ); ?></h2>
-				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-editor-settings">
-					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
-				</div>
-			</div>
-
-			<!-- Images panel -->
-			<div class="bltgallery-panel">
-				<div class="bltgallery-panel__header">
-					<h2><?php esc_html_e( 'Images', 'bltgallery' ); ?></h2>
-				</div>
-				<div class="bltgallery-panel__body">
-					<!-- Uploader -->
-					<div class="bltgallery-uploader" id="bltgallery-uploader">
-						<input type="file" id="bltgallery-file-input" accept="image/*" multiple style="display:none">
-						<div class="bltgallery-uploader__zone" id="bltgallery-drop-zone" tabindex="0" role="button"
-							aria-label="<?php esc_attr_e( 'Drop images here or click to upload', 'bltgallery' ); ?>">
-							<span class="bltgallery-uploader__icon" aria-hidden="true">&#128247;</span>
-							<p><?php esc_html_e( 'Drag & drop images here, or', 'bltgallery' ); ?> <strong><?php esc_html_e( 'click to browse', 'bltgallery' ); ?></strong></p>
-							<p class="bltgallery-uploader__hint"><?php esc_html_e( 'JPEG, PNG, GIF, WebP, AVIF · Max 50 MB each', 'bltgallery' ); ?></p>
+			<div class="bltgallery-editor-layout">
+				<div class="bltgallery-editor-layout__main">
+					<!-- Settings panel -->
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header">
+							<h2><?php esc_html_e( 'Gallery Settings', 'bltgallery' ); ?></h2>
 						</div>
-						<ul class="bltgallery-uploader__progress-list" id="bltgallery-progress-list"></ul>
+						<div class="bltgallery-panel__body" id="bltgallery-editor-settings">
+							<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+						</div>
 					</div>
-					<!-- Image grid -->
-					<div id="bltgallery-image-grid">
-						<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+
+					<!-- Images panel -->
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header">
+							<h2><?php esc_html_e( 'Images', 'bltgallery' ); ?></h2>
+						</div>
+						<div class="bltgallery-panel__body">
+							<!-- Uploader -->
+							<div class="bltgallery-uploader" id="bltgallery-uploader">
+								<input type="file" id="bltgallery-file-input" accept="image/*" multiple style="display:none">
+								<div class="bltgallery-uploader__zone" id="bltgallery-drop-zone" tabindex="0" role="button"
+									aria-label="<?php esc_attr_e( 'Drop images here or click to upload', 'bltgallery' ); ?>">
+									<span class="bltgallery-uploader__icon" aria-hidden="true">&#128247;</span>
+									<p><?php esc_html_e( 'Drag & drop images here, or', 'bltgallery' ); ?> <strong><?php esc_html_e( 'click to browse', 'bltgallery' ); ?></strong></p>
+									<p class="bltgallery-uploader__hint"><?php esc_html_e( 'JPEG, PNG, GIF, WebP, AVIF · Max 50 MB each', 'bltgallery' ); ?></p>
+								</div>
+								<ul class="bltgallery-uploader__progress-list" id="bltgallery-progress-list"></ul>
+							</div>
+							<!-- Image grid -->
+							<div id="bltgallery-image-grid">
+								<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+							</div>
+						</div>
 					</div>
 				</div>
+
+				<aside class="bltgallery-editor-layout__sidebar">
+					<!-- Albums (taxonomy) metabox -->
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header">
+							<h2><?php esc_html_e( 'Albums', 'bltgallery' ); ?></h2>
+						</div>
+						<div class="bltgallery-panel__body" id="bltgallery-albums-metabox">
+							<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+						</div>
+					</div>
+				</aside>
 			</div>
 		</div>
+
+		<!-- Image editor modal (opens when the user clicks "Edit" on a tile) -->
+		<dialog id="bltgallery-image-modal" class="bltgallery-modal">
+			<form method="dialog" class="bltgallery-modal__form" id="bltgallery-image-form">
+				<header class="bltgallery-modal__header">
+					<h2><?php esc_html_e( 'Edit image', 'bltgallery' ); ?></h2>
+					<button type="button" class="bltgallery-modal__close" aria-label="<?php esc_attr_e( 'Close', 'bltgallery' ); ?>" data-close>&times;</button>
+				</header>
+				<div class="bltgallery-modal__body">
+					<figure class="bltgallery-modal__preview">
+						<img id="bltgallery-image-modal-thumb" src="" alt="">
+					</figure>
+					<div class="bltgallery-modal__fields">
+						<label>
+							<span><?php esc_html_e( 'Title', 'bltgallery' ); ?></span>
+							<input type="text" name="title" id="bltgallery-image-modal-title" autocomplete="off">
+						</label>
+						<label>
+							<span><?php esc_html_e( 'Alt text', 'bltgallery' ); ?></span>
+							<input type="text" name="alt_text" id="bltgallery-image-modal-alt" autocomplete="off">
+							<small><?php esc_html_e( 'Used by screen readers and as fallback when the image fails to load.', 'bltgallery' ); ?></small>
+						</label>
+						<label>
+							<span><?php esc_html_e( 'Caption', 'bltgallery' ); ?></span>
+							<textarea name="caption" id="bltgallery-image-modal-caption" rows="3"></textarea>
+							<small><?php esc_html_e( 'Shown beneath the image in the lightbox and on hover in grids.', 'bltgallery' ); ?></small>
+						</label>
+					</div>
+				</div>
+				<footer class="bltgallery-modal__footer">
+					<button type="button" class="button button-secondary" data-close><?php esc_html_e( 'Cancel', 'bltgallery' ); ?></button>
+					<button type="submit" class="button button-primary" id="bltgallery-image-modal-save"><?php esc_html_e( 'Save changes', 'bltgallery' ); ?></button>
+				</footer>
+			</form>
+		</dialog>
 
 		<script>
 		document.addEventListener('DOMContentLoaded', function () {
