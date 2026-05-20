@@ -1004,6 +1004,16 @@
 		}
 
 		renderImporterGalleryList( container, preview.galleries );
+
+		// If any BltGallery galleries already exist, surface the cleanup
+		// panel right away so the user can revisit the page later to back
+		// up / remove the legacy NextGEN files without re-migrating.
+		try {
+			const existing = await api( '/galleries?per_page=1' );
+			if ( Array.isArray( existing ) && existing.length > 0 ) {
+				initCleanup();
+			}
+		} catch {}
 	}
 
 	function renderImporterGalleryList( container, galleries ) {
@@ -1078,15 +1088,20 @@
 				resultsEl.innerHTML = `
 					<div class="notice notice-success inline" style="margin-top:1rem">
 						<p>
-							Import complete: <strong>${ result.galleries_imported }</strong> ${ result.galleries_imported === 1 ? 'gallery' : 'galleries' } imported,
-							<strong>${ result.images_imported }</strong> ${ result.images_imported === 1 ? 'image' : 'images' } imported
+							Migration complete: <strong>${ result.galleries_imported }</strong> ${ result.galleries_imported === 1 ? 'gallery' : 'galleries' } migrated,
+							<strong>${ result.images_imported }</strong> ${ result.images_imported === 1 ? 'image' : 'images' } migrated
 							${ result.images_skipped > 0 ? `, ${ result.images_skipped } skipped` : '' }.
 						</p>
 					</div>
 					${ errorHtml }
 				`;
 
-				showNotice( `Import complete. ${ result.images_imported } image(s) imported.` );
+				showNotice( `Migration complete. ${ result.images_imported } image(s) migrated.` );
+
+				// Reveal the cleanup panel if anything was actually migrated.
+				if ( result.images_imported > 0 ) {
+					initCleanup();
+				}
 			} catch ( err ) {
 				statusEl.textContent = '';
 				showNotice( err.message, 'error' );
@@ -1094,6 +1109,173 @@
 				e.target.disabled = false;
 			}
 		} );
+	}
+
+	// ------------------------------------------------------------------
+	// NextGEN cleanup (post-migration)
+	// ------------------------------------------------------------------
+
+	async function initCleanup() {
+		const panel = document.getElementById( 'bltgallery-nextgen-cleanup-panel' );
+		const body  = document.getElementById( 'bltgallery-nextgen-cleanup' );
+		if ( ! panel || ! body ) return;
+
+		panel.hidden = false;
+		body.innerHTML = '<p class="bltgallery-loading">Scanning NextGEN files on disk…</p>';
+
+		let scan;
+		try {
+			scan = await api( '/import/nextgen/scan' );
+		} catch ( e ) {
+			body.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		renderCleanup( body, scan );
+	}
+
+	function renderCleanup( body, scan ) {
+		if ( ! scan.total_files ) {
+			body.innerHTML = `
+				<div class="notice notice-info inline">
+					<p>No NextGEN files remain on disk. Nothing to clean up.</p>
+				</div>
+			`;
+			return;
+		}
+
+		const rows = scan.galleries.map( ( g ) => `
+			<tr>
+				<td><strong>${ escHtml( g.title ) }</strong></td>
+				<td><code>${ escHtml( g.path ) }</code></td>
+				<td>${ g.exists ? g.files.toLocaleString() : '—' }</td>
+				<td>${ g.exists ? formatBytes( g.bytes ) : '<em>missing</em>' }</td>
+			</tr>
+		` ).join( '' );
+
+		body.innerHTML = `
+			<div class="notice notice-warning inline" style="margin:0 0 1rem">
+				<p>
+					<strong>⚠️ This permanently deletes the original NextGEN Gallery files from this server.</strong>
+					Your migrated copies live in BltGallery's own storage and are unaffected, but
+					reinstalling NextGEN won't bring these files back. <strong>Take a backup first.</strong>
+				</p>
+			</div>
+
+			<p>
+				Files on disk: <strong>${ scan.total_files.toLocaleString() }</strong>
+				totalling <strong>${ formatBytes( scan.total_bytes ) }</strong>
+				across <strong>${ scan.galleries.filter( ( g ) => g.exists ).length }</strong> folders.
+			</p>
+
+			<table class="wp-list-table widefat fixed striped bltgallery-table" style="margin-bottom:1rem">
+				<thead><tr><th>Gallery</th><th>Path</th><th>Files</th><th>Size</th></tr></thead>
+				<tbody>${ rows }</tbody>
+			</table>
+
+			<div class="bltgallery-cleanup__actions">
+				<button class="button button-secondary" id="zyg-backup-btn">
+					📦 Download backup ZIP first
+				</button>
+				<button class="button" id="zyg-delete-btn-stage1">
+					🗑️ I have a backup — delete files
+				</button>
+			</div>
+			<div id="zyg-backup-result"></div>
+			<div id="zyg-cleanup-result"></div>
+
+			<form class="bltgallery-cleanup__confirm" id="zyg-cleanup-confirm" hidden>
+				<p>
+					<strong>Final confirmation.</strong> This action is irreversible.
+					Type <code>DELETE</code> below to remove all NextGEN files from disk.
+				</p>
+				<input type="text" id="zyg-cleanup-confirm-input" autocomplete="off" placeholder="DELETE">
+				<button type="submit" class="button button-primary" disabled>Delete files permanently</button>
+				<button type="button" class="button button-secondary" id="zyg-cleanup-cancel">Cancel</button>
+			</form>
+		`;
+
+		// --- Backup
+		body.querySelector( '#zyg-backup-btn' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Creating ZIP… this may take a while.';
+			const out = body.querySelector( '#zyg-backup-result' );
+			out.innerHTML = '';
+			try {
+				const res = await api( '/import/nextgen/backup', { method: 'POST', body: {} } );
+				out.innerHTML = `
+					<div class="notice notice-success inline" style="margin-top:.5rem">
+						<p>
+							✅ Backup created: <strong>${ res.files.toLocaleString() }</strong> files
+							(${ formatBytes( res.bytes ) }).
+							<a href="${ escHtml( res.url ) }" download class="button button-primary" style="margin-left:.5rem">
+								Download ZIP
+							</a>
+						</p>
+					</div>
+				`;
+			} catch ( err ) {
+				out.innerHTML = `<div class="notice notice-error inline" style="margin-top:.5rem"><p>${ escHtml( err.message ) }</p></div>`;
+			} finally {
+				e.target.disabled = false;
+				e.target.textContent = '📦 Download backup ZIP first';
+			}
+		} );
+
+		// --- Stage 1: reveal confirmation form
+		const confirm  = body.querySelector( '#zyg-cleanup-confirm' );
+		const cInput   = body.querySelector( '#zyg-cleanup-confirm-input' );
+		const cSubmit  = confirm.querySelector( 'button[type="submit"]' );
+
+		body.querySelector( '#zyg-delete-btn-stage1' ).addEventListener( 'click', () => {
+			confirm.hidden = false;
+			cInput.focus();
+		} );
+
+		body.querySelector( '#zyg-cleanup-cancel' ).addEventListener( 'click', () => {
+			confirm.hidden = true;
+			cInput.value   = '';
+			cSubmit.disabled = true;
+		} );
+
+		cInput.addEventListener( 'input', () => {
+			cSubmit.disabled = cInput.value !== 'DELETE';
+		} );
+
+		confirm.addEventListener( 'submit', async ( e ) => {
+			e.preventDefault();
+			if ( cInput.value !== 'DELETE' ) return;
+			cSubmit.disabled = true;
+			cSubmit.textContent = 'Deleting…';
+			const out = body.querySelector( '#zyg-cleanup-result' );
+			try {
+				const res = await api( '/import/nextgen/cleanup', { method: 'POST', body: { confirm: 'DELETE' } } );
+				out.innerHTML = `
+					<div class="notice notice-success inline" style="margin-top:1rem">
+						<p>
+							✅ Deleted <strong>${ res.files.toLocaleString() }</strong> files
+							(${ formatBytes( res.bytes ) }) across <strong>${ res.galleries }</strong> folders.
+						</p>
+					</div>
+				`;
+				// Hide action UI; show fresh empty state.
+				body.querySelector( '.bltgallery-cleanup__actions' ).style.display = 'none';
+				confirm.hidden = true;
+				showNotice( 'NextGEN files deleted from disk.' );
+			} catch ( err ) {
+				out.innerHTML = `<div class="notice notice-error inline" style="margin-top:1rem"><p>${ escHtml( err.message ) }</p></div>`;
+				cSubmit.disabled = false;
+				cSubmit.textContent = 'Delete files permanently';
+			}
+		} );
+	}
+
+	function formatBytes( n ) {
+		if ( ! n ) return '0 B';
+		const units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];
+		let i = 0;
+		while ( n >= 1024 && i < units.length - 1 ) { n /= 1024; i++; }
+		return `${ n.toFixed( i === 0 ? 0 : 1 ) } ${ units[ i ] }`;
 	}
 
 	// ------------------------------------------------------------------

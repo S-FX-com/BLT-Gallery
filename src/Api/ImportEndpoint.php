@@ -52,8 +52,45 @@ class ImportEndpoint {
 					'gallery_ids' => [
 						'type'        => 'array',
 						'items'       => [ 'type' => 'integer' ],
-						'description' => __( 'Specific NextGEN gallery IDs to import. Omit to import all.', 'bltgallery' ),
+						'description' => __( 'Specific NextGEN gallery IDs to migrate. Omit to migrate all.', 'bltgallery' ),
 						'required'    => false,
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/nextgen/scan',
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'scan_legacy' ],
+				'permission_callback' => [ $this, 'permission' ],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/nextgen/backup',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'backup_legacy' ],
+				'permission_callback' => [ $this, 'permission' ],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/nextgen/cleanup',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'cleanup_legacy' ],
+				'permission_callback' => [ $this, 'permission' ],
+				'args'                => [
+					'confirm' => [
+						'type'        => 'string',
+						'description' => __( 'Must equal "DELETE" to proceed.', 'bltgallery' ),
+						'required'    => true,
 					],
 				],
 			]
@@ -134,6 +171,56 @@ class ImportEndpoint {
 		$results = $importer->import( $gallery_ids );
 
 		return new WP_REST_Response( $results, 200 );
+	}
+
+	// ------------------------------------------------------------------
+	// Cleanup endpoints (post-migration)
+	// ------------------------------------------------------------------
+
+	public function scan_legacy(): WP_REST_Response|WP_Error {
+		$importer = new NextGenImporter();
+		if ( ! $importer->is_available() ) {
+			return new WP_Error( 'nextgen_not_found', __( 'NextGEN Gallery tables not found.', 'bltgallery' ), [ 'status' => 422 ] );
+		}
+		return new WP_REST_Response( $importer->scan_legacy_files() );
+	}
+
+	public function backup_legacy(): WP_REST_Response|WP_Error {
+		$importer = new NextGenImporter();
+		if ( ! $importer->is_available() ) {
+			return new WP_Error( 'nextgen_not_found', __( 'NextGEN Gallery tables not found.', 'bltgallery' ), [ 'status' => 422 ] );
+		}
+
+		if ( ! ini_get( 'safe_mode' ) ) {
+			set_time_limit( 600 );
+		}
+
+		try {
+			return new WP_REST_Response( $importer->backup_legacy_files() );
+		} catch ( \Throwable $e ) {
+			return new WP_Error( 'backup_failed', $e->getMessage(), [ 'status' => 500 ] );
+		}
+	}
+
+	public function cleanup_legacy( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		if ( 'DELETE' !== (string) $request->get_param( 'confirm' ) ) {
+			return new WP_Error(
+				'confirmation_required',
+				__( 'Type DELETE to confirm permanent removal.', 'bltgallery' ),
+				[ 'status' => 422 ]
+			);
+		}
+
+		$importer = new NextGenImporter();
+		if ( ! $importer->is_available() ) {
+			return new WP_Error( 'nextgen_not_found', __( 'NextGEN Gallery tables not found.', 'bltgallery' ), [ 'status' => 422 ] );
+		}
+
+		if ( ! ini_get( 'safe_mode' ) ) {
+			set_time_limit( 600 );
+		}
+
+		return new WP_REST_Response( $importer->delete_legacy_files() );
 	}
 
 	// ------------------------------------------------------------------

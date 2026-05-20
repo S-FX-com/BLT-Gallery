@@ -426,3 +426,26 @@
 	background: transparent;
 	padding: 0 0.15rem;
 }
+
+/* ── NextGEN cleanup (Migrate page) ─────────────────────────────────── */
+
+.bltgallery-cleanup__actions {
+	display: flex;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+	margin: 0.5rem 0 0.25rem;
+}
+
+.bltgallery-cleanup__confirm {
+	margin-top: 1rem;
+	padding: 1rem 1.25rem;
+	background: #fef2f2;
+	border: 1px solid #fca5a5;
+	border-left: 4px solid #dc2626;
+	border-radius: var(--blt-radius);
+}
+
+.bltgallery-cleanup__confirm input[type="text"] {
+	width: 220px;
+	margin-right: 0.5rem;
+}

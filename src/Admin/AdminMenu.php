@@ -19,8 +19,8 @@ class AdminMenu {
 
 	public function register_pages(): void {
 		add_menu_page(
-			__( 'BltGallery', 'bltgallery' ),
-			__( 'BltGallery', 'bltgallery' ),
+			__( 'Blt Gallery', 'bltgallery' ),
+			__( 'Blt Gallery', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this, 'render_galleries_page' ],
@@ -57,8 +57,19 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Import', 'bltgallery' ),
-			__( 'Import', 'bltgallery' ),
+			__( 'Migrate', 'bltgallery' ),
+			__( 'Migrate', 'bltgallery' ),
+			'manage_options',
+			self::MENU_SLUG . '-migrate',
+			[ $this, 'render_import_page' ]
+		);
+
+		// Backwards-compat: keep the old ?page=…-import URL working for
+		// anyone who has it bookmarked.
+		add_submenu_page(
+			null,
+			__( 'Migrate', 'bltgallery' ),
+			__( 'Migrate', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG . '-import',
 			[ $this, 'render_import_page' ]
@@ -188,16 +199,26 @@ class AdminMenu {
 	public function render_import_page(): void {
 		?>
 		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'Import Galleries', 'bltgallery' ); ?></h1>
+			<h1><?php esc_html_e( 'Migrate Galleries', 'bltgallery' ); ?></h1>
 			<div id="bltgallery-notice"></div>
 
-			<!-- NextGEN Gallery Importer -->
+			<!-- NextGEN Gallery Migration -->
 			<div class="bltgallery-panel">
 				<div class="bltgallery-panel__header">
-					<h2><?php esc_html_e( 'Import from Imagely NextGEN Gallery', 'bltgallery' ); ?></h2>
+					<h2><?php esc_html_e( 'Migrate from Imagely NextGEN Gallery', 'bltgallery' ); ?></h2>
 				</div>
 				<div class="bltgallery-panel__body" id="bltgallery-nextgen-importer">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Checking for NextGEN Gallery…', 'bltgallery' ); ?></p>
+				</div>
+			</div>
+
+			<!-- Post-migration cleanup: backup + delete legacy NextGEN files -->
+			<div class="bltgallery-panel" id="bltgallery-nextgen-cleanup-panel" hidden>
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Clean up NextGEN Gallery files', 'bltgallery' ); ?></h2>
+				</div>
+				<div class="bltgallery-panel__body" id="bltgallery-nextgen-cleanup">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Scanning…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 		</div>
