@@ -17,12 +17,12 @@ A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS
 - **Cloudflare Image Resizing** integration — point the plugin at your zone and every image is delivered via `/cdn-cgi/image/` at the exact pixel size and format requested
 - **Accessibility**: WCAG 2.2 AA — keyboard navigation, ARIA roles, focus traps
 - **Modern CSS**: CSS Grid, custom properties, no jQuery
-- **WordPress 7 ready**: PHP 8.2, deferred-loading scripts, fetchpriority="high" on LCP image
+- **WordPress 7 ready** (still supports 6.3+): PHP 8.1+, deferred-loading scripts, fetchpriority="high" on LCP image
 
 ## Requirements
 
-- WordPress 7.0+
-- PHP 8.2+
+- WordPress 6.3+ (tested up to 7.0)
+- PHP 8.1+
 - Composer (PHP dependencies; ships with a fallback PSR-4 autoloader)
 
 ## Installation
