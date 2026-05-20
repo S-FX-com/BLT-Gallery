@@ -170,12 +170,16 @@ class SettingsEndpoint {
 			'webp_quality'             => 85,
 			'thumb_width'              => 320,
 			'thumb_height'             => 320,
+			// Storage backend: 'local' | 's3' | 'r2'. Drives which panels
+			// the admin Settings page reveals.
+			'storage_driver'           => 'local',
 		];
 	}
 
 	private function sanitize_setting( string $key, mixed $value ): mixed {
 		return match ( $key ) {
 			'default_display_type'     => sanitize_key( (string) $value ),
+			'storage_driver'           => in_array( (string) $value, [ 'local', 's3', 'r2' ], true ) ? (string) $value : 'local',
 			'webp_quality'             => min( 100, max( 1, (int) $value ) ),
 			'thumb_width', 'thumb_height' => max( 1, (int) $value ),
 			'delete_data_on_uninstall', 'lazy_load' => (bool) $value,

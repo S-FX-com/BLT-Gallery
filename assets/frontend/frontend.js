@@ -214,10 +214,20 @@
 			try { images = JSON.parse( template.textContent ); } catch {}
 
 			var lb = createLightbox( modal, images );
-			container._bltLightbox = lb;
+			container._bltLightbox       = lb;
+			container._bltLightboxImages = images;
 
-			triggers.forEach( function ( btn ) {
-				btn.addEventListener( 'click', function () { lb.open( parseInt( btn.dataset.index, 10 ) || 0 ); } );
+			// Delegated handler so paginated triggers (added later) just work.
+			// AJAX-added triggers carry data-index="-1"; resolve those by id.
+			container.addEventListener( 'click', function ( e ) {
+				var trigger = e.target.closest( '.bltgallery-lightbox__trigger' );
+				if ( ! trigger ) return;
+				var idx = parseInt( trigger.dataset.index, 10 );
+				if ( isNaN( idx ) || idx < 0 ) {
+					var imageId = parseInt( trigger.dataset.imageId, 10 );
+					idx = container._bltLightboxImages.findIndex( function ( i ) { return i.id === imageId; } );
+				}
+				lb.open( Math.max( 0, idx ) );
 			} );
 		} );
 
@@ -276,12 +286,229 @@
 		initMasonry();
 		initSlideshow();
 		initLightbox();
+		initPagination();
 	}
 
 	if ( document.readyState === 'loading' ) {
 		document.addEventListener( 'DOMContentLoaded', boot );
 	} else {
 		boot();
+	}
+
+	// ------------------------------------------------------------------
+	// AJAX Pagination
+	//
+	// Driven by `data-pagination="load-more|numbered|infinite"` and
+	// `data-per-page="N"` on the .bltgallery container. Pages are fetched
+	// from /wp-json/bltgallery/v1/galleries/{id}/images?page=&per_page=.
+	//
+	// Speed:
+	//   • Cancellable AbortController per gallery
+	//   • In-memory cache keyed by `${galleryId}:${page}` so re-visiting
+	//     a numbered page doesn't refetch
+	//   • IntersectionObserver-driven prefetch ~1 viewport before the
+	//     load-more button enters view
+	//   • document.createDocumentFragment() for batch DOM appends
+	//   • Newly-added <img> nodes inherit loading="lazy" / decoding="async"
+	//     so the browser doesn't fetch them until they're near the viewport
+	// ------------------------------------------------------------------
+
+	function initPagination() {
+		document.querySelectorAll( '.bltgallery[data-pagination]' ).forEach( setupPaginatedGallery );
+	}
+
+	function setupPaginatedGallery( container ) {
+		var mode       = container.dataset.pagination;
+		var perPage    = parseInt( container.dataset.perPage, 10 ) || 24;
+		var galleryId  = ( container.id || '' ).replace( 'bltgallery-', '' );
+		if ( ! galleryId ) return;
+
+		var grid    = container.querySelector( '.bltgallery-masonry__grid, .bltgallery-tile__grid, .bltgallery-lightbox__grid' );
+		var nav     = container.querySelector( '.bltgallery-pagination' );
+		if ( ! grid || ! nav ) return;
+
+		var btn      = nav.querySelector( '.bltgallery-pagination__load-more' );
+		var status   = nav.querySelector( '.bltgallery-pagination__status' );
+		var pageBtns = nav.querySelectorAll( '.bltgallery-pagination__page' );
+		var total    = parseInt( grid.dataset.total, 10 ) || 0;
+		var cache    = new Map(); // page -> array of image objects
+		var inflight = null;
+
+		// API base lives on a global injected by WordPress when the
+		// frontend script is enqueued. Falls back to the standard mount.
+		var apiBase = ( window.bltGalleryFrontend && window.bltGalleryFrontend.apiBase )
+			? window.bltGalleryFrontend.apiBase
+			: '/wp-json/bltgallery/v1';
+
+		function fetchPage( page ) {
+			var cached = cache.get( page );
+			if ( cached ) return Promise.resolve( cached );
+
+			if ( inflight ) inflight.abort();
+			inflight = new AbortController();
+
+			var url = apiBase + '/galleries/' + galleryId + '/images?page=' + page + '&per_page=' + perPage + '&shape=paged';
+			return fetch( url, { signal: inflight.signal, headers: { Accept: 'application/json' } } )
+				.then( function ( r ) {
+					if ( ! r.ok ) throw new Error( 'HTTP ' + r.status );
+					return r.json();
+				} )
+				.then( function ( data ) {
+					cache.set( page, data );
+					return data;
+				} );
+		}
+
+		function buildItem( image ) {
+			var displayType = container.dataset.type;
+			var li = document.createElement( 'li' );
+
+			if ( 'masonry' === displayType ) {
+				li.className = 'bltgallery-masonry__item';
+				li.innerHTML = buildAnchorMarkup( image, 'medium' );
+			} else if ( 'tile' === displayType ) {
+				li.className = 'bltgallery-tile__item';
+				var showCaptions = grid.dataset.showCaptions === '1';
+				li.innerHTML = buildAnchorMarkup( image, 'thumb', showCaptions ? 'tile' : null );
+			} else if ( 'lightbox' === displayType ) {
+				li.className = 'bltgallery-lightbox__thumb';
+				li.innerHTML = '<button class="bltgallery-lightbox__trigger" data-image-id="' + image.id + '" data-index="-1" aria-label="' + escAttr( image.alt_text || image.filename ) + '">' + buildImgTag( image, 'thumb' ) + '</button>';
+			}
+			return li;
+		}
+
+		function buildAnchorMarkup( image, size, captionVariant ) {
+			var caption = image.caption
+				? '<span class="' + ( 'tile' === captionVariant ? 'bltgallery-tile__caption' : 'bltgallery__caption' ) + '">' + escHtml( image.caption ) + '</span>'
+				: '';
+			return '<a href="' + escAttr( image.url ) + '" class="bltgallery__link" data-image-id="' + image.id + '" aria-label="' + escAttr( image.alt_text || image.filename ) + '">' + buildImgTag( image, size ) + caption + '</a>';
+		}
+
+		function buildImgTag( image, size ) {
+			var url = ( image.thumbs && image.thumbs[ size ] && image.thumbs[ size ].url ) || image.thumb_url || image.url;
+			var w   = ( image.thumbs && image.thumbs[ size ] && image.thumbs[ size ].width )  || image.width || '';
+			var h   = ( image.thumbs && image.thumbs[ size ] && image.thumbs[ size ].height ) || image.height || '';
+			return '<img src="' + escAttr( url ) + '" alt="' + escAttr( image.alt_text || image.filename || '' ) + '"' + ( w ? ' width="' + w + '"' : '' ) + ( h ? ' height="' + h + '"' : '' ) + ' loading="lazy" decoding="async">';
+		}
+
+		function escHtml( s ) { return String( s ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ); }
+		function escAttr( s ) { return escHtml( s ).replace( /"/g, '&quot;' ); }
+
+		function appendImages( images ) {
+			var frag = document.createDocumentFragment();
+			images.forEach( function ( image ) { frag.appendChild( buildItem( image ) ); } );
+			grid.appendChild( frag );
+
+			// Merge into the lightbox's image array, if any.
+			if ( container._bltLightbox && Array.isArray( container._bltLightboxImages ) ) {
+				images.forEach( function ( img ) {
+					container._bltLightboxImages.push( {
+						id:      img.id,
+						src:     img.url,
+						thumb:   img.thumb_url,
+						alt:     img.alt_text || img.filename,
+						caption: img.caption || '',
+						w:       img.width,
+						h:       img.height,
+					} );
+				} );
+			}
+		}
+
+		async function loadPage( page, opts ) {
+			opts = opts || {};
+			if ( status ) { status.hidden = false; status.textContent = 'Loading…'; }
+			if ( btn && ! opts.silent ) { btn.disabled = true; }
+			try {
+				var data = await fetchPage( page );
+				if ( ! opts.replace ) {
+					appendImages( data.images );
+				} else {
+					// numbered mode: replace the grid contents
+					grid.innerHTML = '';
+					appendImages( data.images );
+				}
+				if ( btn ) {
+					if ( ! data.has_more ) {
+						nav.remove();
+					} else {
+						btn.dataset.page = String( page + 1 );
+						btn.disabled = false;
+						btn.textContent = 'Load more';
+					}
+				}
+				if ( status ) {
+					status.hidden = true;
+					status.textContent = '';
+				}
+				if ( pageBtns.length ) {
+					pageBtns.forEach( function ( b ) {
+						var active = parseInt( b.dataset.page, 10 ) === page;
+						b.classList.toggle( 'is-active', active );
+						b.setAttribute( 'aria-current', active ? 'page' : 'false' );
+					} );
+				}
+			} catch ( err ) {
+				if ( err && err.name === 'AbortError' ) return;
+				if ( status ) {
+					status.hidden = false;
+					status.textContent = 'Could not load more.';
+				}
+				if ( btn ) { btn.disabled = false; }
+			}
+		}
+
+		// --- load-more / infinite ---
+		if ( btn ) {
+			btn.addEventListener( 'click', function () {
+				var page = parseInt( btn.dataset.page, 10 ) || 2;
+				loadPage( page );
+			} );
+
+			// Prefetch the next page ~1 viewport before the button is visible.
+			if ( 'IntersectionObserver' in window ) {
+				var prefetched = new Set();
+				var prefetcher = new IntersectionObserver( function ( entries ) {
+					entries.forEach( function ( entry ) {
+						if ( ! entry.isIntersecting ) return;
+						var page = parseInt( btn.dataset.page, 10 ) || 2;
+						if ( prefetched.has( page ) ) return;
+						prefetched.add( page );
+						fetchPage( page ).catch( function () { prefetched.delete( page ); } );
+					} );
+				}, { rootMargin: '600px 0px' } );
+				prefetcher.observe( btn );
+			}
+
+			// Infinite mode: auto-click whenever the button enters view.
+			if ( 'infinite' === mode && 'IntersectionObserver' in window ) {
+				var io = new IntersectionObserver( function ( entries ) {
+					entries.forEach( function ( entry ) {
+						if ( entry.isIntersecting && ! btn.disabled ) {
+							btn.click();
+						}
+					} );
+				}, { rootMargin: '200px 0px' } );
+				io.observe( btn );
+			}
+		}
+
+		// --- numbered ---
+		if ( pageBtns.length ) {
+			pageBtns.forEach( function ( b ) {
+				b.addEventListener( 'click', function () {
+					var page = parseInt( b.dataset.page, 10 ) || 1;
+					loadPage( page, { replace: true } );
+					container.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+				} );
+
+				// Hover prefetch for numbered links.
+				b.addEventListener( 'pointerenter', function () {
+					var page = parseInt( b.dataset.page, 10 ) || 1;
+					fetchPage( page ).catch( function () {} );
+				}, { once: true } );
+			} );
+		}
 	}
 
 } )();

@@ -71,6 +71,7 @@ final class Plugin {
 
 	private function init_hooks(): void {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
+		add_action( 'init', [ $this, 'register_image_sizes' ] );
 		add_action( 'init', [ $this, 'register_shortcodes' ] );
 		add_action( 'rest_api_init', [ $this, 'register_api_endpoints' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
@@ -81,6 +82,20 @@ final class Plugin {
 			add_action( 'admin_init', [ $this->db, 'maybe_upgrade' ] );
 			add_action( 'admin_init', [ Migration::class, 'run' ] );
 		}
+	}
+
+	/**
+	 * Register Blt Gallery's thumbnail dimensions through WordPress's
+	 * standard image-size API so themes, REST consumers, and other plugins
+	 * can address them with `wp_get_attachment_image_src(..., 'bltgallery-medium')`.
+	 *
+	 * The actual resize work still flows through WP_Image_Editor inside
+	 * ImageProcessor — we just register the names + sizes here.
+	 */
+	public function register_image_sizes(): void {
+		add_image_size( 'bltgallery-thumb',  320,  320,  true );
+		add_image_size( 'bltgallery-medium', 800,  600,  false );
+		add_image_size( 'bltgallery-large',  1600, 1200, false );
 	}
 
 	public function load_textdomain(): void {
@@ -128,6 +143,14 @@ final class Plugin {
 		);
 
 		wp_script_add_data( 'bltgallery-frontend', 'strategy', 'defer' );
+
+		wp_localize_script(
+			'bltgallery-frontend',
+			'bltGalleryFrontend',
+			[
+				'apiBase' => esc_url_raw( rest_url( 'bltgallery/v1' ) ),
+			]
+		);
 	}
 
 	// -----------------------------------------------------------------

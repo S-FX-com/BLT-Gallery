@@ -108,6 +108,16 @@ class Image {
 	// ------------------------------------------------------------------
 
 	public function to_array(): array {
+		$thumbs = [];
+		foreach ( [ 'thumb', 'medium', 'large' ] as $size ) {
+			$baked = $this->meta['thumbs'][ $size ] ?? null;
+			$thumbs[ $size ] = [
+				'url'    => $this->get_thumb_url( $size ),
+				'width'  => (int) ( $baked['width']  ?? 0 ),
+				'height' => (int) ( $baked['height'] ?? 0 ),
+			];
+		}
+
 		return [
 			'id'             => $this->id,
 			'gallery_id'     => $this->gallery_id,
@@ -123,6 +133,7 @@ class Image {
 			'storage_driver' => $this->storage_driver,
 			'url'            => $this->get_url(),
 			'thumb_url'      => $this->get_thumb_url(),
+			'thumbs'         => $thumbs,
 			'meta'           => $this->meta,
 			'created_at'     => $this->created_at,
 			'updated_at'     => $this->updated_at,

@@ -236,4 +236,183 @@ class NextGenImporter {
 		}
 		return $slug;
 	}
+
+	// ------------------------------------------------------------------
+	// Cleanup – list, zip, delete NextGEN files on disk
+	// ------------------------------------------------------------------
+
+	/**
+	 * Inspect every NextGEN gallery's on-disk folder and return totals
+	 * plus per-gallery breakdown. Used by the cleanup UI to show the
+	 * user exactly what would be removed.
+	 *
+	 * @return array {
+	 *   total_files: int,
+	 *   total_bytes: int,
+	 *   galleries:   array<int, array{gid:int,title:string,path:string,files:int,bytes:int,exists:bool}>,
+	 * }
+	 */
+	public function scan_legacy_files(): array {
+		$out = [ 'total_files' => 0, 'total_bytes' => 0, 'galleries' => [] ];
+
+		foreach ( $this->get_galleries() as $ngg ) {
+			$abs    = rtrim( ABSPATH, '/' ) . '/' . trim( (string) $ngg['path'], '/' );
+			$exists = is_dir( $abs );
+			$files  = 0;
+			$bytes  = 0;
+
+			if ( $exists ) {
+				[ $files, $bytes ] = $this->dir_stats( $abs );
+			}
+
+			$out['galleries'][] = [
+				'gid'    => (int) $ngg['gid'],
+				'title'  => (string) ( $ngg['title'] ?: $ngg['name'] ),
+				'path'   => (string) $ngg['path'],
+				'files'  => $files,
+				'bytes'  => $bytes,
+				'exists' => $exists,
+			];
+			$out['total_files'] += $files;
+			$out['total_bytes'] += $bytes;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Build a ZIP archive of every NextGEN gallery folder under the
+	 * WordPress uploads/bltgallery-backups/ directory and return both
+	 * the absolute path and the public URL.
+	 *
+	 * @throws \RuntimeException when ZipArchive is unavailable, the backup
+	 *                          directory is unwritable, or the archive
+	 *                          can't be opened/closed.
+	 */
+	public function backup_legacy_files(): array {
+		if ( ! class_exists( '\\ZipArchive' ) ) {
+			throw new \RuntimeException( __( 'The ZipArchive PHP extension is not available on this server.', 'bltgallery' ) );
+		}
+
+		$uploads = wp_upload_dir();
+		$dir     = trailingslashit( $uploads['basedir'] ) . 'bltgallery-backups';
+		if ( ! wp_mkdir_p( $dir ) ) {
+			throw new \RuntimeException( __( 'Could not create the backup directory.', 'bltgallery' ) );
+		}
+
+		$filename = 'nextgen-backup-' . gmdate( 'Ymd-His' ) . '.zip';
+		$zip_path = $dir . '/' . $filename;
+		$zip_url  = trailingslashit( $uploads['baseurl'] ) . 'bltgallery-backups/' . $filename;
+
+		$zip = new \ZipArchive();
+		if ( true !== $zip->open( $zip_path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE ) ) {
+			throw new \RuntimeException( __( 'Could not create the ZIP archive.', 'bltgallery' ) );
+		}
+
+		$file_count = 0;
+		foreach ( $this->get_galleries() as $ngg ) {
+			$abs = rtrim( ABSPATH, '/' ) . '/' . trim( (string) $ngg['path'], '/' );
+			if ( ! is_dir( $abs ) ) {
+				continue;
+			}
+			$prefix = trim( (string) $ngg['path'], '/' );
+
+			$iter = new \RecursiveIteratorIterator(
+				new \RecursiveDirectoryIterator( $abs, \FilesystemIterator::SKIP_DOTS ),
+				\RecursiveIteratorIterator::LEAVES_ONLY
+			);
+			foreach ( $iter as $file ) {
+				if ( ! $file->isFile() ) {
+					continue;
+				}
+				$abs_path = $file->getPathname();
+				$rel_path = $prefix . '/' . ltrim( substr( $abs_path, strlen( $abs ) ), '/\\' );
+				if ( $zip->addFile( $abs_path, $rel_path ) ) {
+					$file_count++;
+				}
+			}
+		}
+
+		if ( ! $zip->close() ) {
+			throw new \RuntimeException( __( 'Could not finalise the ZIP archive.', 'bltgallery' ) );
+		}
+
+		return [
+			'path'  => $zip_path,
+			'url'   => $zip_url,
+			'files' => $file_count,
+			'bytes' => (int) ( file_exists( $zip_path ) ? filesize( $zip_path ) : 0 ),
+		];
+	}
+
+	/**
+	 * Recursively delete every NextGEN gallery folder. Returns the
+	 * number of files and bytes removed. Does NOT touch the
+	 * `ngg_gallery` / `ngg_pictures` database tables — only files on
+	 * disk — so re-installing NextGEN would surface the rows as empty
+	 * galleries the user can deal with later.
+	 *
+	 * @return array{files:int,bytes:int,galleries:int}
+	 */
+	public function delete_legacy_files(): array {
+		$out = [ 'files' => 0, 'bytes' => 0, 'galleries' => 0 ];
+
+		foreach ( $this->get_galleries() as $ngg ) {
+			$abs = rtrim( ABSPATH, '/' ) . '/' . trim( (string) $ngg['path'], '/' );
+			if ( ! is_dir( $abs ) ) {
+				continue;
+			}
+
+			[ $files, $bytes ] = $this->dir_stats( $abs );
+			if ( $this->rrmdir( $abs ) ) {
+				$out['files']     += $files;
+				$out['bytes']     += $bytes;
+				$out['galleries']++;
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * @return array{0:int,1:int} files, bytes
+	 */
+	private function dir_stats( string $dir ): array {
+		$files = 0;
+		$bytes = 0;
+		$iter  = new \RecursiveIteratorIterator(
+			new \RecursiveDirectoryIterator( $dir, \FilesystemIterator::SKIP_DOTS ),
+			\RecursiveIteratorIterator::LEAVES_ONLY
+		);
+		foreach ( $iter as $file ) {
+			if ( $file->isFile() ) {
+				$files++;
+				$bytes += (int) $file->getSize();
+			}
+		}
+		return [ $files, $bytes ];
+	}
+
+	/**
+	 * Recursive rmdir. Refuses to delete anything outside ABSPATH as
+	 * a defence-in-depth check against a misconfigured NextGEN `path`.
+	 */
+	private function rrmdir( string $dir ): bool {
+		$real_dir  = realpath( $dir );
+		$real_root = realpath( ABSPATH );
+		if ( ! $real_dir || ! $real_root || 0 !== strpos( $real_dir, $real_root ) ) {
+			return false;
+		}
+
+		$it = new \RecursiveIteratorIterator(
+			new \RecursiveDirectoryIterator( $real_dir, \FilesystemIterator::SKIP_DOTS ),
+			\RecursiveIteratorIterator::CHILD_FIRST
+		);
+		foreach ( $it as $entry ) {
+			$entry->isDir()
+				? @rmdir( $entry->getPathname() )
+				: @unlink( $entry->getPathname() );
+		}
+		return @rmdir( $real_dir );
+	}
 }

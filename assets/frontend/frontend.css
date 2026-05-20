@@ -5,6 +5,7 @@
 :root {
 	--blt-gap: 12px;
 	--blt-radius: 6px;
+	--blt-thumb-min: 200px;   /* drives responsive auto-fill grids */
 	--blt-transition: 0.25s ease;
 	--blt-overlay: rgba(0, 0, 0, 0.6);
 	--blt-lb-bg: #111;
@@ -83,12 +84,34 @@
 
 /* ── Masonry ────────────────────────────────────────────────────────── */
 
+/*
+ * Columns-driven responsive grids.
+ *
+ * `--blt-cols` sets the *target* column count at desktop width. The RAM
+ * (repeat / auto-fill / minmax) pattern then ensures columns reflow
+ * gracefully on narrower screens — each tile never drops below
+ * `--blt-thumb-min` (default 160px).
+ *
+ *   max( min-cell-px, 100% / cols )  → the larger of "min size" and "1/N of width"
+ *   minmax( ↑, 1fr )                 → tracks grow with available space
+ *   repeat(auto-fill, …)             → as many tracks as fit
+ */
 .bltgallery-masonry__grid {
-	columns: var(--blt-cols, 3);
-	gap: var(--blt-gutter, 12px);
+	column-count: var(--blt-cols, 4);
+	column-gap: var(--blt-gutter, 12px);
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+@media (max-width: 900px) {
+	.bltgallery-masonry__grid { column-count: max(2, calc(var(--blt-cols, 4) - 1)); }
+}
+@media (max-width: 600px) {
+	.bltgallery-masonry__grid { column-count: max(1, calc(var(--blt-cols, 4) - 2)); }
+}
+@media (max-width: 380px) {
+	.bltgallery-masonry__grid { column-count: 1; }
 }
 
 .bltgallery-masonry__item {
@@ -96,19 +119,14 @@
 	margin-bottom: var(--blt-gutter, 12px);
 }
 
-@media (max-width: 768px) {
-	.bltgallery-masonry__grid { columns: 2; }
-}
-
-@media (max-width: 480px) {
-	.bltgallery-masonry__grid { columns: 1; }
-}
-
 /* ── Tile Grid ──────────────────────────────────────────────────────── */
 
 .bltgallery-tile__grid {
 	display: grid;
-	grid-template-columns: repeat( var(--blt-cols, 4), 1fr );
+	grid-template-columns: repeat(
+		auto-fill,
+		minmax( max( var(--blt-thumb-min, 160px), calc( ( 100% - ( var(--blt-cols, 4) - 1 ) * var(--blt-gutter, 8px) ) / var(--blt-cols, 4) ) ), 1fr )
+	);
 	gap: var(--blt-gutter, 8px);
 	list-style: none;
 	margin: 0;
@@ -126,14 +144,6 @@
 	font-size: 0.8rem;
 	color: #475569;
 	text-align: center;
-}
-
-@media (max-width: 768px) {
-	.bltgallery-tile__grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 480px) {
-	.bltgallery-tile__grid { grid-template-columns: 1fr; }
 }
 
 /* ── Slideshow ──────────────────────────────────────────────────────── */
@@ -237,7 +247,10 @@
 
 .bltgallery-lightbox__grid {
 	display: grid;
-	grid-template-columns: repeat( var(--blt-cols, 4), 1fr );
+	grid-template-columns: repeat(
+		auto-fill,
+		minmax( max( var(--blt-thumb-min, 160px), calc( ( 100% - ( var(--blt-cols, 4) - 1 ) * var(--blt-gutter, 8px) ) / var(--blt-cols, 4) ) ), 1fr )
+	);
 	gap: var(--blt-gutter, 8px);
 	list-style: none;
 	margin: 0;
@@ -275,9 +288,6 @@
 	outline-offset: 2px;
 }
 
-@media (max-width: 768px) {
-	.bltgallery-lightbox__grid { grid-template-columns: repeat(2, 1fr); }
-}
 
 /* ── Lightbox Modal ─────────────────────────────────────────────────── */
 
@@ -545,4 +555,92 @@ body.blt-lightbox-open { overflow: hidden; }
 	display: block;
 	font-size: 0.8rem;
 	opacity: 0.7;
+}
+
+/* ── Optional gallery date header ──────────────────────────────────── */
+
+.bltgallery__header {
+	margin: 0 0 0.75rem;
+}
+
+.bltgallery__date {
+	display: inline-block;
+	font-size: 0.85rem;
+	color: #475569;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+/* ── Pagination controls ───────────────────────────────────────────── */
+
+.bltgallery-pagination {
+	margin-top: 1.25rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.bltgallery-pagination__load-more {
+	font: inherit;
+	padding: 0.6rem 1.25rem;
+	background: #1d2327;
+	color: #fff;
+	border: 0;
+	border-radius: var(--blt-radius);
+	cursor: pointer;
+	transition: background var(--blt-transition), transform var(--blt-transition);
+}
+
+.bltgallery-pagination__load-more:hover:not(:disabled),
+.bltgallery-pagination__load-more:focus-visible {
+	background: #2c3338;
+	transform: translateY(-1px);
+}
+
+.bltgallery-pagination__load-more:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.bltgallery-pagination__status {
+	font-size: 0.85rem;
+	color: #475569;
+}
+
+.bltgallery-pagination__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 0.3rem;
+}
+
+.bltgallery-pagination__page {
+	font: inherit;
+	min-width: 2.2rem;
+	padding: 0.4rem 0.6rem;
+	background: transparent;
+	color: #1d2327;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background var(--blt-transition), border-color var(--blt-transition);
+}
+
+.bltgallery-pagination__page:hover {
+	background: #f6f7f7;
+	border-color: #8c8f94;
+}
+
+.bltgallery-pagination__page.is-active {
+	background: #1d2327;
+	color: #fff;
+	border-color: #1d2327;
+}
+
+.bltgallery-pagination__page:focus-visible {
+	outline: 2px solid #2563eb;
+	outline-offset: 2px;
 }

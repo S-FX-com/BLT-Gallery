@@ -149,11 +149,26 @@ class UploadEndpoint {
 	/**
 	 * Determine which storage driver to use for this upload.
 	 *
-	 * Reads the "Auto-offload" checkbox from each provider's settings.
-	 * S3 takes priority if both are enabled.
-	 * Falls back to 'local' if neither is enabled.
+	 * Honours the General Settings "Storage backend" choice first (the
+	 * radio group in admin Settings), then falls back to either provider's
+	 * per-backend "Auto-offload" checkbox for backwards compatibility.
+	 * Lands on 'local' when nothing applies.
 	 */
 	private function resolve_storage_driver( WP_REST_Request $request ): string {
+		$general  = get_option( 'bltgallery_settings', [] );
+		$selected = is_array( $general ) ? (string) ( $general['storage_driver'] ?? '' ) : '';
+
+		if ( 's3' === $selected && S3Storage::is_configured() ) {
+			return 's3';
+		}
+		if ( 'r2' === $selected && R2Storage::is_configured() ) {
+			return 'r2';
+		}
+		if ( 'local' === $selected ) {
+			return 'local';
+		}
+
+		// Legacy: per-provider auto_offload flag.
 		$aws = get_option( 'bltgallery_aws_settings', [] );
 		if ( ! empty( $aws['auto_offload'] ) && S3Storage::is_configured() ) {
 			return 's3';

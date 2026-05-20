@@ -10,14 +10,19 @@ use BltGallery\Models\Image;
  * Handles image upload processing: dimension extraction, thumbnail generation,
  * WebP/AVIF conversion, and EXIF stripping.
  *
- * Only the WordPress WP_Image_Editor API is used so that the host's preferred
- * image library (GD or Imagick) is respected automatically.
+ * All resize work flows through the WordPress WP_Image_Editor API so the
+ * host's preferred image library (GD or Imagick) is respected automatically,
+ * `image_resize_dimensions` / `wp_image_editor_supports` filters fire, and
+ * the resulting files behave exactly like core-generated intermediate sizes.
  */
 class ImageProcessor {
 
 	/**
-	 * Thumbnail sizes generated for every uploaded image.
-	 * Keys are size names; values are [width, height, crop] triples.
+	 * Logical → physical dimensions for every thumbnail we generate.
+	 * Each size name also has a matching `bltgallery-{name}` entry registered
+	 * with `add_image_size()` in Plugin::register_image_sizes().
+	 *
+	 * Values: [width, height, crop].
 	 */
 	const THUMBNAIL_SIZES = [
 		'thumb'  => [ 320, 320, true ],
@@ -105,6 +110,19 @@ class ImageProcessor {
 			// Fresh editor instance per size so resize calls don't stack.
 			$thumb_editor = wp_get_image_editor( $src_path );
 			if ( is_wp_error( $thumb_editor ) ) {
+				continue;
+			}
+
+			// Skip generation entirely when the source is already smaller
+			// than the target — matches WordPress core behaviour.
+			$dims = image_resize_dimensions(
+				$thumb_editor->get_size()['width']  ?? 0,
+				$thumb_editor->get_size()['height'] ?? 0,
+				$w,
+				$h,
+				$crop
+			);
+			if ( false === $dims ) {
 				continue;
 			}
 

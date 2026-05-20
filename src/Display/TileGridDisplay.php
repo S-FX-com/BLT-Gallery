@@ -28,8 +28,9 @@ class TileGridDisplay extends AbstractDisplay {
 			return;
 		}
 
-		$columns       = (int) ( $gallery->settings['columns'] ?? 4 );
-		$gutter        = (int) ( $gallery->settings['gutter'] ?? 8 );
+		$cfg = $this->pagination_config( $gallery );
+		[ $slice, $has_more, $total ] = $this->slice_for_pagination( $images, $cfg );
+
 		$captions_mode = sanitize_key( (string) ( $gallery->settings['captions'] ?? '' ) );
 		$show_captions = $captions_mode
 			? 'off' !== $captions_mode
@@ -38,21 +39,26 @@ class TileGridDisplay extends AbstractDisplay {
 		$lightbox      = ( '0' === (string) $lightbox || false === $lightbox ) ? '0' : '1';
 
 		printf(
-			'<ul class="bltgallery-tile__grid" style="--blt-cols:%d; --blt-gutter:%dpx;" data-lightbox="%s">',
-			$columns,
-			$gutter,
-			esc_attr( $lightbox )
+			'<ul class="bltgallery-tile__grid" data-lightbox="%s" data-show-captions="%d" data-total="%d">',
+			esc_attr( $lightbox ),
+			$show_captions ? 1 : 0,
+			(int) $total
 		);
 
-		foreach ( $images as $image ) {
+		foreach ( $slice as $image ) {
 			$this->render_item( $image, $show_captions );
 		}
 
 		echo '</ul>';
+
+		if ( $has_more ) {
+			$this->render_pagination_controls( $gallery, $cfg, $total );
+		}
+
 		$this->close_container();
 	}
 
-	private function render_item( Image $image, bool $show_caption ): void {
+	public function render_item( Image $image, bool $show_caption = false ): void {
 		$full_url = esc_url( $image->get_url() );
 
 		echo '<li class="bltgallery-tile__item">';

@@ -51,9 +51,14 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 | `id`        | int                                               | Gallery ID (or use `slug`)            |
 | `slug`      | string                                            | Gallery slug (alt to `id`)            |
 | `type`      | `masonry` `tile` `slideshow` `lightbox` `album`   | Overrides stored display type         |
-| `cols`      | 1–8                                               | Column count for grid layouts         |
+| `cols`      | 1–8                                               | Target column count (responsive — reflows on narrow screens) |
+| `size`      | `small` `medium` `large` `xlarge`                 | Minimum tile-width preset (advanced)  |
+| `thumb_min` | px                                                | Raw minimum tile width (advanced)     |
 | `gap`       | px                                                | Gutter between items                  |
 | `radius`    | px                                                | Per-item border radius                |
+| `pagination`| `off` `load-more` `numbered` `infinite`           | AJAX pagination mode                  |
+| `per_page`  | int                                               | Images per page when paginated        |
+| `date`      | `YYYY-MM-DD`                                      | Override the gallery's display date   |
 | `captions`  | `below` `hover` `off`                             | Caption position                      |
 | `lightbox`  | `1` / `0`                                         | Enable lightbox click-through         |
 | `autoplay`  | `1` / `0`                                         | Slideshow only                        |
@@ -90,7 +95,8 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 | `cover`        | `first` `random`                        | Which image to use for the card cover    |
 | `gallery_type` | same as `[blt_gallery]` `type`          | Inline display type in accordion mode    |
 | `limit`        | int                                     | Cap number of galleries rendered         |
-| `order`        | `menu` `date` `random`                  | Sort order                               |
+| `sort_by`      | `menu` `date` `name` `random`           | Sort key within the album                |
+| `order`        | `asc` `desc`                            | Sort direction                           |
 
 ## Cloudflare optimisation
 

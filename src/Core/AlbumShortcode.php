@@ -53,7 +53,10 @@ class AlbumShortcode {
 				'show_count'   => '1',
 				'cover'        => 'first',
 				'limit'        => '',
-				'order'        => 'menu',
+				// Sort key within the album: menu (manual / sort_order),
+				// date (settings.gallery_date), or name (title).
+				'sort_by'      => 'menu',
+				'order'        => 'asc', // asc | desc
 				'gallery_type' => '',
 				'class'        => '',
 				'style_attr'   => '',
@@ -108,13 +111,36 @@ class AlbumShortcode {
 			}
 		}
 
-		// Order / limit.
-		switch ( sanitize_key( $atts['order'] ) ) {
+		$sort_by  = sanitize_key( $atts['sort_by'] );
+		$reverse  = 'desc' === sanitize_key( $atts['order'] );
+
+		switch ( $sort_by ) {
 			case 'random':
 				shuffle( $galleries );
 				break;
 			case 'date':
-				usort( $galleries, static fn( $a, $b ) => strcmp( (string) $b->created_at, (string) $a->created_at ) );
+				usort( $galleries, static function ( $a, $b ) {
+					$ad = (string) ( $a->settings['gallery_date'] ?? $a->created_at );
+					$bd = (string) ( $b->settings['gallery_date'] ?? $b->created_at );
+					return strcmp( $ad, $bd );
+				} );
+				if ( $reverse ) {
+					$galleries = array_reverse( $galleries );
+				}
+				break;
+			case 'name':
+			case 'title':
+				usort( $galleries, static fn( $a, $b ) => strnatcasecmp( (string) $a->title, (string) $b->title ) );
+				if ( $reverse ) {
+					$galleries = array_reverse( $galleries );
+				}
+				break;
+			case 'menu':
+			default:
+				// Manual order = preserve insertion. Only reverse if explicitly asked.
+				if ( $reverse ) {
+					$galleries = array_reverse( $galleries );
+				}
 				break;
 		}
 

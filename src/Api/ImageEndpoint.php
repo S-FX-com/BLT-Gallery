@@ -90,8 +90,40 @@ class ImageEndpoint {
 			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
-		$images = ImageRepository::find_by_gallery( $gallery_id );
-		return new WP_REST_Response( array_map( fn( Image $img ) => $img->to_array(), $images ) );
+		$page     = max( 1, (int) ( $request->get_param( 'page' ) ?? 1 ) );
+		$per_page = (int) ( $request->get_param( 'per_page' ) ?? 0 );
+		$paginate = $per_page > 0;
+
+		$all   = ImageRepository::find_by_gallery( $gallery_id );
+		$total = count( $all );
+
+		$slice = $paginate
+			? array_slice( $all, ( $page - 1 ) * $per_page, $per_page )
+			: $all;
+
+		$response = new WP_REST_Response(
+			[
+				'images'    => array_map( fn( Image $img ) => $img->to_array(), $slice ),
+				'page'      => $page,
+				'per_page'  => $paginate ? $per_page : $total,
+				'total'     => $total,
+				'has_more'  => $paginate ? ( $page * $per_page ) < $total : false,
+			]
+		);
+
+		// Logged-out + paginated reads are safe to cache on CDNs.
+		if ( $paginate && ! is_user_logged_in() ) {
+			$response->header( 'Cache-Control', 'public, max-age=120, s-maxage=300, stale-while-revalidate=600' );
+		}
+		$response->header( 'X-BLT-Total', (string) $total );
+
+		// Back-compat: if the caller didn't ask for pagination AND didn't pass
+		// _embed, return the bare array shape that older clients expect.
+		if ( ! $paginate && ! $request->get_param( 'shape' ) ) {
+			return new WP_REST_Response( array_map( fn( Image $img ) => $img->to_array(), $all ) );
+		}
+
+		return $response;
 	}
 
 	public function show( WP_REST_Request $request ): WP_REST_Response|WP_Error {
