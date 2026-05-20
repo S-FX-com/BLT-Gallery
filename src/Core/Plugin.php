@@ -143,6 +143,14 @@ final class Plugin {
 		);
 
 		wp_script_add_data( 'bltgallery-frontend', 'strategy', 'defer' );
+
+		wp_localize_script(
+			'bltgallery-frontend',
+			'bltGalleryFrontend',
+			[
+				'apiBase' => esc_url_raw( rest_url( 'bltgallery/v1' ) ),
+			]
+		);
 	}
 
 	// -----------------------------------------------------------------

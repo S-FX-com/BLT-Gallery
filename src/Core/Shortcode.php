@@ -40,24 +40,27 @@ class Shortcode {
 	public function render( array $atts, string $content = '', string $tag = 'blt_gallery' ): string {
 		$atts = shortcode_atts(
 			[
-				'id'       => 0,
-				'slug'     => '',
-				'type'     => '',
-				'cols'     => '',
-				'gap'      => '',
-				'radius'   => '',
-				'size'     => '', // small | medium | large | xlarge
-				'thumb_min'=> '', // raw px override
-				'captions' => '',
-				'lightbox' => '',
-				'autoplay' => '',
-				'speed'    => '',
-				'arrows'   => '',
-				'dots'     => '',
-				'limit'    => '',
-				'order'    => '',
-				'class'    => '',
-				'style'    => '',
+				'id'         => 0,
+				'slug'       => '',
+				'type'       => '',
+				'cols'       => '',
+				'gap'        => '',
+				'radius'     => '',
+				'size'       => '', // small | medium | large | xlarge
+				'thumb_min'  => '', // raw px override
+				'captions'   => '',
+				'lightbox'   => '',
+				'autoplay'   => '',
+				'speed'      => '',
+				'arrows'     => '',
+				'dots'       => '',
+				'pagination' => '', // off | load-more | numbered | infinite
+				'per_page'   => '',
+				'date'       => '', // YYYY-MM-DD override
+				'limit'      => '',
+				'order'      => '',
+				'class'      => '',
+				'style'      => '',
 			],
 			$atts,
 			$tag
@@ -100,26 +103,36 @@ class Shortcode {
 
 	private function merge_settings( array $settings, array $atts ): array {
 		$map = [
-			'cols'      => 'columns',
-			'gap'       => 'gutter',
-			'radius'    => 'radius',
-			'size'      => 'thumbnail_size',
-			'thumb_min' => 'thumb_min',
-			'captions'  => 'captions',
-			'lightbox'  => 'lightbox',
-			'autoplay'  => 'autoplay',
-			'speed'     => 'speed',
-			'arrows'    => 'arrows',
-			'dots'      => 'dots',
+			'cols'       => 'columns',
+			'gap'        => 'gutter',
+			'radius'     => 'radius',
+			'size'       => 'thumbnail_size',
+			'thumb_min'  => 'thumb_min',
+			'captions'   => 'captions',
+			'lightbox'   => 'lightbox',
+			'autoplay'   => 'autoplay',
+			'speed'      => 'speed',
+			'arrows'     => 'arrows',
+			'dots'       => 'dots',
+			'pagination' => 'pagination',
+			'per_page'   => 'per_page',
+			'date'       => 'gallery_date',
 		];
+
+		$int_keys = [ 'cols', 'gap', 'radius', 'speed', 'thumb_min', 'per_page' ];
 
 		foreach ( $map as $att => $key ) {
 			if ( '' === $atts[ $att ] || null === $atts[ $att ] ) {
 				continue;
 			}
-			$settings[ $key ] = in_array( $att, [ 'cols', 'gap', 'radius', 'speed', 'thumb_min' ], true )
+			$settings[ $key ] = in_array( $att, $int_keys, true )
 				? (int) $atts[ $att ]
 				: $atts[ $att ];
+		}
+
+		// Validate date format.
+		if ( ! empty( $settings['gallery_date'] ) && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $settings['gallery_date'] ) ) {
+			unset( $settings['gallery_date'] );
 		}
 
 		return $settings;

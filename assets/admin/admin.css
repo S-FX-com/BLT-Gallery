@@ -302,3 +302,127 @@
 	color: #646970;
 	line-height: 1.35;
 }
+
+/* ── Inline image edit ──────────────────────────────────────────────── */
+
+.bltgallery-image-grid__actions {
+	display: inline-flex;
+	gap: 0.4rem;
+	align-items: center;
+}
+
+.bltgallery-image-grid__item.is-editing {
+	background: #f5f9ff;
+	border-color: var(--blt-accent);
+}
+
+.bltgallery-image-grid__edit {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0.6rem;
+	background: #f6f7f7;
+	border-top: 1px solid #e5e7eb;
+}
+
+.bltgallery-image-grid__edit label {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+
+.bltgallery-image-grid__edit input,
+.bltgallery-image-grid__edit textarea {
+	width: 100%;
+	font: inherit;
+	font-weight: 400;
+}
+
+.bltgallery-image-grid__edit-actions {
+	display: flex;
+	gap: 0.4rem;
+	justify-content: flex-end;
+}
+
+/* ── Storage backend cards ──────────────────────────────────────────── */
+
+.bltgallery-driver-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 0.6rem;
+}
+
+.bltgallery-driver-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	padding: 0.75rem 0.85rem;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: var(--blt-radius);
+	cursor: pointer;
+}
+
+.bltgallery-driver-card.is-selected {
+	border-color: var(--blt-accent);
+	background: #f5f9ff;
+	box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+
+.bltgallery-driver-card input[type="radio"] {
+	margin: 0 0 0.3rem;
+}
+
+.bltgallery-driver-card__label {
+	font-weight: 600;
+}
+
+.bltgallery-driver-card__desc {
+	font-size: 0.8rem;
+	color: #646970;
+	line-height: 1.35;
+}
+
+/* Hidden panels (S3 / R2) when not the active backend. */
+.bltgallery-panel[hidden] {
+	display: none;
+}
+
+/* ── Shortcodes reference page ──────────────────────────────────────── */
+
+.bltgallery-shortcode-doc__examples {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.4rem;
+	margin-bottom: 1rem;
+}
+
+.bltgallery-shortcode-doc__example {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.bltgallery-shortcode-doc__example code {
+	flex: 1;
+	padding: 0.45rem 0.6rem;
+	background: #1d2327;
+	color: #f6f7f7;
+	border-radius: 4px;
+	font-size: 0.85rem;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.bltgallery-shortcode-doc__table td:first-child code {
+	background: #f6f7f7;
+	padding: 0.15rem 0.4rem;
+	border-radius: 3px;
+}
+
+.bltgallery-shortcode-doc__table td:nth-child(2) code {
+	background: transparent;
+	padding: 0 0.15rem;
+}

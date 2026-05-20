@@ -48,12 +48,45 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
+			__( 'Shortcodes', 'bltgallery' ),
+			__( 'Shortcodes', 'bltgallery' ),
+			'manage_options',
+			self::MENU_SLUG . '-shortcodes',
+			[ $this, 'render_shortcodes_page' ]
+		);
+
+		add_submenu_page(
+			self::MENU_SLUG,
 			__( 'Import', 'bltgallery' ),
 			__( 'Import', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG . '-import',
 			[ $this, 'render_import_page' ]
 		);
+	}
+
+	public function render_shortcodes_page(): void {
+		?>
+		<div class="wrap bltgallery-wrap">
+			<h1><?php esc_html_e( 'Shortcodes', 'bltgallery' ); ?></h1>
+			<p>
+				<?php esc_html_e(
+					'Drop these shortcodes into any post, page, or widget to display galleries. Every shortcode attribute below overrides the corresponding gallery setting for that single placement.',
+					'bltgallery'
+				); ?>
+			</p>
+			<div id="bltgallery-shortcodes-doc">
+				<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+			</div>
+		</div>
+		<script>
+		document.addEventListener( 'DOMContentLoaded', function () {
+			if ( window.BltGalleryAdmin && BltGalleryAdmin.initShortcodesDoc ) {
+				BltGalleryAdmin.initShortcodesDoc();
+			}
+		} );
+		</script>
+		<?php
 	}
 
 	public function enqueue_assets( string $hook ): void {

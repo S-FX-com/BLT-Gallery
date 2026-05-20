@@ -292,11 +292,15 @@
 	}
 
 	function renderEditorSettings( container, gallery, galleryId ) {
-		const settings = gallery.settings || {};
-		const selected = gallery.display_type || 'masonry';
-		const size     = settings.thumbnail_size || 'medium';
-		const autoplay = settings.autoplay ? '1' : '0';
-		const speed    = settings.speed ?? 4000;
+		const settings   = gallery.settings || {};
+		const selected   = gallery.display_type || 'masonry';
+		const columns    = settings.columns ?? 4;
+		const galDate    = settings.gallery_date || '';
+		const category   = settings.category || '';
+		const pagination = settings.pagination || 'off';
+		const perPage    = settings.per_page ?? 24;
+		const autoplay   = settings.autoplay ? '1' : '0';
+		const speed      = settings.speed ?? 4000;
 
 		const typeCards = DISPLAY_TYPES.map( ( t ) => `
 			<label class="bltgallery-type-card${ t.value === selected ? ' is-selected' : '' }" data-type="${ t.value }">
@@ -309,10 +313,6 @@
 			</label>
 		` ).join( '' );
 
-		const sizeOptions = THUMB_SIZES.map( ( s ) =>
-			`<option value="${ s.value }"${ s.value === size ? ' selected' : '' }>${ escHtml( s.label ) } — ${ escHtml( s.desc ) }</option>`
-		).join( '' );
-
 		container.innerHTML = `
 			<div class="bltgallery-field">
 				<label for="zyg-title">Title</label>
@@ -323,15 +323,37 @@
 				<textarea id="zyg-description" rows="3" class="large-text">${ escHtml( gallery.description || '' ) }</textarea>
 			</div>
 			<div class="bltgallery-field">
+				<label for="zyg-gallery-date">Date (optional)</label>
+				<input type="date" id="zyg-gallery-date" value="${ escHtml( galDate ) }">
+				<p class="description">YYYY-MM-DD. Rendered above the gallery and used for sorting albums by date.</p>
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-category">Album / Category (optional)</label>
+				<input type="text" id="zyg-category" class="regular-text" value="${ escHtml( category ) }" list="zyg-category-suggestions" placeholder="e.g. weddings">
+				<datalist id="zyg-category-suggestions"></datalist>
+				<p class="description">Group this gallery with others in <code>[blt_album category="…"]</code>.</p>
+			</div>
+			<div class="bltgallery-field">
 				<span class="bltgallery-field__label">Display Type</span>
 				<div class="bltgallery-type-cards" role="radiogroup" aria-label="Display type">
 					${ typeCards }
 				</div>
 			</div>
-			<div class="bltgallery-field" id="zyg-size-row">
-				<label for="zyg-thumb-size">Thumbnail size</label>
-				<select id="zyg-thumb-size">${ sizeOptions }</select>
-				<p class="description">Columns auto-fit responsively to your page width based on this size — no manual column count needed.</p>
+			<div class="bltgallery-field" id="zyg-cols-row">
+				<label for="zyg-columns">Columns</label>
+				<input type="number" id="zyg-columns" class="small-text" min="1" max="8" value="${ columns }">
+				<p class="description">Target column count on desktop. The grid still reorganises responsively on narrower screens.</p>
+			</div>
+			<div class="bltgallery-field" id="zyg-pagination-row">
+				<label for="zyg-pagination">Pagination</label>
+				<select id="zyg-pagination">
+					<option value="off"${ pagination === 'off' ? ' selected' : '' }>Off — load all at once</option>
+					<option value="load-more"${ pagination === 'load-more' ? ' selected' : '' }>Load more button</option>
+					<option value="numbered"${ pagination === 'numbered' ? ' selected' : '' }>Numbered pages</option>
+					<option value="infinite"${ pagination === 'infinite' ? ' selected' : '' }>Infinite scroll</option>
+				</select>
+				<label for="zyg-per-page" style="margin-left:1rem">Per page</label>
+				<input type="number" id="zyg-per-page" class="small-text" min="1" max="200" value="${ perPage }">
 			</div>
 			<div class="bltgallery-field" id="zyg-slideshow-row" style="display:none">
 				<label for="zyg-autoplay">Autoplay</label>
@@ -347,8 +369,16 @@
 			</div>
 		`;
 
+		// Populate the category datalist by harvesting existing values from the API.
+		api( '/galleries?per_page=100' ).then( ( galleries ) => {
+			const dl = container.querySelector( '#zyg-category-suggestions' );
+			const cats = Array.from( new Set( galleries.map( ( g ) => g.settings?.category ).filter( Boolean ) ) );
+			dl.innerHTML = cats.map( ( c ) => `<option value="${ escHtml( c ) }">` ).join( '' );
+		} ).catch( () => {} );
+
 		const cardsWrap = container.querySelector( '.bltgallery-type-cards' );
-		const sizeRow   = container.querySelector( '#zyg-size-row' );
+		const colsRow   = container.querySelector( '#zyg-cols-row' );
+		const pagRow    = container.querySelector( '#zyg-pagination-row' );
 		const ssRow     = container.querySelector( '#zyg-slideshow-row' );
 
 		function selectedType() {
@@ -358,7 +388,8 @@
 		function updateTypeVisibility() {
 			const type = selectedType();
 			const isSlide = type === 'slideshow';
-			sizeRow.style.display = isSlide ? 'none' : '';
+			colsRow.style.display = isSlide ? 'none' : '';
+			pagRow.style.display  = isSlide ? 'none' : '';
 			ssRow.style.display   = isSlide ? '' : 'none';
 		}
 
@@ -375,18 +406,30 @@
 		container.querySelector( '#zyg-save-btn' ).addEventListener( 'click', async ( e ) => {
 			e.target.disabled = true;
 			e.target.textContent = 'Saving…';
-			const type    = selectedType();
-			const isSlide = type === 'slideshow';
+			const type        = selectedType();
+			const isSlide     = type === 'slideshow';
+			const dateValue   = container.querySelector( '#zyg-gallery-date' ).value;
+			const catValue    = container.querySelector( '#zyg-category' ).value.trim();
+
+			const baseSettings = {
+				gallery_date: dateValue,
+				category:     catValue,
+			};
+
 			const body = {
 				title:        container.querySelector( '#zyg-title' ).value,
 				description:  container.querySelector( '#zyg-description' ).value,
 				display_type: type,
-				settings: isSlide ? {
-					autoplay: container.querySelector( '#zyg-autoplay' ).value === '1',
-					speed:    parseInt( container.querySelector( '#zyg-speed' ).value, 10 ),
-				} : {
-					thumbnail_size: container.querySelector( '#zyg-thumb-size' ).value,
-				},
+				settings: isSlide
+					? { ...baseSettings,
+						autoplay: container.querySelector( '#zyg-autoplay' ).value === '1',
+						speed:    parseInt( container.querySelector( '#zyg-speed' ).value, 10 ),
+					}
+					: { ...baseSettings,
+						columns:    parseInt( container.querySelector( '#zyg-columns' ).value, 10 ),
+						pagination: container.querySelector( '#zyg-pagination' ).value,
+						per_page:   parseInt( container.querySelector( '#zyg-per-page' ).value, 10 ),
+					},
 			};
 			try {
 				await api( `/galleries/${ galleryId }`, { method: 'PUT', body } );
@@ -426,10 +469,69 @@
 			li.innerHTML = `
 				<img src="${ escHtml( img.thumb_url || img.url ) }" alt="${ escHtml( img.alt_text || img.filename ) }" loading="lazy" width="100" height="100">
 				<div class="bltgallery-image-grid__meta">
-					<span title="${ escHtml( img.filename ) }">${ escHtml( img.filename ) }</span>
-					<button class="button-link-delete zyg-img-delete" aria-label="Delete ${ escHtml( img.filename ) }">&times;</button>
+					<span class="bltgallery-image-grid__name" title="${ escHtml( img.filename ) }">${ escHtml( img.alt_text || img.filename ) }</span>
+					<div class="bltgallery-image-grid__actions">
+						<button class="button-link zyg-img-edit" aria-label="Edit ${ escHtml( img.filename ) }">Edit</button>
+						<button class="button-link-delete zyg-img-delete" aria-label="Delete ${ escHtml( img.filename ) }">&times;</button>
+					</div>
 				</div>
+				<form class="bltgallery-image-grid__edit" hidden>
+					<label>
+						<span>Title / alt text</span>
+						<input type="text" name="alt_text" value="${ escHtml( img.alt_text || '' ) }" placeholder="${ escHtml( img.filename ) }">
+					</label>
+					<label>
+						<span>Caption</span>
+						<textarea name="caption" rows="2" placeholder="Shown in lightbox and on hover">${ escHtml( img.caption || '' ) }</textarea>
+					</label>
+					<div class="bltgallery-image-grid__edit-actions">
+						<button type="submit" class="button button-primary">Save</button>
+						<button type="button" class="button button-secondary zyg-img-cancel">Cancel</button>
+					</div>
+				</form>
 			`;
+
+			const form = li.querySelector( '.bltgallery-image-grid__edit' );
+			const name = li.querySelector( '.bltgallery-image-grid__name' );
+
+			li.querySelector( '.zyg-img-edit' ).addEventListener( 'click', () => {
+				const open = ! form.hidden;
+				form.hidden = open;
+				li.classList.toggle( 'is-editing', ! open );
+				if ( ! open ) form.querySelector( 'input[name="alt_text"]' ).focus();
+			} );
+
+			li.querySelector( '.zyg-img-cancel' ).addEventListener( 'click', () => {
+				form.hidden = true;
+				li.classList.remove( 'is-editing' );
+				form.querySelector( 'input[name="alt_text"]' ).value = img.alt_text || '';
+				form.querySelector( 'textarea[name="caption"]' ).value = img.caption || '';
+			} );
+
+			form.addEventListener( 'submit', async ( ev ) => {
+				ev.preventDefault();
+				const submit = form.querySelector( 'button[type="submit"]' );
+				submit.disabled = true;
+				submit.textContent = 'Saving…';
+				const body = {
+					alt_text: form.querySelector( 'input[name="alt_text"]' ).value.trim(),
+					caption:  form.querySelector( 'textarea[name="caption"]' ).value,
+				};
+				try {
+					const updated = await api( `/galleries/${ galleryId }/images/${ img.id }`, { method: 'PATCH', body } );
+					img.alt_text = updated.alt_text;
+					img.caption  = updated.caption;
+					name.textContent  = updated.alt_text || updated.filename;
+					form.hidden = true;
+					li.classList.remove( 'is-editing' );
+					showNotice( 'Image updated.' );
+				} catch ( err ) {
+					showNotice( err.message, 'error' );
+				} finally {
+					submit.disabled = false;
+					submit.textContent = 'Save';
+				}
+			} );
 
 			li.querySelector( '.zyg-img-delete' ).addEventListener( 'click', async () => {
 				if ( ! window.confirm( `Delete image "${ img.filename }"?` ) ) return;
@@ -576,19 +678,55 @@
 			return;
 		}
 
-		renderGeneralSettings( genEl, general );
+		renderGeneralSettings( genEl, general, () => applyStorageVisibility( general.storage_driver ) );
 		renderAwsSettings( awsEl, aws );
 		renderR2Settings( r2El, r2 );
+
+		applyStorageVisibility( general.storage_driver || 'local' );
 	}
 
-	function renderGeneralSettings( container, general ) {
-		const g = general || {};
+	/**
+	 * Show / hide the S3 + R2 panels based on the active storage backend.
+	 */
+	function applyStorageVisibility( driver ) {
+		const map = {
+			s3: 'bltgallery-aws-settings',
+			r2: 'bltgallery-r2-settings',
+		};
+		Object.entries( map ).forEach( ( [ key, panelId ] ) => {
+			const panel = document.getElementById( panelId )?.closest( '.bltgallery-panel' );
+			if ( ! panel ) return;
+			panel.hidden = driver !== key;
+		} );
+	}
+
+	function renderGeneralSettings( container, general, onChange ) {
+		const g      = general || {};
+		const driver = g.storage_driver || 'local';
+
+		const driverOption = ( value, label, desc ) => `
+			<label class="bltgallery-driver-card${ driver === value ? ' is-selected' : '' }">
+				<input type="radio" name="zyg-storage-driver" value="${ value }"${ driver === value ? ' checked' : '' }>
+				<span class="bltgallery-driver-card__label">${ escHtml( label ) }</span>
+				<span class="bltgallery-driver-card__desc">${ escHtml( desc ) }</span>
+			</label>
+		`;
+
 		container.innerHTML = `
 			<div class="bltgallery-field">
 				<label for="zyg-default-display">Default Display Type</label>
 				<select id="zyg-default-display">
 					${ DISPLAY_TYPES.map( ( t ) => `<option value="${ t.value }"${ t.value === g.default_display_type ? ' selected' : '' }>${ escHtml( t.label ) }</option>` ).join( '' ) }
 				</select>
+			</div>
+			<div class="bltgallery-field">
+				<span class="bltgallery-field__label">Storage backend</span>
+				<div class="bltgallery-driver-cards" role="radiogroup" aria-label="Storage backend">
+					${ driverOption( 'local', 'Local uploads', 'Files live in /wp-content/uploads on this server.' ) }
+					${ driverOption( 's3',    'Amazon S3',     'Offload to an S3 bucket (with optional CloudFront).' ) }
+					${ driverOption( 'r2',    'Cloudflare R2', 'Offload to R2 — S3-compatible, no egress fees.' ) }
+				</div>
+				<p class="description">The matching settings panel below will appear once you save.</p>
 			</div>
 			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
@@ -611,17 +749,29 @@
 			</div>
 		`;
 
+		container.querySelectorAll( 'input[name="zyg-storage-driver"]' ).forEach( ( r ) => {
+			r.addEventListener( 'change', ( e ) => {
+				container.querySelectorAll( '.bltgallery-driver-card' ).forEach( ( c ) => {
+					c.classList.toggle( 'is-selected', c.contains( e.target ) );
+				} );
+				applyStorageVisibility( e.target.value );
+			} );
+		} );
+
 		container.querySelector( '#zyg-save-general' ).addEventListener( 'click', async ( e ) => {
 			e.target.disabled = true;
 			e.target.textContent = 'Saving…';
 			try {
-				await api( '/settings', { method: 'POST', body: {
+				const next = await api( '/settings', { method: 'POST', body: {
 					default_display_type:    container.querySelector( '#zyg-default-display' ).value,
+					storage_driver:          container.querySelector( 'input[name="zyg-storage-driver"]:checked' ).value,
 					lazy_load:               container.querySelector( '#zyg-lazy-load' ).checked,
 					webp_quality:            parseInt( container.querySelector( '#zyg-webp-quality' ).value, 10 ),
 					delete_data_on_uninstall: container.querySelector( '#zyg-delete-data' ).checked,
 				} } );
 				showNotice( 'General settings saved.' );
+				if ( typeof onChange === 'function' ) onChange( next );
+				applyStorageVisibility( next.storage_driver );
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
@@ -947,12 +1097,142 @@
 	}
 
 	// ------------------------------------------------------------------
+	// Shortcodes reference page
+	// ------------------------------------------------------------------
+
+	const SHORTCODE_DOCS = [
+		{
+			tag: 'blt_gallery',
+			title: 'Single gallery',
+			intro: 'Renders one gallery. Every attribute below temporarily overrides the matching gallery setting for this placement.',
+			examples: [
+				`[blt_gallery id="5"]`,
+				`[blt_gallery slug="weddings-2026" type="masonry" cols="4" gap="16"]`,
+				`[blt_gallery id="5" type="slideshow" autoplay="1" speed="4000"]`,
+				`[blt_gallery id="5" type="tile" pagination="load-more" per_page="24"]`,
+				`[blt_gallery id="5" captions="hover" radius="12" lightbox="1"]`,
+				`[blt_gallery id="5" date="2026-05-20"]`,
+			],
+			attrs: [
+				[ 'id',         'int',                 'Gallery ID.' ],
+				[ 'slug',       'string',              'Gallery slug — used when `id` is omitted.' ],
+				[ 'type',       'masonry · tile · slideshow · lightbox', 'Override the stored display type.' ],
+				[ 'cols',       '1–8',                 'Target column count at desktop width.' ],
+				[ 'gap',        'px',                  'Gutter between items.' ],
+				[ 'radius',     'px',                  'Per-item border radius.' ],
+				[ 'size',       'small · medium · large · xlarge', 'Preset minimum tile width.' ],
+				[ 'thumb_min',  'px',                  'Raw minimum tile width (advanced override).' ],
+				[ 'captions',   'below · hover · off', 'Caption position.' ],
+				[ 'lightbox',   '1 · 0',               'Enable click-to-lightbox on grids.' ],
+				[ 'pagination', 'off · load-more · numbered · infinite', 'AJAX pagination mode.' ],
+				[ 'per_page',   'int',                 'Images per page when pagination is on.' ],
+				[ 'date',       'YYYY-MM-DD',          'Override the gallery’s display date.' ],
+				[ 'autoplay',   '1 · 0',               'Slideshow autoplay.' ],
+				[ 'speed',      'ms',                  'Slideshow autoplay interval.' ],
+				[ 'arrows',     '1 · 0',               'Show slideshow nav arrows.' ],
+				[ 'dots',       '1 · 0',               'Show slideshow dot indicators.' ],
+				[ 'limit',      'int',                 'Cap the number of images rendered.' ],
+				[ 'order',      'menu · date · random','Image sort order.' ],
+				[ 'class',      'string',              'Extra CSS class on the wrapper.' ],
+				[ 'style',      'string',              'Extra inline style on the wrapper.' ],
+			],
+		},
+		{
+			tag: 'blt_album',
+			title: 'Album (collection of galleries)',
+			intro: 'Renders a group of galleries as clickable cards. Treat an album like a category — galleries grouped by the same value in their Album/Category field show up together.',
+			examples: [
+				`[blt_album category="weddings" sort_by="date"]`,
+				`[blt_album ids="3,7,9" style="grid" cols="3" gap="20"]`,
+				`[blt_album slugs="nature,travel" style="masonry" cols="4"]`,
+				`[blt_album category="portfolio" style="carousel" cols="4"]`,
+				`[blt_album category="portfolio" style="accordion" gallery_type="masonry"]`,
+				`[blt_album category="portfolio" sort_by="name" order="asc"]`,
+			],
+			attrs: [
+				[ 'ids',          'comma-separated ints',     'Explicit gallery IDs to include.' ],
+				[ 'slugs',        'comma-separated slugs',    'Alternative to `ids`.' ],
+				[ 'category',     'string',                   'Pull every gallery whose Album/Category matches.' ],
+				[ 'style',        'grid · masonry · carousel · accordion', 'Album layout.' ],
+				[ 'cols',         '1–8',                      'Card grid column count.' ],
+				[ 'gap',          'px',                       'Space between cards.' ],
+				[ 'radius',       'px',                       'Card border radius.' ],
+				[ 'captions',     'below · hover · off',      'Title placement on each card.' ],
+				[ 'show_count',   '1 · 0',                    'Render "N photos" under each card.' ],
+				[ 'cover',        'first · random',           'Which image becomes the card cover.' ],
+				[ 'sort_by',      'menu · date · name',       'How to sort galleries within the album.' ],
+				[ 'order',        'asc · desc',               'Sort direction.' ],
+				[ 'gallery_type', 'see [blt_gallery] type',   'Inline display type used in accordion mode.' ],
+				[ 'limit',        'int',                      'Cap number of galleries rendered.' ],
+			],
+		},
+	];
+
+	function initShortcodesDoc() {
+		const root = document.getElementById( 'bltgallery-shortcodes-doc' );
+		if ( ! root ) return;
+
+		root.innerHTML = SHORTCODE_DOCS.map( ( sc ) => `
+			<div class="bltgallery-panel bltgallery-shortcode-doc">
+				<div class="bltgallery-panel__header">
+					<h2><code>[${ escHtml( sc.tag ) }]</code> — ${ escHtml( sc.title ) }</h2>
+				</div>
+				<div class="bltgallery-panel__body">
+					<p>${ escHtml( sc.intro ) }</p>
+
+					<h3>Examples</h3>
+					<div class="bltgallery-shortcode-doc__examples">
+						${ sc.examples.map( ( ex ) => `
+							<div class="bltgallery-shortcode-doc__example">
+								<code>${ escHtml( ex ) }</code>
+								<button type="button" class="button button-secondary bltgallery-copy" data-copy="${ escHtml( ex ) }">Copy</button>
+							</div>
+						` ).join( '' ) }
+					</div>
+
+					<h3>Attributes</h3>
+					<table class="wp-list-table widefat fixed striped bltgallery-table bltgallery-shortcode-doc__table">
+						<thead>
+							<tr><th style="width:18%">Attribute</th><th style="width:30%">Values</th><th>Description</th></tr>
+						</thead>
+						<tbody>
+							${ sc.attrs.map( ( [ a, v, d ] ) => `
+								<tr>
+									<td><code>${ escHtml( a ) }</code></td>
+									<td>${ v.split( ' · ' ).map( ( token ) => `<code>${ escHtml( token ) }</code>` ).join( ' · ' ) }</td>
+									<td>${ escHtml( d ) }</td>
+								</tr>
+							` ).join( '' ) }
+						</tbody>
+					</table>
+				</div>
+			</div>
+		` ).join( '' );
+
+		root.addEventListener( 'click', async ( e ) => {
+			const btn = e.target.closest( '.bltgallery-copy' );
+			if ( ! btn ) return;
+			try {
+				await navigator.clipboard.writeText( btn.dataset.copy );
+				const label = btn.textContent;
+				btn.textContent = 'Copied!';
+				setTimeout( () => { btn.textContent = label; }, 1500 );
+			} catch {
+				/* clipboard unavailable — silent fallback */
+			}
+		} );
+	}
+
+	// ------------------------------------------------------------------
 	// Auto-init settings page
 	// ------------------------------------------------------------------
 
 	document.addEventListener( 'DOMContentLoaded', function () {
 		if ( document.getElementById( 'bltgallery-general-settings' ) ) {
 			initSettings();
+		}
+		if ( document.getElementById( 'bltgallery-shortcodes-doc' ) ) {
+			initShortcodesDoc();
 		}
 	} );
 
@@ -965,6 +1245,7 @@
 		initGalleryEditor,
 		initSettings,
 		initImporter,
+		initShortcodesDoc,
 	};
 
 } )();

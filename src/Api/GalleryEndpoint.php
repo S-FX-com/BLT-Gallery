@@ -145,12 +145,41 @@ class GalleryEndpoint {
 			$gallery->display_type = sanitize_key( $request->get_param( 'display_type' ) );
 		}
 		if ( null !== $request->get_param( 'settings' ) ) {
-			$gallery->settings = (array) $request->get_param( 'settings' );
+			$gallery->settings = $this->sanitize_settings( (array) $request->get_param( 'settings' ), $gallery->settings );
 		}
 
 		$gallery = GalleryRepository::save( $gallery );
 
 		return new WP_REST_Response( $gallery->to_array() );
+	}
+
+	/**
+	 * Merge incoming gallery settings into the existing array with light
+	 * per-key sanitization for known fields. Unknown keys pass through
+	 * (free-form is expected for theme integrations).
+	 */
+	private function sanitize_settings( array $incoming, array $existing ): array {
+		$merged = array_merge( $existing, $incoming );
+
+		// Date: must be YYYY-MM-DD or empty.
+		if ( array_key_exists( 'gallery_date', $merged ) ) {
+			$d = trim( (string) $merged['gallery_date'] );
+			$merged['gallery_date'] = ( '' === $d || preg_match( '/^\d{4}-\d{2}-\d{2}$/', $d ) )
+				? $d
+				: '';
+		}
+
+		// Pagination mode.
+		if ( array_key_exists( 'pagination', $merged ) ) {
+			$allowed = [ 'off', 'load-more', 'numbered', 'infinite' ];
+			$mode    = sanitize_key( (string) $merged['pagination'] );
+			$merged['pagination'] = in_array( $mode, $allowed, true ) ? $mode : 'off';
+		}
+		if ( array_key_exists( 'per_page', $merged ) ) {
+			$merged['per_page'] = max( 1, min( 200, (int) $merged['per_page'] ) );
+		}
+
+		return $merged;
 	}
 
 	public function delete( WP_REST_Request $request ): WP_REST_Response|WP_Error {

@@ -28,23 +28,32 @@ class MasonryDisplay extends AbstractDisplay {
 			return;
 		}
 
+		$cfg = $this->pagination_config( $gallery );
+		[ $slice, $has_more, $total ] = $this->slice_for_pagination( $images, $cfg );
+
 		$lightbox = ( $gallery->settings['lightbox'] ?? '1' );
 		$lightbox = ( '0' === (string) $lightbox || false === $lightbox ) ? '0' : '1';
 
 		printf(
-			'<ul class="bltgallery-masonry__grid" data-lightbox="%s">',
-			esc_attr( $lightbox )
+			'<ul class="bltgallery-masonry__grid" data-lightbox="%s" data-total="%d">',
+			esc_attr( $lightbox ),
+			(int) $total
 		);
 
-		foreach ( $images as $image ) {
+		foreach ( $slice as $image ) {
 			$this->render_item( $image );
 		}
 
 		echo '</ul>';
+
+		if ( $has_more ) {
+			$this->render_pagination_controls( $gallery, $cfg, $total );
+		}
+
 		$this->close_container();
 	}
 
-	private function render_item( Image $image ): void {
+	public function render_item( Image $image ): void {
 		$full_url = esc_url( $image->get_url() );
 		$caption  = wp_kses_post( $image->caption );
 

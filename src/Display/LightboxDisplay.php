@@ -29,21 +29,30 @@ class LightboxDisplay extends AbstractDisplay {
 			return;
 		}
 
-		echo '<ul class="bltgallery-lightbox__grid" data-lightbox="1">';
+		$cfg = $this->pagination_config( $gallery );
+		[ $slice, $has_more, $total ] = $this->slice_for_pagination( $images, $cfg );
 
-		foreach ( $images as $idx => $image ) {
+		printf( '<ul class="bltgallery-lightbox__grid" data-lightbox="1" data-total="%d">', (int) $total );
+
+		foreach ( $slice as $idx => $image ) {
 			$this->render_thumb( $image, $idx );
 		}
 
 		echo '</ul>';
 
+		if ( $has_more ) {
+			$this->render_pagination_controls( $gallery, $cfg, $total );
+		}
+
 		// Hidden lightbox modal – populated by JS with full-resolution images.
-		$this->render_modal( $gallery, $images );
+		// We only seed it with the first-page slice; subsequent pages get
+		// merged into the modal's data array when they load via AJAX.
+		$this->render_modal( $gallery, $slice );
 
 		$this->close_container();
 	}
 
-	private function render_thumb( Image $image, int $idx ): void {
+	public function render_thumb( Image $image, int $idx ): void {
 		printf(
 			'<li class="bltgallery-lightbox__thumb">'
 			. '<button class="bltgallery-lightbox__trigger" data-index="%d" data-image-id="%d" aria-label="%s">'
