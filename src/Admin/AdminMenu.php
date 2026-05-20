@@ -77,6 +77,7 @@ class AdminMenu {
 	}
 
 	public function render_shortcodes_page(): void {
+		$docs = $this->shortcode_docs();
 		?>
 		<div class="wrap bltgallery-wrap">
 			<h1><?php esc_html_e( 'Shortcodes', 'bltgallery' ); ?></h1>
@@ -86,18 +87,147 @@ class AdminMenu {
 					'bltgallery'
 				); ?>
 			</p>
+
 			<div id="bltgallery-shortcodes-doc">
-				<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+				<?php foreach ( $docs as $sc ) : ?>
+					<div class="bltgallery-panel bltgallery-shortcode-doc">
+						<div class="bltgallery-panel__header">
+							<h2><code>[<?php echo esc_html( $sc['tag'] ); ?>]</code> — <?php echo esc_html( $sc['title'] ); ?></h2>
+						</div>
+						<div class="bltgallery-panel__body">
+							<p><?php echo esc_html( $sc['intro'] ); ?></p>
+
+							<h3><?php esc_html_e( 'Examples', 'bltgallery' ); ?></h3>
+							<div class="bltgallery-shortcode-doc__examples">
+								<?php foreach ( $sc['examples'] as $ex ) : ?>
+									<div class="bltgallery-shortcode-doc__example">
+										<code><?php echo esc_html( $ex ); ?></code>
+										<button type="button" class="button button-secondary bltgallery-copy" data-copy="<?php echo esc_attr( $ex ); ?>">
+											<?php esc_html_e( 'Copy', 'bltgallery' ); ?>
+										</button>
+									</div>
+								<?php endforeach; ?>
+							</div>
+
+							<h3><?php esc_html_e( 'Attributes', 'bltgallery' ); ?></h3>
+							<table class="wp-list-table widefat fixed striped bltgallery-table bltgallery-shortcode-doc__table">
+								<thead>
+									<tr>
+										<th style="width:18%"><?php esc_html_e( 'Attribute', 'bltgallery' ); ?></th>
+										<th style="width:30%"><?php esc_html_e( 'Values', 'bltgallery' ); ?></th>
+										<th><?php esc_html_e( 'Description', 'bltgallery' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $sc['attrs'] as [ $a, $v, $d ] ) : ?>
+										<tr>
+											<td><code><?php echo esc_html( $a ); ?></code></td>
+											<td>
+												<?php
+												$tokens = array_map( 'trim', explode( '·', (string) $v ) );
+												echo implode(
+													' · ',
+													array_map( static fn( $t ) => '<code>' . esc_html( $t ) . '</code>', $tokens )
+												);
+												?>
+											</td>
+											<td><?php echo esc_html( $d ); ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 		<script>
-		document.addEventListener( 'DOMContentLoaded', function () {
-			if ( window.BltGalleryAdmin && BltGalleryAdmin.initShortcodesDoc ) {
-				BltGalleryAdmin.initShortcodesDoc();
-			}
+		document.addEventListener( 'click', function ( e ) {
+			var btn = e.target.closest( '.bltgallery-copy' );
+			if ( ! btn || ! navigator.clipboard ) return;
+			navigator.clipboard.writeText( btn.dataset.copy ).then( function () {
+				var label = btn.textContent;
+				btn.textContent = 'Copied!';
+				setTimeout( function () { btn.textContent = label; }, 1500 );
+			} );
 		} );
 		</script>
 		<?php
+	}
+
+	/**
+	 * Source of truth for the Shortcodes reference page. Rendered both
+	 * server-side (PHP, so it works without admin.js loading) and
+	 * mirrored in admin.js for live-rendering scenarios.
+	 */
+	private function shortcode_docs(): array {
+		return [
+			[
+				'tag'      => 'blt_gallery',
+				'title'    => __( 'Single gallery', 'bltgallery' ),
+				'intro'    => __( 'Renders one gallery. Every attribute below temporarily overrides the matching gallery setting for this placement.', 'bltgallery' ),
+				'examples' => [
+					'[blt_gallery id="5"]',
+					'[blt_gallery slug="weddings-2026" type="masonry" cols="4" gap="16"]',
+					'[blt_gallery id="5" type="slideshow" autoplay="1" speed="4000"]',
+					'[blt_gallery id="5" type="tile" pagination="load-more" per_page="24"]',
+					'[blt_gallery id="5" captions="hover" radius="12" lightbox="1"]',
+					'[blt_gallery id="5" date="2026-05-20"]',
+				],
+				'attrs'    => [
+					[ 'id',         'int',                                              __( 'Gallery ID.', 'bltgallery' ) ],
+					[ 'slug',       'string',                                           __( 'Gallery slug — used when `id` is omitted.', 'bltgallery' ) ],
+					[ 'type',       'masonry · tile · slideshow · lightbox',            __( 'Override the stored display type.', 'bltgallery' ) ],
+					[ 'cols',       '1–8',                                              __( 'Target column count at desktop width.', 'bltgallery' ) ],
+					[ 'gap',        'px',                                               __( 'Gutter between items.', 'bltgallery' ) ],
+					[ 'radius',     'px',                                               __( 'Per-item border radius.', 'bltgallery' ) ],
+					[ 'size',       'small · medium · large · xlarge',                  __( 'Preset minimum tile width.', 'bltgallery' ) ],
+					[ 'thumb_min',  'px',                                               __( 'Raw minimum tile width (advanced override).', 'bltgallery' ) ],
+					[ 'captions',   'below · hover · off',                              __( 'Caption position.', 'bltgallery' ) ],
+					[ 'lightbox',   '1 · 0',                                            __( 'Enable click-to-lightbox on grids.', 'bltgallery' ) ],
+					[ 'pagination', 'off · load-more · numbered · infinite',            __( 'AJAX pagination mode.', 'bltgallery' ) ],
+					[ 'per_page',   'int',                                              __( 'Images per page when pagination is on.', 'bltgallery' ) ],
+					[ 'date',       'YYYY-MM-DD',                                       __( 'Override the gallery’s display date.', 'bltgallery' ) ],
+					[ 'autoplay',   '1 · 0',                                            __( 'Slideshow autoplay.', 'bltgallery' ) ],
+					[ 'speed',      'ms',                                               __( 'Slideshow autoplay interval.', 'bltgallery' ) ],
+					[ 'arrows',     '1 · 0',                                            __( 'Show slideshow nav arrows.', 'bltgallery' ) ],
+					[ 'dots',       '1 · 0',                                            __( 'Show slideshow dot indicators.', 'bltgallery' ) ],
+					[ 'limit',      'int',                                              __( 'Cap the number of images rendered.', 'bltgallery' ) ],
+					[ 'order',      'menu · date · random',                             __( 'Image sort order.', 'bltgallery' ) ],
+					[ 'class',      'string',                                           __( 'Extra CSS class on the wrapper.', 'bltgallery' ) ],
+					[ 'style',      'string',                                           __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
+				],
+			],
+			[
+				'tag'      => 'blt_album',
+				'title'    => __( 'Album (collection of galleries)', 'bltgallery' ),
+				'intro'    => __( 'Renders a group of galleries as clickable cards. Albums behave like a category — galleries that share an Album/Category value show up together, and you can sort by date or name.', 'bltgallery' ),
+				'examples' => [
+					'[blt_album category="weddings" sort_by="date"]',
+					'[blt_album ids="3,7,9" style="grid" cols="3" gap="20"]',
+					'[blt_album slugs="nature,travel" style="masonry" cols="4"]',
+					'[blt_album category="portfolio" style="carousel" cols="4"]',
+					'[blt_album category="portfolio" style="accordion" gallery_type="masonry"]',
+					'[blt_album category="portfolio" sort_by="name" order="asc"]',
+				],
+				'attrs'    => [
+					[ 'ids',          'comma-separated ints',                            __( 'Explicit gallery IDs to include.', 'bltgallery' ) ],
+					[ 'slugs',        'comma-separated slugs',                           __( 'Alternative to `ids`.', 'bltgallery' ) ],
+					[ 'category',     'string',                                          __( 'Pull every gallery whose Album/Category matches.', 'bltgallery' ) ],
+					[ 'style',        'grid · masonry · carousel · accordion',           __( 'Album layout.', 'bltgallery' ) ],
+					[ 'cols',         '1–8',                                             __( 'Card grid column count.', 'bltgallery' ) ],
+					[ 'gap',          'px',                                              __( 'Space between cards.', 'bltgallery' ) ],
+					[ 'radius',       'px',                                              __( 'Card border radius.', 'bltgallery' ) ],
+					[ 'captions',     'below · hover · off',                             __( 'Title placement on each card.', 'bltgallery' ) ],
+					[ 'show_count',   '1 · 0',                                           __( 'Render "N photos" under each card.', 'bltgallery' ) ],
+					[ 'cover',        'first · random',                                  __( 'Which image becomes the card cover.', 'bltgallery' ) ],
+					[ 'sort_by',      'menu · date · name · random',                     __( 'How to sort galleries within the album.', 'bltgallery' ) ],
+					[ 'order',        'asc · desc',                                      __( 'Sort direction.', 'bltgallery' ) ],
+					[ 'gallery_type', 'see [blt_gallery] type',                          __( 'Inline display type used in accordion mode.', 'bltgallery' ) ],
+					[ 'limit',        'int',                                             __( 'Cap number of galleries rendered.', 'bltgallery' ) ],
+				],
+			],
+		];
 	}
 
 	public function enqueue_assets( string $hook ): void {
@@ -163,18 +293,25 @@ class AdminMenu {
 				</div>
 			</div>
 
-			<!-- AWS S3 & CloudFront Settings -->
-			<div class="bltgallery-panel">
+			<?php
+			$general    = get_option( 'bltgallery_settings', [] );
+			$enable_s3  = ! empty( $general['enable_s3'] );
+			$enable_r2  = ! empty( $general['enable_r2'] );
+			$enable_cfi = ! empty( $general['enable_cf_images'] );
+			?>
+
+			<!-- AWS S3 & CloudFront Settings (hidden until enabled in General) -->
+			<div class="bltgallery-panel"<?php echo $enable_s3 ? '' : ' hidden'; ?>>
 				<div class="bltgallery-panel__header">
-					<h2><?php esc_html_e( 'AWS S3 &amp; CloudFront', 'bltgallery' ); ?></h2>
+					<h2><?php esc_html_e( 'Amazon S3 & CloudFront', 'bltgallery' ); ?></h2>
 				</div>
 				<div class="bltgallery-panel__body" id="bltgallery-aws-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
-			<!-- Cloudflare R2 Settings -->
-			<div class="bltgallery-panel">
+			<!-- Cloudflare R2 Settings (hidden until enabled in General) -->
+			<div class="bltgallery-panel"<?php echo $enable_r2 ? '' : ' hidden'; ?>>
 				<div class="bltgallery-panel__header">
 					<h2><?php esc_html_e( 'Cloudflare R2', 'bltgallery' ); ?></h2>
 				</div>
@@ -183,8 +320,8 @@ class AdminMenu {
 				</div>
 			</div>
 
-			<!-- Cloudflare Image Resizing -->
-			<div class="bltgallery-panel">
+			<!-- Cloudflare Image Resizing (hidden until enabled in General) -->
+			<div class="bltgallery-panel"<?php echo $enable_cfi ? '' : ' hidden'; ?>>
 				<div class="bltgallery-panel__header">
 					<h2><?php esc_html_e( 'Cloudflare Image Resizing', 'bltgallery' ); ?></h2>
 				</div>

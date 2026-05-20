@@ -147,28 +147,28 @@ class UploadEndpoint {
 	}
 
 	/**
-	 * Determine which storage driver to use for this upload.
+	 * Pick the storage driver for this upload.
 	 *
-	 * Honours the General Settings "Storage backend" choice first (the
-	 * radio group in admin Settings), then falls back to either provider's
-	 * per-backend "Auto-offload" checkbox for backwards compatibility.
-	 * Lands on 'local' when nothing applies.
+	 * Priority:
+	 *   1. General Settings → "Integrations" checkbox enabled AND that
+	 *      backend's credentials are configured
+	 *   2. Legacy per-provider `auto_offload` flag (pre-3.1)
+	 *   3. Local
+	 *
+	 * When both S3 and R2 are enabled, S3 wins (it was supported first).
 	 */
 	private function resolve_storage_driver( WP_REST_Request $request ): string {
-		$general  = get_option( 'bltgallery_settings', [] );
-		$selected = is_array( $general ) ? (string) ( $general['storage_driver'] ?? '' ) : '';
+		$general = get_option( 'bltgallery_settings', [] );
+		$general = is_array( $general ) ? $general : [];
 
-		if ( 's3' === $selected && S3Storage::is_configured() ) {
+		if ( ! empty( $general['enable_s3'] ) && S3Storage::is_configured() ) {
 			return 's3';
 		}
-		if ( 'r2' === $selected && R2Storage::is_configured() ) {
+		if ( ! empty( $general['enable_r2'] ) && R2Storage::is_configured() ) {
 			return 'r2';
 		}
-		if ( 'local' === $selected ) {
-			return 'local';
-		}
 
-		// Legacy: per-provider auto_offload flag.
+		// Legacy: per-provider auto_offload flag (pre-3.1 installs).
 		$aws = get_option( 'bltgallery_aws_settings', [] );
 		if ( ! empty( $aws['auto_offload'] ) && S3Storage::is_configured() ) {
 			return 's3';

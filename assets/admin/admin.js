@@ -149,18 +149,23 @@
 			return;
 		}
 
-		const rows = galleries.map( ( g ) => `
-			<tr>
-				<td><strong><a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
-				<td>${ escHtml( g.display_type ) }</td>
-				<td><code>[blt_gallery id="${ escHtml( String( g.id ) ) }"]</code></td>
-				<td>${ escHtml( new Date( g.created_at ).toLocaleDateString() ) }</td>
-				<td>
-					<a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }" class="button button-secondary">Edit</a>
-					<button class="button bltgallery-delete-btn" data-id="${ g.id }" data-title="${ escHtml( g.title ) }">Delete</button>
-				</td>
-			</tr>
-		` ).join( '' );
+		const rows = galleries.map( ( g ) => {
+			const cat  = ( g.settings && g.settings.category ) || '';
+			const date = ( g.settings && g.settings.gallery_date ) || g.created_at;
+			return `
+				<tr>
+					<td><strong><a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
+					<td>${ escHtml( g.display_type ) }</td>
+					<td>${ cat ? `<span class="bltgallery-cat-pill">${ escHtml( cat ) }</span>` : '<span class="bltgallery-muted">—</span>' }</td>
+					<td><code>[blt_gallery id="${ escHtml( String( g.id ) ) }"]</code></td>
+					<td>${ escHtml( date ? new Date( date ).toLocaleDateString() : '' ) }</td>
+					<td>
+						<a href="${ escHtml( listUrl + '&action=edit&gallery_id=' + g.id ) }" class="button button-secondary">Edit</a>
+						<button class="button bltgallery-delete-btn" data-id="${ g.id }" data-title="${ escHtml( g.title ) }">Delete</button>
+					</td>
+				</tr>
+			`;
+		} ).join( '' );
 
 		container.innerHTML = `
 			<table class="wp-list-table widefat fixed striped bltgallery-table">
@@ -168,8 +173,9 @@
 					<tr>
 						<th>Title</th>
 						<th>Display Type</th>
+						<th>Album</th>
 						<th>Shortcode</th>
-						<th>Created</th>
+						<th>Date</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
@@ -663,8 +669,9 @@
 		const genEl = document.getElementById( 'bltgallery-general-settings' );
 		const awsEl = document.getElementById( 'bltgallery-aws-settings' );
 		const r2El  = document.getElementById( 'bltgallery-r2-settings' );
+		const cfEl  = document.getElementById( 'bltgallery-cf-images-settings' );
 
-		if ( ! genEl && ! awsEl && ! r2El ) return;
+		if ( ! genEl && ! awsEl && ! r2El && ! cfEl ) return;
 
 		let general, aws, r2;
 		try {
@@ -678,39 +685,39 @@
 			return;
 		}
 
-		renderGeneralSettings( genEl, general, () => applyStorageVisibility( general.storage_driver ) );
+		// Renders happen first so the panels exist in the DOM before
+		// visibility is applied.
+		renderGeneralSettings( genEl, general );
 		renderAwsSettings( awsEl, aws );
 		renderR2Settings( r2El, r2 );
 
-		applyStorageVisibility( general.storage_driver || 'local' );
-	}
-
-	/**
-	 * Show / hide the S3 + R2 panels based on the active storage backend.
-	 */
-	function applyStorageVisibility( driver ) {
-		const map = {
-			s3: 'bltgallery-aws-settings',
-			r2: 'bltgallery-r2-settings',
-		};
-		Object.entries( map ).forEach( ( [ key, panelId ] ) => {
-			const panel = document.getElementById( panelId )?.closest( '.bltgallery-panel' );
-			if ( ! panel ) return;
-			panel.hidden = driver !== key;
+		applyIntegrationVisibility( {
+			s3:        !! general.enable_s3,
+			r2:        !! general.enable_r2,
+			cf_images: !! general.enable_cf_images,
 		} );
 	}
 
-	function renderGeneralSettings( container, general, onChange ) {
-		const g      = general || {};
-		const driver = g.storage_driver || 'local';
+	/**
+	 * Per-integration panel visibility. The Settings page renders all
+	 * panels; we just toggle `.hidden` on the wrapping .bltgallery-panel.
+	 */
+	function applyIntegrationVisibility( flags ) {
+		const map = {
+			s3:        'bltgallery-aws-settings',
+			r2:        'bltgallery-r2-settings',
+			cf_images: 'bltgallery-cf-images-settings',
+		};
+		Object.entries( map ).forEach( ( [ key, panelId ] ) => {
+			const body  = document.getElementById( panelId );
+			const panel = body?.closest( '.bltgallery-panel' );
+			if ( ! panel ) return;
+			panel.hidden = ! flags[ key ];
+		} );
+	}
 
-		const driverOption = ( value, label, desc ) => `
-			<label class="bltgallery-driver-card${ driver === value ? ' is-selected' : '' }">
-				<input type="radio" name="zyg-storage-driver" value="${ value }"${ driver === value ? ' checked' : '' }>
-				<span class="bltgallery-driver-card__label">${ escHtml( label ) }</span>
-				<span class="bltgallery-driver-card__desc">${ escHtml( desc ) }</span>
-			</label>
-		`;
+	function renderGeneralSettings( container, general ) {
+		const g = general || {};
 
 		container.innerHTML = `
 			<div class="bltgallery-field">
@@ -719,15 +726,29 @@
 					${ DISPLAY_TYPES.map( ( t ) => `<option value="${ t.value }"${ t.value === g.default_display_type ? ' selected' : '' }>${ escHtml( t.label ) }</option>` ).join( '' ) }
 				</select>
 			</div>
+
 			<div class="bltgallery-field">
-				<span class="bltgallery-field__label">Storage backend</span>
-				<div class="bltgallery-driver-cards" role="radiogroup" aria-label="Storage backend">
-					${ driverOption( 'local', 'Local uploads', 'Files live in /wp-content/uploads on this server.' ) }
-					${ driverOption( 's3',    'Amazon S3',     'Offload to an S3 bucket (with optional CloudFront).' ) }
-					${ driverOption( 'r2',    'Cloudflare R2', 'Offload to R2 — S3-compatible, no egress fees.' ) }
+				<span class="bltgallery-field__label">Integrations</span>
+				<p class="description">Tick a service to reveal its configuration panel below. Unticked services stay hidden.</p>
+				<div class="bltgallery-integration-row">
+					<label class="bltgallery-integration">
+						<input type="checkbox" id="zyg-enable-s3"${ g.enable_s3 ? ' checked' : '' }>
+						<span class="bltgallery-integration__label">Amazon S3</span>
+						<span class="bltgallery-integration__desc">Offload uploads to an S3 bucket (optionally with CloudFront).</span>
+					</label>
+					<label class="bltgallery-integration">
+						<input type="checkbox" id="zyg-enable-r2"${ g.enable_r2 ? ' checked' : '' }>
+						<span class="bltgallery-integration__label">Cloudflare R2</span>
+						<span class="bltgallery-integration__desc">S3-compatible storage with no egress fees.</span>
+					</label>
+					<label class="bltgallery-integration">
+						<input type="checkbox" id="zyg-enable-cf-images"${ g.enable_cf_images ? ' checked' : '' }>
+						<span class="bltgallery-integration__label">Cloudflare Image Resizing</span>
+						<span class="bltgallery-integration__desc">Serve every image through <code>/cdn-cgi/image/</code> for on-the-fly resize + AVIF/WebP.</span>
+					</label>
 				</div>
-				<p class="description">The matching settings panel below will appear once you save.</p>
 			</div>
+
 			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
 					<input type="checkbox" id="zyg-lazy-load"${ g.lazy_load ? ' checked' : '' }>
@@ -749,29 +770,38 @@
 			</div>
 		`;
 
-		container.querySelectorAll( 'input[name="zyg-storage-driver"]' ).forEach( ( r ) => {
-			r.addEventListener( 'change', ( e ) => {
-				container.querySelectorAll( '.bltgallery-driver-card' ).forEach( ( c ) => {
-					c.classList.toggle( 'is-selected', c.contains( e.target ) );
-				} );
-				applyStorageVisibility( e.target.value );
-			} );
+		// Live preview: ticking a checkbox immediately shows its panel.
+		const toggles = {
+			s3:        container.querySelector( '#zyg-enable-s3' ),
+			r2:        container.querySelector( '#zyg-enable-r2' ),
+			cf_images: container.querySelector( '#zyg-enable-cf-images' ),
+		};
+		const reflectVisibility = () => applyIntegrationVisibility( {
+			s3:        toggles.s3.checked,
+			r2:        toggles.r2.checked,
+			cf_images: toggles.cf_images.checked,
 		} );
+		Object.values( toggles ).forEach( ( cb ) => cb.addEventListener( 'change', reflectVisibility ) );
 
 		container.querySelector( '#zyg-save-general' ).addEventListener( 'click', async ( e ) => {
 			e.target.disabled = true;
 			e.target.textContent = 'Saving…';
 			try {
 				const next = await api( '/settings', { method: 'POST', body: {
-					default_display_type:    container.querySelector( '#zyg-default-display' ).value,
-					storage_driver:          container.querySelector( 'input[name="zyg-storage-driver"]:checked' ).value,
-					lazy_load:               container.querySelector( '#zyg-lazy-load' ).checked,
-					webp_quality:            parseInt( container.querySelector( '#zyg-webp-quality' ).value, 10 ),
+					default_display_type:     container.querySelector( '#zyg-default-display' ).value,
+					enable_s3:                toggles.s3.checked,
+					enable_r2:                toggles.r2.checked,
+					enable_cf_images:         toggles.cf_images.checked,
+					lazy_load:                container.querySelector( '#zyg-lazy-load' ).checked,
+					webp_quality:             parseInt( container.querySelector( '#zyg-webp-quality' ).value, 10 ),
 					delete_data_on_uninstall: container.querySelector( '#zyg-delete-data' ).checked,
 				} } );
 				showNotice( 'General settings saved.' );
-				if ( typeof onChange === 'function' ) onChange( next );
-				applyStorageVisibility( next.storage_driver );
+				applyIntegrationVisibility( {
+					s3:        !! next.enable_s3,
+					r2:        !! next.enable_r2,
+					cf_images: !! next.enable_cf_images,
+				} );
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
