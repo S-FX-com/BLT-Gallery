@@ -2,26 +2,26 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Api;
+namespace BltGallery\Api;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use ZymGallery\Aws\S3Storage;
-use ZymGallery\Storage\R2Storage;
+use BltGallery\Aws\S3Storage;
+use BltGallery\Storage\R2Storage;
 
 /**
  * REST API endpoints for plugin settings.
  *
- * GET  /zymgallery/v1/settings        – get all settings
- * POST /zymgallery/v1/settings        – update general settings
- * GET  /zymgallery/v1/settings/aws    – get AWS settings (keys masked)
- * POST /zymgallery/v1/settings/aws    – update AWS settings
- * POST /zymgallery/v1/settings/aws/test – test S3 connection
+ * GET  /bltgallery/v1/settings        – get all settings
+ * POST /bltgallery/v1/settings        – update general settings
+ * GET  /bltgallery/v1/settings/aws    – get AWS settings (keys masked)
+ * POST /bltgallery/v1/settings/aws    – update AWS settings
+ * POST /bltgallery/v1/settings/aws/test – test S3 connection
  */
 class SettingsEndpoint {
 
-	const NAMESPACE = 'zymgallery/v1';
+	const NAMESPACE = 'bltgallery/v1';
 
 	public function register(): void {
 		register_rest_route(
@@ -94,6 +94,47 @@ class SettingsEndpoint {
 				'permission_callback' => [ $this, 'permission' ],
 			]
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/settings/cf-images',
+			[
+				[
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_cf_images_settings' ],
+					'permission_callback' => [ $this, 'permission' ],
+				],
+				[
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'update_cf_images_settings' ],
+					'permission_callback' => [ $this, 'permission' ],
+				],
+			]
+		);
+	}
+
+	// ------------------------------------------------------------------
+	// Cloudflare Images settings (URL-based resizing via /cdn-cgi/image/)
+	// ------------------------------------------------------------------
+
+	public function get_cf_images_settings(): WP_REST_Response {
+		return new WP_REST_Response( get_option( 'bltgallery_cf_images_settings', [] ) );
+	}
+
+	public function update_cf_images_settings( WP_REST_Request $request ): WP_REST_Response {
+		$current  = get_option( 'bltgallery_cf_images_settings', [] );
+		$incoming = $request->get_json_params() ?? [];
+
+		$current['enabled']         = ! empty( $incoming['enabled'] );
+		$current['zone_url']        = isset( $incoming['zone_url'] )       ? esc_url_raw( (string) $incoming['zone_url'] ) : ( $current['zone_url'] ?? '' );
+		$current['default_format']  = isset( $incoming['default_format'] ) ? sanitize_key( (string) $incoming['default_format'] ) : ( $current['default_format'] ?? 'auto' );
+		$current['default_quality'] = isset( $incoming['default_quality'] ) ? min( 100, max( 1, (int) $incoming['default_quality'] ) ) : ( $current['default_quality'] ?? 85 );
+		$current['default_fit']     = isset( $incoming['default_fit'] )    ? sanitize_key( (string) $incoming['default_fit'] ) : ( $current['default_fit'] ?? 'cover' );
+		$current['sharpen']         = isset( $incoming['sharpen'] )        ? max( 0, min( 10, (float) $incoming['sharpen'] ) ) : ( $current['sharpen'] ?? 0 );
+
+		update_option( 'bltgallery_cf_images_settings', $current );
+
+		return new WP_REST_Response( $current );
 	}
 
 	// ------------------------------------------------------------------
@@ -101,12 +142,12 @@ class SettingsEndpoint {
 	// ------------------------------------------------------------------
 
 	public function get_settings(): WP_REST_Response {
-		$settings = get_option( 'zymgallery_settings', $this->default_settings() );
+		$settings = get_option( 'bltgallery_settings', $this->default_settings() );
 		return new WP_REST_Response( $settings );
 	}
 
 	public function update_settings( WP_REST_Request $request ): WP_REST_Response {
-		$current  = get_option( 'zymgallery_settings', $this->default_settings() );
+		$current  = get_option( 'bltgallery_settings', $this->default_settings() );
 		$incoming = $request->get_json_params() ?? [];
 
 		$allowed_keys = array_keys( $this->default_settings() );
@@ -116,7 +157,7 @@ class SettingsEndpoint {
 			}
 		}
 
-		update_option( 'zymgallery_settings', $current );
+		update_option( 'bltgallery_settings', $current );
 
 		return new WP_REST_Response( $current );
 	}
@@ -147,7 +188,7 @@ class SettingsEndpoint {
 	// ------------------------------------------------------------------
 
 	public function get_aws_settings(): WP_REST_Response {
-		$settings = get_option( 'zymgallery_aws_settings', [] );
+		$settings = get_option( 'bltgallery_aws_settings', [] );
 
 		// Mask secrets before sending to the client.
 		$masked = $settings;
@@ -159,7 +200,7 @@ class SettingsEndpoint {
 	}
 
 	public function update_aws_settings( WP_REST_Request $request ): WP_REST_Response {
-		$current  = get_option( 'zymgallery_aws_settings', [] );
+		$current  = get_option( 'bltgallery_aws_settings', [] );
 		$incoming = $request->get_json_params() ?? [];
 
 		$allowed = [
@@ -183,7 +224,7 @@ class SettingsEndpoint {
 			$current[ $key ] = sanitize_text_field( (string) $incoming[ $key ] );
 		}
 
-		update_option( 'zymgallery_aws_settings', $current );
+		update_option( 'bltgallery_aws_settings', $current );
 
 		return new WP_REST_Response( $this->get_aws_settings()->get_data() );
 	}
@@ -196,7 +237,7 @@ class SettingsEndpoint {
 		if ( ! S3Storage::is_configured() ) {
 			return new WP_REST_Response( [
 				'success' => false,
-				'message' => __( 'AWS credentials are not configured.', 'zymgallery' ),
+				'message' => __( 'AWS credentials are not configured.', 'bltgallery' ),
 			] );
 		}
 
@@ -206,7 +247,7 @@ class SettingsEndpoint {
 
 			return new WP_REST_Response( [
 				'success' => true,
-				'message' => __( 'S3 connection successful.', 'zymgallery' ),
+				'message' => __( 'S3 connection successful.', 'bltgallery' ),
 			] );
 		} catch ( \Throwable $e ) {
 			return new WP_REST_Response( [
@@ -221,7 +262,7 @@ class SettingsEndpoint {
 	// ------------------------------------------------------------------
 
 	public function get_r2_settings(): WP_REST_Response {
-		$settings = get_option( 'zymgallery_r2_settings', [] );
+		$settings = get_option( 'bltgallery_r2_settings', [] );
 
 		$masked = $settings;
 		if ( ! empty( $masked['secret_access_key'] ) ) {
@@ -232,7 +273,7 @@ class SettingsEndpoint {
 	}
 
 	public function update_r2_settings( WP_REST_Request $request ): WP_REST_Response {
-		$current  = get_option( 'zymgallery_r2_settings', [] );
+		$current  = get_option( 'bltgallery_r2_settings', [] );
 		$incoming = $request->get_json_params() ?? [];
 
 		$allowed = [
@@ -261,7 +302,7 @@ class SettingsEndpoint {
 			}
 		}
 
-		update_option( 'zymgallery_r2_settings', $current );
+		update_option( 'bltgallery_r2_settings', $current );
 
 		return new WP_REST_Response( $this->get_r2_settings()->get_data() );
 	}
@@ -270,7 +311,7 @@ class SettingsEndpoint {
 		if ( ! R2Storage::is_configured() ) {
 			return new WP_REST_Response( [
 				'success' => false,
-				'message' => __( 'Cloudflare R2 credentials are not configured.', 'zymgallery' ),
+				'message' => __( 'Cloudflare R2 credentials are not configured.', 'bltgallery' ),
 			] );
 		}
 
@@ -280,7 +321,7 @@ class SettingsEndpoint {
 
 			return new WP_REST_Response( [
 				'success' => true,
-				'message' => __( 'R2 connection successful.', 'zymgallery' ),
+				'message' => __( 'R2 connection successful.', 'bltgallery' ),
 			] );
 		} catch ( \Throwable $e ) {
 			return new WP_REST_Response( [

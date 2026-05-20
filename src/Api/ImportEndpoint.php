@@ -2,23 +2,23 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Api;
+namespace BltGallery\Api;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use ZymGallery\Import\NextGenImporter;
+use BltGallery\Import\NextGenImporter;
 
 /**
  * REST API endpoints for the gallery importer tool.
  *
- * GET  /zymgallery/v1/import/nextgen/status   – detect if NextGEN is present
- * GET  /zymgallery/v1/import/nextgen/preview  – list NextGEN galleries with image counts
- * POST /zymgallery/v1/import/nextgen/run      – run the import (optionally limit to gallery IDs)
+ * GET  /bltgallery/v1/import/nextgen/status   – detect if NextGEN is present
+ * GET  /bltgallery/v1/import/nextgen/preview  – list NextGEN galleries with image counts
+ * POST /bltgallery/v1/import/nextgen/run      – run the import (optionally limit to gallery IDs)
  */
 class ImportEndpoint {
 
-	const NAMESPACE = 'zymgallery/v1';
+	const NAMESPACE = 'bltgallery/v1';
 
 	public function register(): void {
 		register_rest_route(
@@ -52,7 +52,7 @@ class ImportEndpoint {
 					'gallery_ids' => [
 						'type'        => 'array',
 						'items'       => [ 'type' => 'integer' ],
-						'description' => __( 'Specific NextGEN gallery IDs to import. Omit to import all.', 'zymgallery' ),
+						'description' => __( 'Specific NextGEN gallery IDs to import. Omit to import all.', 'bltgallery' ),
 						'required'    => false,
 					],
 				],
@@ -74,8 +74,8 @@ class ImportEndpoint {
 		return new WP_REST_Response( [
 			'available' => $available,
 			'message'   => $available
-				? __( 'NextGEN Gallery detected. Ready to import.', 'zymgallery' )
-				: __( 'NextGEN Gallery tables not found. Is the plugin installed and have galleries been created?', 'zymgallery' ),
+				? __( 'NextGEN Gallery detected. Ready to import.', 'bltgallery' )
+				: __( 'NextGEN Gallery tables not found. Is the plugin installed and have galleries been created?', 'bltgallery' ),
 		] );
 	}
 
@@ -107,7 +107,7 @@ class ImportEndpoint {
 		if ( ! $importer->is_available() ) {
 			return new WP_Error(
 				'nextgen_not_found',
-				__( 'NextGEN Gallery tables not found.', 'zymgallery' ),
+				__( 'NextGEN Gallery tables not found.', 'bltgallery' ),
 				[ 'status' => 422 ]
 			);
 		}

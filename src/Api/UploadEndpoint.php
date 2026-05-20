@@ -2,22 +2,22 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Api;
+namespace BltGallery\Api;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use ZymGallery\Core\GalleryRepository;
-use ZymGallery\Core\ImageProcessor;
-use ZymGallery\Core\ImageRepository;
-use ZymGallery\Aws\CloudFrontCDN;
-use ZymGallery\Aws\S3Storage;
-use ZymGallery\Storage\R2Storage;
+use BltGallery\Core\GalleryRepository;
+use BltGallery\Core\ImageProcessor;
+use BltGallery\Core\ImageRepository;
+use BltGallery\Aws\CloudFrontCDN;
+use BltGallery\Aws\S3Storage;
+use BltGallery\Storage\R2Storage;
 
 /**
  * Handles multipart image uploads.
  *
- * POST /zymgallery/v1/galleries/{gallery_id}/upload
+ * POST /bltgallery/v1/galleries/{gallery_id}/upload
  *
  * Accepts:
  *   - file   : the uploaded file (multipart/form-data)
@@ -25,7 +25,7 @@ use ZymGallery\Storage\R2Storage;
  */
 class UploadEndpoint {
 
-	const NAMESPACE = 'zymgallery/v1';
+	const NAMESPACE = 'bltgallery/v1';
 
 	/** Maximum upload size in bytes (50 MB). Servers may enforce a lower limit. */
 	const MAX_UPLOAD_SIZE = 52_428_800;
@@ -53,13 +53,13 @@ class UploadEndpoint {
 		$gallery_id = (int) $request->get_param( 'gallery_id' );
 
 		if ( ! GalleryRepository::find( $gallery_id ) ) {
-			return new WP_Error( 'not_found', __( 'Gallery not found.', 'zymgallery' ), [ 'status' => 404 ] );
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
 		$files = $request->get_file_params();
 
 		if ( empty( $files['file'] ) ) {
-			return new WP_Error( 'no_file', __( 'No file uploaded.', 'zymgallery' ), [ 'status' => 400 ] );
+			return new WP_Error( 'no_file', __( 'No file uploaded.', 'bltgallery' ), [ 'status' => 400 ] );
 		}
 
 		$file = $files['file'];
@@ -91,14 +91,14 @@ class UploadEndpoint {
 					$image = $cf->apply_to_image( $image );
 				}
 			} catch ( \Throwable $e ) {
-				error_log( 'ZymGallery S3 upload failed: ' . $e->getMessage() );
+				error_log( 'BltGallery S3 upload failed: ' . $e->getMessage() );
 			}
 		} elseif ( 'r2' === $driver && R2Storage::is_configured() ) {
 			try {
 				$r2    = new R2Storage();
 				$image = $r2->upload_image( $image );
 			} catch ( \Throwable $e ) {
-				error_log( 'ZymGallery R2 upload failed: ' . $e->getMessage() );
+				error_log( 'BltGallery R2 upload failed: ' . $e->getMessage() );
 			}
 		}
 		// 'local' driver: image already saved locally by ImageProcessor, nothing else to do.
@@ -115,7 +115,7 @@ class UploadEndpoint {
 
 	private function validate_file( array $file ): true|WP_Error {
 		if ( ! empty( $file['error'] ) ) {
-			return new WP_Error( 'upload_error', __( 'File upload error.', 'zymgallery' ), [ 'status' => 400 ] );
+			return new WP_Error( 'upload_error', __( 'File upload error.', 'bltgallery' ), [ 'status' => 400 ] );
 		}
 
 		if ( $file['size'] > self::MAX_UPLOAD_SIZE ) {
@@ -123,7 +123,7 @@ class UploadEndpoint {
 				'file_too_large',
 				sprintf(
 					/* translators: %s: max size in MB */
-					__( 'File exceeds maximum size of %s MB.', 'zymgallery' ),
+					__( 'File exceeds maximum size of %s MB.', 'bltgallery' ),
 					self::MAX_UPLOAD_SIZE / 1_048_576
 				),
 				[ 'status' => 413 ]
@@ -138,7 +138,7 @@ class UploadEndpoint {
 		if ( ! in_array( $mime, self::ALLOWED_TYPES, true ) ) {
 			return new WP_Error(
 				'invalid_type',
-				__( 'Only JPEG, PNG, GIF, WebP, and AVIF images are allowed.', 'zymgallery' ),
+				__( 'Only JPEG, PNG, GIF, WebP, and AVIF images are allowed.', 'bltgallery' ),
 				[ 'status' => 415 ]
 			);
 		}
@@ -154,12 +154,12 @@ class UploadEndpoint {
 	 * Falls back to 'local' if neither is enabled.
 	 */
 	private function resolve_storage_driver( WP_REST_Request $request ): string {
-		$aws = get_option( 'zymgallery_aws_settings', [] );
+		$aws = get_option( 'bltgallery_aws_settings', [] );
 		if ( ! empty( $aws['auto_offload'] ) && S3Storage::is_configured() ) {
 			return 's3';
 		}
 
-		$r2 = get_option( 'zymgallery_r2_settings', [] );
+		$r2 = get_option( 'bltgallery_r2_settings', [] );
 		if ( ! empty( $r2['auto_offload'] ) && R2Storage::is_configured() ) {
 			return 'r2';
 		}

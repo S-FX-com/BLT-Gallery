@@ -2,18 +2,19 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Core;
+namespace BltGallery\Core;
 
-use ZymGallery\Admin\AdminMenu;
-use ZymGallery\Api\GalleryEndpoint;
-use ZymGallery\Api\ImageEndpoint;
-use ZymGallery\Api\SettingsEndpoint;
-use ZymGallery\Api\ImportEndpoint;
-use ZymGallery\Api\UploadEndpoint;
-use ZymGallery\Display\LightboxDisplay;
-use ZymGallery\Display\MasonryDisplay;
-use ZymGallery\Display\SlideshowDisplay;
-use ZymGallery\Display\TileGridDisplay;
+use BltGallery\Admin\AdminMenu;
+use BltGallery\Api\GalleryEndpoint;
+use BltGallery\Api\ImageEndpoint;
+use BltGallery\Api\SettingsEndpoint;
+use BltGallery\Api\ImportEndpoint;
+use BltGallery\Api\UploadEndpoint;
+use BltGallery\Display\LightboxDisplay;
+use BltGallery\Display\MasonryDisplay;
+use BltGallery\Display\SlideshowDisplay;
+use BltGallery\Display\TileGridDisplay;
+use BltGallery\Display\AlbumDisplay;
 
 /**
  * Main plugin bootstrap. Loaded via plugins_loaded.
@@ -43,6 +44,7 @@ final class Plugin {
 	public static function activate(): void {
 		$db = new Database();
 		$db->install();
+		Migration::run();
 		flush_rewrite_rules();
 	}
 
@@ -51,14 +53,15 @@ final class Plugin {
 	}
 
 	public static function uninstall(): void {
-		if ( get_option( 'zymgallery_delete_data_on_uninstall' ) ) {
+		if ( get_option( 'bltgallery_delete_data_on_uninstall' ) ) {
 			$db = new Database();
 			$db->drop_tables();
-			delete_option( 'zymgallery_settings' );
-			delete_option( 'zymgallery_aws_settings' );
-			delete_option( 'zymgallery_r2_settings' );
-			delete_option( 'zymgallery_delete_data_on_uninstall' );
-			delete_option( 'zymgallery_db_version' );
+			delete_option( 'bltgallery_settings' );
+			delete_option( 'bltgallery_aws_settings' );
+			delete_option( 'bltgallery_r2_settings' );
+			delete_option( 'bltgallery_cf_images_settings' );
+			delete_option( 'bltgallery_delete_data_on_uninstall' );
+			delete_option( 'bltgallery_db_version' );
 		}
 	}
 
@@ -75,25 +78,29 @@ final class Plugin {
 		if ( is_admin() ) {
 			$admin = new AdminMenu();
 			$admin->init();
-		}
-
-		// Database upgrade check on every admin page load.
-		if ( is_admin() ) {
 			add_action( 'admin_init', [ $this->db, 'maybe_upgrade' ] );
+			add_action( 'admin_init', [ Migration::class, 'run' ] );
 		}
 	}
 
 	public function load_textdomain(): void {
 		load_plugin_textdomain(
-			'zymgallery',
+			'bltgallery',
 			false,
-			dirname( ZYMGALLERY_PLUGIN_BASENAME ) . '/languages'
+			dirname( BLT_GALLERY_PLUGIN_BASENAME ) . '/languages'
 		);
 	}
 
 	public function register_shortcodes(): void {
-		$shortcode = new Shortcode();
-		add_shortcode( 'zymgallery', [ $shortcode, 'render' ] );
+		$gallery = new Shortcode();
+		$album   = new AlbumShortcode();
+
+		add_shortcode( 'blt_gallery', [ $gallery, 'render' ] );
+		add_shortcode( 'blt_album',   [ $album,   'render' ] );
+
+		// Backward-compatibility aliases for pre-3.0 content.
+		add_shortcode( 'bltgallery',  [ $gallery, 'render' ] );
+		add_shortcode( 'zymgallery',  [ $gallery, 'render' ] );
 	}
 
 	public function register_api_endpoints(): void {
@@ -106,19 +113,21 @@ final class Plugin {
 
 	public function enqueue_frontend_assets(): void {
 		wp_register_style(
-			'zymgallery-frontend',
-			ZYMGALLERY_PLUGIN_URL . 'assets/frontend/frontend.css',
+			'bltgallery-frontend',
+			BLT_GALLERY_PLUGIN_URL . 'assets/frontend/frontend.css',
 			[],
-			ZYMGALLERY_VERSION
+			BLT_GALLERY_VERSION
 		);
 
 		wp_register_script(
-			'zymgallery-frontend',
-			ZYMGALLERY_PLUGIN_URL . 'assets/frontend/frontend.js',
+			'bltgallery-frontend',
+			BLT_GALLERY_PLUGIN_URL . 'assets/frontend/frontend.js',
 			[],
-			ZYMGALLERY_VERSION,
+			BLT_GALLERY_VERSION,
 			true
 		);
+
+		wp_script_add_data( 'bltgallery-frontend', 'strategy', 'defer' );
 	}
 
 	// -----------------------------------------------------------------
@@ -131,6 +140,7 @@ final class Plugin {
 			'tile'      => new TileGridDisplay(),
 			'slideshow' => new SlideshowDisplay(),
 			'lightbox'  => new LightboxDisplay(),
+			'album'     => new AlbumDisplay(),
 			default     => null,
 		};
 	}

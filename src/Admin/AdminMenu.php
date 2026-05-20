@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Admin;
+namespace BltGallery\Admin;
 
 /**
- * Registers the ZymGallery admin menu and renders pure-PHP views.
+ * Registers the BltGallery admin menu and renders pure-PHP views.
  * No build step required.
  */
 class AdminMenu {
 
-	const MENU_SLUG = 'zymgallery';
+	const MENU_SLUG = 'bltgallery';
 
 	public function init(): void {
 		add_action( 'admin_menu', [ $this, 'register_pages' ] );
@@ -19,8 +19,8 @@ class AdminMenu {
 
 	public function register_pages(): void {
 		add_menu_page(
-			__( 'ZymGallery', 'zymgallery' ),
-			__( 'ZymGallery', 'zymgallery' ),
+			__( 'BltGallery', 'bltgallery' ),
+			__( 'BltGallery', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this, 'render_galleries_page' ],
@@ -30,8 +30,8 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Galleries', 'zymgallery' ),
-			__( 'Galleries', 'zymgallery' ),
+			__( 'Galleries', 'bltgallery' ),
+			__( 'Galleries', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this, 'render_galleries_page' ]
@@ -39,8 +39,8 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Settings', 'zymgallery' ),
-			__( 'Settings', 'zymgallery' ),
+			__( 'Settings', 'bltgallery' ),
+			__( 'Settings', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG . '-settings',
 			[ $this, 'render_settings_page' ]
@@ -48,8 +48,8 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Import', 'zymgallery' ),
-			__( 'Import', 'zymgallery' ),
+			__( 'Import', 'bltgallery' ),
+			__( 'Import', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG . '-import',
 			[ $this, 'render_import_page' ]
@@ -62,27 +62,27 @@ class AdminMenu {
 		}
 
 		wp_enqueue_style(
-			'zymgallery-admin',
-			ZYMGALLERY_PLUGIN_URL . 'assets/admin/admin.css',
+			'bltgallery-admin',
+			BLT_GALLERY_PLUGIN_URL . 'assets/admin/admin.css',
 			[],
-			ZYMGALLERY_VERSION
+			BLT_GALLERY_VERSION
 		);
 
 		wp_enqueue_script(
-			'zymgallery-admin',
-			ZYMGALLERY_PLUGIN_URL . 'assets/admin/admin.js',
+			'bltgallery-admin',
+			BLT_GALLERY_PLUGIN_URL . 'assets/admin/admin.js',
 			[],
-			ZYMGALLERY_VERSION,
+			BLT_GALLERY_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'zymgallery-admin',
-			'zymGalleryConfig',
+			'bltgallery-admin',
+			'bltGalleryConfig',
 			[
-				'apiBase'  => rest_url( 'zymgallery/v1' ),
+				'apiBase'  => rest_url( 'bltgallery/v1' ),
 				'nonce'    => wp_create_nonce( 'wp_rest' ),
-				'pluginUrl' => ZYMGALLERY_PLUGIN_URL,
+				'pluginUrl' => BLT_GALLERY_PLUGIN_URL,
 				'adminUrl' => admin_url( 'admin.php?page=' . self::MENU_SLUG ),
 			]
 		);
@@ -105,37 +105,47 @@ class AdminMenu {
 
 	public function render_settings_page(): void {
 		?>
-		<div class="wrap zymgallery-wrap">
-			<h1><?php esc_html_e( 'ZymGallery Settings', 'zymgallery' ); ?></h1>
-			<div id="zymgallery-notice"></div>
+		<div class="wrap bltgallery-wrap">
+			<h1><?php esc_html_e( 'BltGallery Settings', 'bltgallery' ); ?></h1>
+			<div id="bltgallery-notice"></div>
 
 			<!-- General Settings -->
-			<div class="zymgallery-panel">
-				<div class="zymgallery-panel__header">
-					<h2><?php esc_html_e( 'General', 'zymgallery' ); ?></h2>
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'General', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="zymgallery-panel__body" id="zymgallery-general-settings">
-					<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+				<div class="bltgallery-panel__body" id="bltgallery-general-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- AWS S3 & CloudFront Settings -->
-			<div class="zymgallery-panel">
-				<div class="zymgallery-panel__header">
-					<h2><?php esc_html_e( 'AWS S3 &amp; CloudFront', 'zymgallery' ); ?></h2>
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'AWS S3 &amp; CloudFront', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="zymgallery-panel__body" id="zymgallery-aws-settings">
-					<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+				<div class="bltgallery-panel__body" id="bltgallery-aws-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Cloudflare R2 Settings -->
-			<div class="zymgallery-panel">
-				<div class="zymgallery-panel__header">
-					<h2><?php esc_html_e( 'Cloudflare R2', 'zymgallery' ); ?></h2>
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Cloudflare R2', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="zymgallery-panel__body" id="zymgallery-r2-settings">
-					<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+				<div class="bltgallery-panel__body" id="bltgallery-r2-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+				</div>
+			</div>
+
+			<!-- Cloudflare Image Resizing -->
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Cloudflare Image Resizing', 'bltgallery' ); ?></h2>
+				</div>
+				<div class="bltgallery-panel__body" id="bltgallery-cf-images-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 		</div>
@@ -144,24 +154,24 @@ class AdminMenu {
 
 	public function render_import_page(): void {
 		?>
-		<div class="wrap zymgallery-wrap">
-			<h1><?php esc_html_e( 'Import Galleries', 'zymgallery' ); ?></h1>
-			<div id="zymgallery-notice"></div>
+		<div class="wrap bltgallery-wrap">
+			<h1><?php esc_html_e( 'Import Galleries', 'bltgallery' ); ?></h1>
+			<div id="bltgallery-notice"></div>
 
 			<!-- NextGEN Gallery Importer -->
-			<div class="zymgallery-panel">
-				<div class="zymgallery-panel__header">
-					<h2><?php esc_html_e( 'Import from Imagely NextGEN Gallery', 'zymgallery' ); ?></h2>
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Import from Imagely NextGEN Gallery', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="zymgallery-panel__body" id="zymgallery-nextgen-importer">
-					<p class="zymgallery-loading"><?php esc_html_e( 'Checking for NextGEN Gallery…', 'zymgallery' ); ?></p>
+				<div class="bltgallery-panel__body" id="bltgallery-nextgen-importer">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Checking for NextGEN Gallery…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 		</div>
 
 		<script>
 		document.addEventListener( 'DOMContentLoaded', function () {
-			ZymGalleryAdmin.initImporter();
+			BltGalleryAdmin.initImporter();
 		} );
 		</script>
 		<?php
@@ -174,23 +184,23 @@ class AdminMenu {
 	private function render_gallery_list(): void {
 		$list_url   = admin_url( 'admin.php?page=' . self::MENU_SLUG );
 		?>
-		<div class="wrap zymgallery-wrap">
-			<div class="zymgallery-page-header">
-				<h1><?php esc_html_e( 'Galleries', 'zymgallery' ); ?></h1>
-				<button class="button button-primary" id="zymgallery-new-gallery-btn">
-					<?php esc_html_e( '+ New Gallery', 'zymgallery' ); ?>
+		<div class="wrap bltgallery-wrap">
+			<div class="bltgallery-page-header">
+				<h1><?php esc_html_e( 'Galleries', 'bltgallery' ); ?></h1>
+				<button class="button button-primary" id="bltgallery-new-gallery-btn">
+					<?php esc_html_e( '+ New Gallery', 'bltgallery' ); ?>
 				</button>
 			</div>
-			<div id="zymgallery-notice"></div>
+			<div id="bltgallery-notice"></div>
 
-			<div id="zymgallery-gallery-list">
-				<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+			<div id="bltgallery-gallery-list">
+				<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 			</div>
 		</div>
 
 		<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			ZymGalleryAdmin.initGalleryList(
+			BltGalleryAdmin.initGalleryList(
 				<?php echo wp_json_encode( $list_url ); ?>
 			);
 		});
@@ -201,46 +211,46 @@ class AdminMenu {
 	private function render_gallery_editor( int $gallery_id ): void {
 		$back_url = admin_url( 'admin.php?page=' . self::MENU_SLUG );
 		?>
-		<div class="wrap zymgallery-wrap">
-			<div class="zymgallery-page-header">
+		<div class="wrap bltgallery-wrap">
+			<div class="bltgallery-page-header">
 				<a href="<?php echo esc_url( $back_url ); ?>" class="button button-secondary">
-					&larr; <?php esc_html_e( 'Galleries', 'zymgallery' ); ?>
+					&larr; <?php esc_html_e( 'Galleries', 'bltgallery' ); ?>
 				</a>
-				<h1 id="zymgallery-editor-title"><?php esc_html_e( 'Edit Gallery', 'zymgallery' ); ?></h1>
-				<code id="zymgallery-shortcode"></code>
+				<h1 id="bltgallery-editor-title"><?php esc_html_e( 'Edit Gallery', 'bltgallery' ); ?></h1>
+				<code id="bltgallery-shortcode"></code>
 			</div>
-			<div id="zymgallery-notice"></div>
+			<div id="bltgallery-notice"></div>
 
 			<!-- Settings panel -->
-			<div class="zymgallery-panel">
-				<div class="zymgallery-panel__header">
-					<h2><?php esc_html_e( 'Gallery Settings', 'zymgallery' ); ?></h2>
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Gallery Settings', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="zymgallery-panel__body" id="zymgallery-editor-settings">
-					<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+				<div class="bltgallery-panel__body" id="bltgallery-editor-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Images panel -->
-			<div class="zymgallery-panel">
-				<div class="zymgallery-panel__header">
-					<h2><?php esc_html_e( 'Images', 'zymgallery' ); ?></h2>
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Images', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="zymgallery-panel__body">
+				<div class="bltgallery-panel__body">
 					<!-- Uploader -->
-					<div class="zymgallery-uploader" id="zymgallery-uploader">
-						<input type="file" id="zymgallery-file-input" accept="image/*" multiple style="display:none">
-						<div class="zymgallery-uploader__zone" id="zymgallery-drop-zone" tabindex="0" role="button"
-							aria-label="<?php esc_attr_e( 'Drop images here or click to upload', 'zymgallery' ); ?>">
-							<span class="zymgallery-uploader__icon" aria-hidden="true">&#128247;</span>
-							<p><?php esc_html_e( 'Drag & drop images here, or', 'zymgallery' ); ?> <strong><?php esc_html_e( 'click to browse', 'zymgallery' ); ?></strong></p>
-							<p class="zymgallery-uploader__hint"><?php esc_html_e( 'JPEG, PNG, GIF, WebP, AVIF · Max 50 MB each', 'zymgallery' ); ?></p>
+					<div class="bltgallery-uploader" id="bltgallery-uploader">
+						<input type="file" id="bltgallery-file-input" accept="image/*" multiple style="display:none">
+						<div class="bltgallery-uploader__zone" id="bltgallery-drop-zone" tabindex="0" role="button"
+							aria-label="<?php esc_attr_e( 'Drop images here or click to upload', 'bltgallery' ); ?>">
+							<span class="bltgallery-uploader__icon" aria-hidden="true">&#128247;</span>
+							<p><?php esc_html_e( 'Drag & drop images here, or', 'bltgallery' ); ?> <strong><?php esc_html_e( 'click to browse', 'bltgallery' ); ?></strong></p>
+							<p class="bltgallery-uploader__hint"><?php esc_html_e( 'JPEG, PNG, GIF, WebP, AVIF · Max 50 MB each', 'bltgallery' ); ?></p>
 						</div>
-						<ul class="zymgallery-uploader__progress-list" id="zymgallery-progress-list"></ul>
+						<ul class="bltgallery-uploader__progress-list" id="bltgallery-progress-list"></ul>
 					</div>
 					<!-- Image grid -->
-					<div id="zymgallery-image-grid">
-						<p class="zymgallery-loading"><?php esc_html_e( 'Loading…', 'zymgallery' ); ?></p>
+					<div id="bltgallery-image-grid">
+						<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 					</div>
 				</div>
 			</div>
@@ -248,7 +258,7 @@ class AdminMenu {
 
 		<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			ZymGalleryAdmin.initGalleryEditor(<?php echo (int) $gallery_id; ?>);
+			BltGalleryAdmin.initGalleryEditor(<?php echo (int) $gallery_id; ?>);
 		});
 		</script>
 		<?php

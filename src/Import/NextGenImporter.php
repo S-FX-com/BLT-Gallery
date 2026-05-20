@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Import;
+namespace BltGallery\Import;
 
-use ZymGallery\Core\GalleryRepository;
-use ZymGallery\Core\ImageProcessor;
-use ZymGallery\Core\ImageRepository;
-use ZymGallery\Models\Gallery;
+use BltGallery\Core\GalleryRepository;
+use BltGallery\Core\ImageProcessor;
+use BltGallery\Core\ImageRepository;
+use BltGallery\Models\Gallery;
 
 /**
  * Imports galleries and images from Imagely NextGEN Gallery.
@@ -17,7 +17,7 @@ use ZymGallery\Models\Gallery;
  *   {prefix}ngg_pictures – per-image records (pid, galleryid, filename, alttext, description, …)
  *
  * Images live on disk at ABSPATH . $gallery->path . '/' . $picture->filename.
- * This importer copies files into ZymGallery's own upload directory so that the
+ * This importer copies files into BltGallery's own upload directory so that the
  * original NextGEN files are never modified or removed.
  */
 class NextGenImporter {
@@ -76,7 +76,7 @@ class NextGenImporter {
 	// ------------------------------------------------------------------
 
 	/**
-	 * Import NextGEN galleries into ZymGallery.
+	 * Import NextGEN galleries into BltGallery.
 	 *
 	 * @param int[]|null $gallery_ids  Specific NextGEN gallery IDs to import,
 	 *                                 or null to import everything.
@@ -98,7 +98,7 @@ class NextGenImporter {
 		];
 
 		if ( ! $this->is_available() ) {
-			$results['errors'][] = __( 'NextGEN Gallery tables not found.', 'zymgallery' );
+			$results['errors'][] = __( 'NextGEN Gallery tables not found.', 'bltgallery' );
 			return $results;
 		}
 
@@ -161,7 +161,7 @@ class NextGenImporter {
 			'errors'           => [],
 		];
 
-		// Create the ZymGallery gallery record.
+		// Create the BltGallery gallery record.
 		$gallery              = new Gallery();
 		$gallery->title       = sanitize_text_field( $ngg['title'] ?: $ngg['name'] );
 		$gallery->slug        = $this->unique_slug( sanitize_title( $ngg['name'] ) . '-from-nextgen' );
@@ -197,7 +197,7 @@ class NextGenImporter {
 				$result['images_skipped']++;
 				$result['errors'][] = sprintf(
 					/* translators: 1: filename, 2: gallery title */
-					__( 'File not found: %1$s (gallery: %2$s)', 'zymgallery' ),
+					__( 'File not found: %1$s (gallery: %2$s)', 'bltgallery' ),
 					$pic['filename'],
 					$gallery->title
 				);
@@ -215,7 +215,7 @@ class NextGenImporter {
 				$result['images_skipped']++;
 				$result['errors'][] = sprintf(
 					/* translators: 1: filename, 2: error message */
-					__( 'Failed to import %1$s: %2$s', 'zymgallery' ),
+					__( 'Failed to import %1$s: %2$s', 'bltgallery' ),
 					$pic['filename'],
 					$e->getMessage()
 				);
@@ -226,7 +226,7 @@ class NextGenImporter {
 	}
 
 	/**
-	 * Generate a slug that does not already exist in ZymGallery.
+	 * Generate a slug that does not already exist in BltGallery.
 	 */
 	private function unique_slug( string $base ): string {
 		$slug  = $base;

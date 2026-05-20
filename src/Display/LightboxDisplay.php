@@ -2,16 +2,16 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Display;
+namespace BltGallery\Display;
 
-use ZymGallery\Models\Gallery;
-use ZymGallery\Models\Image;
+use BltGallery\Models\Gallery;
+use BltGallery\Models\Image;
 
 /**
  * Lightbox display type.
  *
  * Renders a thumbnail grid where every image opens a full-screen lightbox
- * modal driven by the lightweight zymgallery-lightbox frontend module.
+ * modal driven by the lightweight bltgallery-lightbox frontend module.
  * No Galleria.js or jQuery dependency.
  */
 class LightboxDisplay extends AbstractDisplay {
@@ -34,7 +34,7 @@ class LightboxDisplay extends AbstractDisplay {
 
 		// Thumbnail grid.
 		printf(
-			'<ul class="zymgallery-lightbox__grid" style="--zym-cols:%d; --zym-gutter:%dpx;" data-lightbox="1">',
+			'<ul class="bltgallery-lightbox__grid" style="--blt-cols:%d; --blt-gutter:%dpx;" data-lightbox="1">',
 			$columns,
 			$gutter
 		);
@@ -53,8 +53,8 @@ class LightboxDisplay extends AbstractDisplay {
 
 	private function render_thumb( Image $image, int $idx ): void {
 		printf(
-			'<li class="zymgallery-lightbox__thumb">'
-			. '<button class="zymgallery-lightbox__trigger" data-index="%d" data-image-id="%d" aria-label="%s">'
+			'<li class="bltgallery-lightbox__thumb">'
+			. '<button class="bltgallery-lightbox__trigger" data-index="%d" data-image-id="%d" aria-label="%s">'
 			. '%s'
 			. '</button>'
 			. '</li>',
@@ -83,20 +83,20 @@ class LightboxDisplay extends AbstractDisplay {
 		);
 
 		printf(
-			'<template class="zymgallery-lightbox__data" data-gallery="%d">%s</template>',
+			'<template class="bltgallery-lightbox__data" data-gallery="%d">%s</template>',
 			(int) $gallery->id,
 			esc_html( wp_json_encode( $image_data ) )
 		);
 
 		// The modal shell – JS will wire it up.
-		echo '<div class="zymgallery-lightbox__modal" role="dialog" aria-modal="true" '
-			. 'aria-label="' . esc_attr__( 'Image lightbox', 'zymgallery' ) . '" hidden>';
-		echo '<button class="zymgallery-lightbox__close" aria-label="' . esc_attr__( 'Close lightbox', 'zymgallery' ) . '">&times;</button>';
-		echo '<button class="zymgallery-lightbox__prev"  aria-label="' . esc_attr__( 'Previous image', 'zymgallery' ) . '">&#8249;</button>';
-		echo '<button class="zymgallery-lightbox__next"  aria-label="' . esc_attr__( 'Next image', 'zymgallery' ) . '">&#8250;</button>';
-		echo '<figure class="zymgallery-lightbox__figure">';
-		echo '<img class="zymgallery-lightbox__img" src="" alt="">';
-		echo '<figcaption class="zymgallery-lightbox__caption"></figcaption>';
+		echo '<div class="bltgallery-lightbox__modal" role="dialog" aria-modal="true" '
+			. 'aria-label="' . esc_attr__( 'Image lightbox', 'bltgallery' ) . '" hidden>';
+		echo '<button class="bltgallery-lightbox__close" aria-label="' . esc_attr__( 'Close lightbox', 'bltgallery' ) . '">&times;</button>';
+		echo '<button class="bltgallery-lightbox__prev"  aria-label="' . esc_attr__( 'Previous image', 'bltgallery' ) . '">&#8249;</button>';
+		echo '<button class="bltgallery-lightbox__next"  aria-label="' . esc_attr__( 'Next image', 'bltgallery' ) . '">&#8250;</button>';
+		echo '<figure class="bltgallery-lightbox__figure">';
+		echo '<img class="bltgallery-lightbox__img" src="" alt="">';
+		echo '<figcaption class="bltgallery-lightbox__caption"></figcaption>';
 		echo '</figure>';
 		echo '</div>';
 	}

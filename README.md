@@ -1,78 +1,106 @@
-# ZymGallery
+# Blt Gallery
 
-A modern, self-contained WordPress photo gallery plugin with AWS S3/CloudFront offloading, WebP image optimisation, and beautiful responsive display types.
+A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS S3 offloading, Cloudflare Images URL-based optimisation, and easy `[blt_gallery]` / `[blt_album]` shortcodes.
+
+> Formerly distributed as **ZymGallery**. Existing `[zymgallery]` shortcodes and database tables are auto-migrated on activation — no content changes required.
 
 ## Features
 
-- **Four display types**: Masonry, Tile Grid, Slideshow, Lightbox
+- **Five display types**: Masonry, Tile Grid, Slideshow, Lightbox, Album
+- **Two shortcodes**: `[blt_gallery]` (single gallery) and `[blt_album]` (collection of galleries)
+- **Rich shortcode attributes** for inline styling — `cols`, `gap`, `radius`, `captions`, `autoplay`, etc.
 - **No external dependencies**: standalone plugin — no NextGEN Gallery required
-- **Modern admin UI**: React-powered admin built on `@wordpress/components`
-- **REST API**: full CRUD via the WordPress REST API (`/zymgallery/v1/`)
-- **Image optimisation**: WebP thumbnails generated on upload via `WP_Image_Editor`; EXIF data stripped for privacy
-- **AWS S3 offloading**: auto-upload to S3 on ingest; keeps local files or deletes after transfer
-- **CloudFront CDN**: serves images from a CloudFront distribution (signed URLs optional)
-- **Accessibility**: WCAG 2.2 AA — keyboard navigation, ARIA roles, focus traps in lightbox
-- **Modern CSS**: CSS Grid, CSS custom properties, no jQuery
+- **REST API**: full CRUD via the WordPress REST API (`/bltgallery/v1/`)
+- **Image optimisation**: WebP/AVIF thumbnails generated on upload; EXIF stripped
+- **Cloudflare R2 offloading** (S3 SigV4, no SDK dependency)
+- **AWS S3 + CloudFront offloading** (signed URLs optional)
+- **Cloudflare Image Resizing** integration — point the plugin at your zone and every image is delivered via `/cdn-cgi/image/` at the exact pixel size and format requested
+- **Accessibility**: WCAG 2.2 AA — keyboard navigation, ARIA roles, focus traps
+- **Modern CSS**: CSS Grid, custom properties, no jQuery
+- **WordPress 7 ready**: PHP 8.2, deferred-loading scripts, fetchpriority="high" on LCP image
 
 ## Requirements
 
-- WordPress 6.3+
-- PHP 8.1+
-- Composer (for PHP dependencies)
-- Node.js 18+ / npm (for asset builds)
+- WordPress 7.0+
+- PHP 8.2+
+- Composer (PHP dependencies; ships with a fallback PSR-4 autoloader)
 
 ## Installation
-
-### 1. Install PHP dependencies
 
 ```bash
 composer install --no-dev --optimize-autoloader
 ```
 
-### 2. Build frontend assets
+Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 
-```bash
-npm install
-npm run build
-```
+## Shortcode reference
 
-### 3. Activate in WordPress
-
-Upload the plugin folder to `/wp-content/plugins/zymgallery/` and activate via **Plugins**.
-
-## Usage
-
-### Shortcode
+### `[blt_gallery]` — single gallery
 
 ```
-[zymgallery id="5"]
-[zymgallery id="5" type="slideshow"]
-[zymgallery slug="my-gallery" type="masonry"]
+[blt_gallery id="5"]
+[blt_gallery id="5" type="slideshow" autoplay="1" speed="4000"]
+[blt_gallery slug="my-gallery" type="masonry" cols="4" gap="16" radius="12"]
+[blt_gallery id="5" type="tile" cols="5" gap="8" captions="hover" lightbox="1"]
+[blt_gallery id="5" limit="12" order="random"]
+[blt_gallery id="5" class="my-section" style="background:#000;padding:24px"]
 ```
 
-### Display types
+| Attribute   | Values                                            | Notes                                 |
+|-------------|---------------------------------------------------|---------------------------------------|
+| `id`        | int                                               | Gallery ID (or use `slug`)            |
+| `slug`      | string                                            | Gallery slug (alt to `id`)            |
+| `type`      | `masonry` `tile` `slideshow` `lightbox` `album`   | Overrides stored display type         |
+| `cols`      | 1–8                                               | Column count for grid layouts         |
+| `gap`       | px                                                | Gutter between items                  |
+| `radius`    | px                                                | Per-item border radius                |
+| `captions`  | `below` `hover` `off`                             | Caption position                      |
+| `lightbox`  | `1` / `0`                                         | Enable lightbox click-through         |
+| `autoplay`  | `1` / `0`                                         | Slideshow only                        |
+| `speed`     | ms                                                | Slideshow autoplay interval           |
+| `arrows`    | `1` / `0`                                         | Slideshow nav arrows                  |
+| `dots`      | `1` / `0`                                         | Slideshow dot indicators              |
+| `limit`     | int                                               | Cap number of images rendered         |
+| `order`     | `menu` `date` `random`                            | Sort order                            |
+| `class`     | string                                            | Extra wrapper class                   |
+| `style`     | string                                            | Extra wrapper inline style            |
 
-| Value       | Description                                        |
-|-------------|-----------------------------------------------------|
-| `masonry`   | CSS columns masonry grid with optional lightbox     |
-| `tile`      | Uniform square thumbnail grid                       |
-| `slideshow` | Accessible carousel with autoplay, dots, arrows     |
-| `lightbox`  | Thumbnail grid that opens a full-screen modal       |
+### `[blt_album]` — collection of galleries
 
-## Development
-
-```bash
-npm start          # webpack dev watch
-npm run lint       # JS + CSS linting
-composer test      # PHPUnit tests
+```
+[blt_album ids="3,7,9"]
+[blt_album ids="3,7,9" style="grid" cols="3" gap="20" captions="below"]
+[blt_album slugs="weddings,nature,travel" style="masonry" cols="4"]
+[blt_album ids="3,7,9" style="carousel" cols="4"]
+[blt_album ids="3,7,9" style="accordion" gallery_type="masonry"]
+[blt_album category="portfolio" limit="12" order="date"]
 ```
 
-## AWS S3 / CloudFront Setup
+| Attribute      | Values                                  | Notes                                    |
+|----------------|-----------------------------------------|------------------------------------------|
+| `ids`          | comma-separated ints                    | Galleries to include                     |
+| `slugs`        | comma-separated slugs                   | Alternative to `ids`                     |
+| `category`     | string                                  | Match `settings.category` on galleries   |
+| `style`        | `grid` `masonry` `carousel` `accordion` | Album layout                             |
+| `cols`         | 1–8                                     | Cards per row                            |
+| `gap`          | px                                      | Gap between cards                        |
+| `radius`       | px                                      | Card border radius                       |
+| `captions`     | `below` `hover` `off`                   | Title placement on card                  |
+| `show_count`   | `1` / `0`                               | Render "N photos" under each card        |
+| `cover`        | `first` `random`                        | Which image to use for the card cover    |
+| `gallery_type` | same as `[blt_gallery]` `type`          | Inline display type in accordion mode    |
+| `limit`        | int                                     | Cap number of galleries rendered         |
+| `order`        | `menu` `date` `random`                  | Sort order                               |
 
-1. Create an S3 bucket and an IAM user with `s3:PutObject`, `s3:DeleteObject` permissions.
-2. (Optional) Create a CloudFront distribution pointing at the bucket.
-3. Enter credentials in **ZymGallery → Settings → AWS S3 & CloudFront**.
-4. Enable **Auto-offload new uploads to S3**.
+## Cloudflare optimisation
+
+Blt Gallery is built to run hot on Cloudflare:
+
+1. **Cloudflare R2** — *Settings → Cloudflare R2*. Auto-offload new uploads, optionally remove the local copy.
+2. **Cloudflare Image Resizing** — *Settings → Cloudflare Images*. Once enabled, the plugin rewrites every `<img>` `src` and `srcset` through `/cdn-cgi/image/` so each image is delivered in the optimal format (AVIF/WebP), size, and quality — without pre-generating extra thumbnails.
+3. **Cache-Control** — R2 uploads are PUT with `Cache-Control: max-age=31536000` so the edge can hold them indefinitely.
+
+See the companion [CloudflareSkills](https://github.com/sfxdotcom/CloudflareSkills) repository — in particular the `wordpress-on-cloudflare` skill — for end-to-end deployment patterns (cache rules, Workers, R2 binding, Images, page rules).
 
 ## License
 

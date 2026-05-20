@@ -2,17 +2,17 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Aws;
+namespace BltGallery\Aws;
 
-use ZymGallery\Models\Image;
-use ZymGallery\Storage\S3HttpClient;
+use BltGallery\Models\Image;
+use BltGallery\Storage\S3HttpClient;
 
 /**
  * Handles uploading images to AWS S3.
  *
  * Uses S3HttpClient (pure HTTP + AWS SigV4) – no SDK or Composer required.
  *
- * Settings (stored in 'zymgallery_aws_settings' option):
+ * Settings (stored in 'bltgallery_aws_settings' option):
  *   access_key_id     – IAM access key
  *   secret_access_key – IAM secret
  *   region            – e.g. 'us-east-1'
@@ -112,7 +112,7 @@ class S3Storage {
 			$this->client->delete_object( $this->settings['bucket'], $s3_key );
 		} catch ( \RuntimeException $e ) {
 			// Log but do not throw – deletion failure should not block UI.
-			error_log( "ZymGallery S3 delete failed for {$s3_key}: " . $e->getMessage() );
+			error_log( "BltGallery S3 delete failed for {$s3_key}: " . $e->getMessage() );
 		}
 	}
 
@@ -166,7 +166,7 @@ class S3Storage {
 	}
 
 	private static function load_settings_static(): array {
-		$raw = get_option( 'zymgallery_aws_settings', [] );
+		$raw = get_option( 'bltgallery_aws_settings', [] );
 		return is_array( $raw ) ? $raw : [];
 	}
 }

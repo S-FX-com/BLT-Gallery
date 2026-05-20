@@ -2,18 +2,18 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Core;
+namespace BltGallery\Core;
 
 /**
- * Manages custom database tables for ZymGallery.
+ * Manages custom database tables for BltGallery.
  *
  * Tables:
- *   {prefix}zym_galleries  – gallery metadata
- *   {prefix}zym_images     – per-image records
+ *   {prefix}blt_galleries  – gallery metadata
+ *   {prefix}blt_images     – per-image records
  */
 class Database {
 
-	const DB_VERSION = '2.1.0';
+	const DB_VERSION = '3.0.0';
 
 	// ------------------------------------------------------------------
 	// Public API
@@ -24,8 +24,8 @@ class Database {
 
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$galleries_table = $wpdb->prefix . 'zym_galleries';
-		$images_table    = $wpdb->prefix . 'zym_images';
+		$galleries_table = $wpdb->prefix . 'blt_galleries';
+		$images_table    = $wpdb->prefix . 'blt_images';
 
 		$sql = "
 		CREATE TABLE {$galleries_table} (
@@ -72,11 +72,11 @@ class Database {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		update_option( 'zymgallery_db_version', self::DB_VERSION );
+		update_option( 'bltgallery_db_version', self::DB_VERSION );
 	}
 
 	public function maybe_upgrade(): void {
-		$installed = get_option( 'zymgallery_db_version', '0' );
+		$installed = get_option( 'bltgallery_db_version', '0' );
 		if ( version_compare( $installed, self::DB_VERSION, '<' ) ) {
 			$this->install();
 			$this->run_migrations( $installed );
@@ -91,7 +91,7 @@ class Database {
 	 */
 	private function run_migrations( string $from_version ): void {
 		global $wpdb;
-		$images_table = $wpdb->prefix . 'zym_images';
+		$images_table = $wpdb->prefix . 'blt_images';
 
 		// 2.0.x → 2.1.0: expand storage_driver ENUM to include 'r2'.
 		if ( version_compare( $from_version, '2.1.0', '<' ) ) {
@@ -102,14 +102,14 @@ class Database {
 			);
 		}
 
-		update_option( 'zymgallery_db_version', self::DB_VERSION );
+		update_option( 'bltgallery_db_version', self::DB_VERSION );
 	}
 
 	public function drop_tables(): void {
 		global $wpdb;
 		// Order matters due to FK conventions (images references galleries).
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}zym_images" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}zym_galleries" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}blt_images" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}blt_galleries" );
 	}
 
 	// ------------------------------------------------------------------
@@ -118,11 +118,11 @@ class Database {
 
 	public static function galleries_table(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'zym_galleries';
+		return $wpdb->prefix . 'blt_galleries';
 	}
 
 	public static function images_table(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'zym_images';
+		return $wpdb->prefix . 'blt_images';
 	}
 }

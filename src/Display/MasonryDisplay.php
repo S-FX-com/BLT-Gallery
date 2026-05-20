@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Display;
+namespace BltGallery\Display;
 
-use ZymGallery\Models\Gallery;
-use ZymGallery\Models\Image;
+use BltGallery\Models\Gallery;
+use BltGallery\Models\Image;
 
 /**
  * Masonry display type.
@@ -28,13 +28,16 @@ class MasonryDisplay extends AbstractDisplay {
 			return;
 		}
 
-		$columns = (int) ( $gallery->settings['columns'] ?? 3 );
-		$gutter  = (int) ( $gallery->settings['gutter'] ?? 12 );
+		$columns  = (int) ( $gallery->settings['columns'] ?? 3 );
+		$gutter   = (int) ( $gallery->settings['gutter'] ?? 12 );
+		$lightbox = ( $gallery->settings['lightbox'] ?? '1' );
+		$lightbox = ( '0' === (string) $lightbox || false === $lightbox ) ? '0' : '1';
 
 		printf(
-			'<ul class="zymgallery-masonry__grid" style="--zym-cols:%d; --zym-gutter:%dpx;" data-lightbox="1">',
+			'<ul class="bltgallery-masonry__grid" style="--blt-cols:%d; --blt-gutter:%dpx;" data-lightbox="%s">',
 			$columns,
-			$gutter
+			$gutter,
+			esc_attr( $lightbox )
 		);
 
 		foreach ( $images as $image ) {
@@ -49,16 +52,16 @@ class MasonryDisplay extends AbstractDisplay {
 		$full_url = esc_url( $image->get_url() );
 		$caption  = wp_kses_post( $image->caption );
 
-		echo '<li class="zymgallery-masonry__item">';
+		echo '<li class="bltgallery-masonry__item">';
 		printf(
-			'<a href="%s" class="zymgallery__link" data-image-id="%d" aria-label="%s">',
+			'<a href="%s" class="bltgallery__link" data-image-id="%d" aria-label="%s">',
 			$full_url,
 			(int) $image->id,
 			esc_attr( $image->alt_text ?: $image->filename )
 		);
 		echo $this->img_tag( $image, 'medium' );
 		if ( $caption ) {
-			echo '<span class="zymgallery__caption">' . $caption . '</span>';
+			echo '<span class="bltgallery__caption">' . $caption . '</span>';
 		}
 		echo '</a></li>';
 	}

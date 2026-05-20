@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Aws;
+namespace BltGallery\Aws;
 
 use Aws\CloudFront\CloudFrontClient;
-use ZymGallery\Models\Image;
+use BltGallery\Models\Image;
 
 /**
  * Generates CloudFront URLs for images stored in S3.
  *
- * Settings (stored within 'zymgallery_aws_settings' option):
+ * Settings (stored within 'bltgallery_aws_settings' option):
  *   cloudfront_domain    – e.g. 'd1234abcd.cloudfront.net'
  *   cloudfront_key_id    – Key-pair ID for signed URLs (optional)
  *   cloudfront_pem_path  – Absolute path to the private key PEM (optional)
@@ -90,7 +90,7 @@ class CloudFrontCDN {
 			$client->createInvalidation( [
 				'DistributionId'    => $distribution_id,
 				'InvalidationBatch' => [
-					'CallerReference' => uniqid( 'zym_', true ),
+					'CallerReference' => uniqid( 'blt_', true ),
 					'Paths'           => [
 						'Quantity' => count( $paths ),
 						'Items'    => $paths,
@@ -98,7 +98,7 @@ class CloudFrontCDN {
 				],
 			] );
 		} catch ( \Exception $e ) {
-			error_log( 'ZymGallery CloudFront invalidation failed: ' . $e->getMessage() );
+			error_log( 'BltGallery CloudFront invalidation failed: ' . $e->getMessage() );
 		}
 	}
 
@@ -152,7 +152,7 @@ class CloudFrontCDN {
 	}
 
 	private function load_settings(): array {
-		$raw = get_option( 'zymgallery_aws_settings', [] );
+		$raw = get_option( 'bltgallery_aws_settings', [] );
 		return is_array( $raw ) ? $raw : [];
 	}
 }

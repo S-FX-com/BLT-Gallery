@@ -1,15 +1,15 @@
 {
-    "name": "s-fx-com/zymgallery",
-    "description": "A modern, self-contained WordPress photo gallery plugin with AWS S3/CloudFront offloading and WebP image optimization.",
+    "name": "s-fx-com/blt-gallery",
+    "description": "A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS S3 offloading, Cloudflare Images URL-based optimisation, and gallery + album shortcodes.",
     "license": "GPL-3.0-or-later",
     "type": "wordpress-plugin",
     "authors": [
         {
-            "name": "ZymGallery Contributors"
+            "name": "Blt Gallery Contributors"
         }
     ],
     "require": {
-        "php": ">=8.1"
+        "php": ">=8.2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.9",
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ZymGallery\\": "src/"
+            "BltGallery\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ZymGallery\\Tests\\": "tests/"
+            "BltGallery\\Tests\\": "tests/"
         }
     },
     "config": {

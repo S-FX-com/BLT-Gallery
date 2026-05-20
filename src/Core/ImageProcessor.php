@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace ZymGallery\Core;
+namespace BltGallery\Core;
 
-use ZymGallery\Models\Image;
+use BltGallery\Models\Image;
 
 /**
  * Handles image upload processing: dimension extraction, thumbnail generation,
@@ -36,7 +36,7 @@ class ImageProcessor {
 	public function process_upload( string $tmp_path, int $gallery_id ): Image {
 		// Determine destination directory inside WP uploads.
 		$upload_dir = wp_upload_dir();
-		$dest_dir   = trailingslashit( $upload_dir['basedir'] ) . 'zymgallery/' . $gallery_id . '/';
+		$dest_dir   = trailingslashit( $upload_dir['basedir'] ) . 'bltgallery/' . $gallery_id . '/';
 
 		if ( ! wp_mkdir_p( $dest_dir ) ) {
 			throw new \RuntimeException( 'Could not create upload directory.' );
