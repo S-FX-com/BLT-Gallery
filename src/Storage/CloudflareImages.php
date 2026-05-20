@@ -24,6 +24,14 @@ namespace BltGallery\Storage;
 final class CloudflareImages {
 
 	public static function is_enabled(): bool {
+		// New (3.1+): General Settings → Integrations checkbox.
+		$general = get_option( 'bltgallery_settings', [] );
+		if ( is_array( $general ) && ! empty( $general['enable_cf_images'] ) ) {
+			$s = self::settings();
+			return ! empty( $s['zone_url'] );
+		}
+
+		// Legacy: panel had its own per-feature "enabled" toggle.
 		$s = self::settings();
 		return ! empty( $s['enabled'] ) && ! empty( $s['zone_url'] );
 	}

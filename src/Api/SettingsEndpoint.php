@@ -170,8 +170,12 @@ class SettingsEndpoint {
 			'webp_quality'             => 85,
 			'thumb_width'              => 320,
 			'thumb_height'             => 320,
-			// Storage backend: 'local' | 's3' | 'r2'. Drives which panels
-			// the admin Settings page reveals.
+			// Per-integration enable flags. Drive which panels the admin
+			// Settings page reveals and which provider serves uploads.
+			'enable_s3'                => false,
+			'enable_r2'                => false,
+			'enable_cf_images'         => false,
+			// Legacy single-value selector kept so old saves don't lose state.
 			'storage_driver'           => 'local',
 		];
 	}
@@ -182,7 +186,7 @@ class SettingsEndpoint {
 			'storage_driver'           => in_array( (string) $value, [ 'local', 's3', 'r2' ], true ) ? (string) $value : 'local',
 			'webp_quality'             => min( 100, max( 1, (int) $value ) ),
 			'thumb_width', 'thumb_height' => max( 1, (int) $value ),
-			'delete_data_on_uninstall', 'lazy_load' => (bool) $value,
+			'delete_data_on_uninstall', 'lazy_load', 'enable_s3', 'enable_r2', 'enable_cf_images' => (bool) $value,
 			default                    => $value,
 		};
 	}
