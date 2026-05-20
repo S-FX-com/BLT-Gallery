@@ -5,6 +5,7 @@
 :root {
 	--blt-gap: 12px;
 	--blt-radius: 6px;
+	--blt-thumb-min: 200px;   /* drives responsive auto-fill grids */
 	--blt-transition: 0.25s ease;
 	--blt-overlay: rgba(0, 0, 0, 0.6);
 	--blt-lb-bg: #111;
@@ -83,12 +84,22 @@
 
 /* ── Masonry ────────────────────────────────────────────────────────── */
 
+/*
+ * Masonry — responsive by default. Browser computes the column count from
+ * the container width and the configured thumbnail size. Set
+ * `data-fixed-cols="1"` on the parent .bltgallery to force `--blt-cols`.
+ */
 .bltgallery-masonry__grid {
-	columns: var(--blt-cols, 3);
-	gap: var(--blt-gutter, 12px);
+	column-width: var(--blt-thumb-min, 200px);
+	column-gap: var(--blt-gutter, 12px);
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+.bltgallery[data-fixed-cols="1"] .bltgallery-masonry__grid {
+	column-width: auto;
+	columns: var(--blt-cols, 3);
 }
 
 .bltgallery-masonry__item {
@@ -96,23 +107,19 @@
 	margin-bottom: var(--blt-gutter, 12px);
 }
 
-@media (max-width: 768px) {
-	.bltgallery-masonry__grid { columns: 2; }
-}
-
-@media (max-width: 480px) {
-	.bltgallery-masonry__grid { columns: 1; }
-}
-
 /* ── Tile Grid ──────────────────────────────────────────────────────── */
 
 .bltgallery-tile__grid {
 	display: grid;
-	grid-template-columns: repeat( var(--blt-cols, 4), 1fr );
+	grid-template-columns: repeat(auto-fill, minmax(var(--blt-thumb-min, 200px), 1fr));
 	gap: var(--blt-gutter, 8px);
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+.bltgallery[data-fixed-cols="1"] .bltgallery-tile__grid {
+	grid-template-columns: repeat( var(--blt-cols, 4), 1fr );
 }
 
 .bltgallery-tile__item .bltgallery__link img {
@@ -126,14 +133,6 @@
 	font-size: 0.8rem;
 	color: #475569;
 	text-align: center;
-}
-
-@media (max-width: 768px) {
-	.bltgallery-tile__grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 480px) {
-	.bltgallery-tile__grid { grid-template-columns: 1fr; }
 }
 
 /* ── Slideshow ──────────────────────────────────────────────────────── */
@@ -237,11 +236,15 @@
 
 .bltgallery-lightbox__grid {
 	display: grid;
-	grid-template-columns: repeat( var(--blt-cols, 4), 1fr );
+	grid-template-columns: repeat(auto-fill, minmax(var(--blt-thumb-min, 200px), 1fr));
 	gap: var(--blt-gutter, 8px);
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+.bltgallery[data-fixed-cols="1"] .bltgallery-lightbox__grid {
+	grid-template-columns: repeat( var(--blt-cols, 4), 1fr );
 }
 
 .bltgallery-lightbox__thumb img {
@@ -276,7 +279,9 @@
 }
 
 @media (max-width: 768px) {
-	.bltgallery-lightbox__grid { grid-template-columns: repeat(2, 1fr); }
+	.bltgallery[data-fixed-cols="1"] .bltgallery-lightbox__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
 }
 
 /* ── Lightbox Modal ─────────────────────────────────────────────────── */

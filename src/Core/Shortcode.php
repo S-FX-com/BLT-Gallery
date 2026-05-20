@@ -46,6 +46,8 @@ class Shortcode {
 				'cols'     => '',
 				'gap'      => '',
 				'radius'   => '',
+				'size'     => '', // small | medium | large | xlarge
+				'thumb_min'=> '', // raw px override
 				'captions' => '',
 				'lightbox' => '',
 				'autoplay' => '',
@@ -98,22 +100,24 @@ class Shortcode {
 
 	private function merge_settings( array $settings, array $atts ): array {
 		$map = [
-			'cols'     => 'columns',
-			'gap'      => 'gutter',
-			'radius'   => 'radius',
-			'captions' => 'captions',
-			'lightbox' => 'lightbox',
-			'autoplay' => 'autoplay',
-			'speed'    => 'speed',
-			'arrows'   => 'arrows',
-			'dots'     => 'dots',
+			'cols'      => 'columns',
+			'gap'       => 'gutter',
+			'radius'    => 'radius',
+			'size'      => 'thumbnail_size',
+			'thumb_min' => 'thumb_min',
+			'captions'  => 'captions',
+			'lightbox'  => 'lightbox',
+			'autoplay'  => 'autoplay',
+			'speed'     => 'speed',
+			'arrows'    => 'arrows',
+			'dots'      => 'dots',
 		];
 
 		foreach ( $map as $att => $key ) {
 			if ( '' === $atts[ $att ] || null === $atts[ $att ] ) {
 				continue;
 			}
-			$settings[ $key ] = in_array( $att, [ 'cols', 'gap', 'radius', 'speed' ], true )
+			$settings[ $key ] = in_array( $att, [ 'cols', 'gap', 'radius', 'speed', 'thumb_min' ], true )
 				? (int) $atts[ $att ]
 				: $atts[ $att ];
 		}

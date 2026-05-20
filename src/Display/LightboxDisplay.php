@@ -29,15 +29,7 @@ class LightboxDisplay extends AbstractDisplay {
 			return;
 		}
 
-		$columns = (int) ( $gallery->settings['columns'] ?? 4 );
-		$gutter  = (int) ( $gallery->settings['gutter'] ?? 8 );
-
-		// Thumbnail grid.
-		printf(
-			'<ul class="bltgallery-lightbox__grid" style="--blt-cols:%d; --blt-gutter:%dpx;" data-lightbox="1">',
-			$columns,
-			$gutter
-		);
+		echo '<ul class="bltgallery-lightbox__grid" data-lightbox="1">';
 
 		foreach ( $images as $idx => $image ) {
 			$this->render_thumb( $image, $idx );

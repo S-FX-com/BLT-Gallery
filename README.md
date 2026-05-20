@@ -51,7 +51,9 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 | `id`        | int                                               | Gallery ID (or use `slug`)            |
 | `slug`      | string                                            | Gallery slug (alt to `id`)            |
 | `type`      | `masonry` `tile` `slideshow` `lightbox` `album`   | Overrides stored display type         |
-| `cols`      | 1–8                                               | Column count for grid layouts         |
+| `size`      | `small` `medium` `large` `xlarge`                 | Responsive thumbnail size (preferred) |
+| `thumb_min` | px                                                | Raw min-column-width override         |
+| `cols`      | 1–8                                               | Force a fixed column count (overrides `size`) |
 | `gap`       | px                                                | Gutter between items                  |
 | `radius`    | px                                                | Per-item border radius                |
 | `captions`  | `below` `hover` `off`                             | Caption position                      |

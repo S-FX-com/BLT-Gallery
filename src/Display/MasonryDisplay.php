@@ -28,15 +28,11 @@ class MasonryDisplay extends AbstractDisplay {
 			return;
 		}
 
-		$columns  = (int) ( $gallery->settings['columns'] ?? 3 );
-		$gutter   = (int) ( $gallery->settings['gutter'] ?? 12 );
 		$lightbox = ( $gallery->settings['lightbox'] ?? '1' );
 		$lightbox = ( '0' === (string) $lightbox || false === $lightbox ) ? '0' : '1';
 
 		printf(
-			'<ul class="bltgallery-masonry__grid" style="--blt-cols:%d; --blt-gutter:%dpx;" data-lightbox="%s">',
-			$columns,
-			$gutter,
+			'<ul class="bltgallery-masonry__grid" data-lightbox="%s">',
 			esc_attr( $lightbox )
 		);
 

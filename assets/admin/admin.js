@@ -60,21 +60,77 @@
 		const container = document.getElementById( 'bltgallery-gallery-list' );
 		const newBtn    = document.getElementById( 'bltgallery-new-gallery-btn' );
 
-		newBtn?.addEventListener( 'click', async () => {
-			const title = window.prompt( 'Gallery title:' );
-			if ( ! title ) return;
-			newBtn.disabled = true;
+		newBtn?.addEventListener( 'click', () => openInlineCreateForm( newBtn, listUrl ) );
+
+		await loadGalleryList( container, listUrl );
+	}
+
+	/**
+	 * Inject (or focus) an inline gallery-creation form right above the
+	 * gallery table, replacing the legacy window.prompt() dialog.
+	 */
+	function openInlineCreateForm( newBtn, listUrl ) {
+		const existing = document.getElementById( 'bltgallery-inline-create' );
+		if ( existing ) {
+			existing.querySelector( 'input[name="title"]' )?.focus();
+			return;
+		}
+
+		const wrap     = document.createElement( 'div' );
+		wrap.id        = 'bltgallery-inline-create';
+		wrap.className = 'bltgallery-inline-create';
+		wrap.innerHTML = `
+			<form class="bltgallery-inline-create__form" novalidate>
+				<label class="bltgallery-inline-create__label" for="bltgallery-inline-create-title">
+					New gallery title
+				</label>
+				<div class="bltgallery-inline-create__row">
+					<input
+						id="bltgallery-inline-create-title"
+						name="title"
+						type="text"
+						class="regular-text"
+						placeholder="e.g. Summer 2026 wedding"
+						required
+						autocomplete="off">
+					<button type="submit" class="button button-primary">Create &amp; Edit</button>
+					<button type="button" class="button button-secondary" data-action="cancel">Cancel</button>
+				</div>
+				<p class="bltgallery-inline-create__hint description">
+					You can upload images and tweak display settings on the next screen.
+				</p>
+			</form>
+		`;
+
+		const notice = document.getElementById( 'bltgallery-notice' );
+		notice.parentNode.insertBefore( wrap, notice.nextSibling );
+
+		const input  = wrap.querySelector( 'input[name="title"]' );
+		const submit = wrap.querySelector( 'button[type="submit"]' );
+		input.focus();
+
+		wrap.querySelector( '[data-action="cancel"]' ).addEventListener( 'click', () => {
+			wrap.remove();
+		} );
+
+		wrap.querySelector( 'form' ).addEventListener( 'submit', async ( e ) => {
+			e.preventDefault();
+			const title = input.value.trim();
+			if ( ! title ) {
+				input.focus();
+				return;
+			}
+			submit.disabled = true;
+			submit.textContent = 'Creating…';
 			try {
 				const gallery = await api( '/galleries', { method: 'POST', body: { title } } );
 				window.location.href = listUrl + '&action=edit&gallery_id=' + gallery.id;
-			} catch ( e ) {
-				showNotice( e.message, 'error' );
-			} finally {
-				newBtn.disabled = false;
+			} catch ( err ) {
+				submit.disabled = false;
+				submit.textContent = 'Create & Edit';
+				showNotice( err.message, 'error' );
 			}
 		} );
-
-		await loadGalleryList( container, listUrl );
 	}
 
 	async function loadGalleryList( container, listUrl ) {
@@ -146,10 +202,63 @@
 	// ------------------------------------------------------------------
 
 	const DISPLAY_TYPES = [
-		{ value: 'masonry',   label: 'Masonry'   },
-		{ value: 'tile',      label: 'Tile Grid' },
-		{ value: 'slideshow', label: 'Slideshow' },
-		{ value: 'lightbox',  label: 'Lightbox'  },
+		{
+			value: 'masonry',
+			label: 'Masonry',
+			desc:  'Variable-height columns. Best for mixed portrait + landscape shots.',
+			preview: `
+				<rect x="2"  y="2"  width="18" height="26" rx="2"/>
+				<rect x="22" y="2"  width="18" height="14" rx="2"/>
+				<rect x="22" y="18" width="18" height="22" rx="2"/>
+				<rect x="42" y="2"  width="18" height="22" rx="2"/>
+				<rect x="42" y="26" width="18" height="14" rx="2"/>
+			`,
+		},
+		{
+			value: 'tile',
+			label: 'Tile Grid',
+			desc:  'Uniform square thumbnails. Great for clean, editorial layouts.',
+			preview: `
+				<rect x="2"  y="2"  width="18" height="18" rx="2"/>
+				<rect x="22" y="2"  width="18" height="18" rx="2"/>
+				<rect x="42" y="2"  width="18" height="18" rx="2"/>
+				<rect x="2"  y="22" width="18" height="18" rx="2"/>
+				<rect x="22" y="22" width="18" height="18" rx="2"/>
+				<rect x="42" y="22" width="18" height="18" rx="2"/>
+			`,
+		},
+		{
+			value: 'slideshow',
+			label: 'Slideshow',
+			desc:  'One image at a time with optional autoplay. Perfect for hero areas.',
+			preview: `
+				<rect x="2"  y="6" width="58" height="30" rx="2"/>
+				<circle cx="22" cy="40" r="2"/>
+				<circle cx="30" cy="40" r="2" fill="currentColor"/>
+				<circle cx="38" cy="40" r="2"/>
+			`,
+		},
+		{
+			value: 'lightbox',
+			label: 'Lightbox',
+			desc:  'Tile grid that opens a full-screen modal viewer on click.',
+			preview: `
+				<rect x="2"  y="2"  width="18" height="18" rx="2"/>
+				<rect x="22" y="2"  width="18" height="18" rx="2"/>
+				<rect x="42" y="2"  width="18" height="18" rx="2"/>
+				<rect x="2"  y="22" width="18" height="18" rx="2"/>
+				<rect x="22" y="22" width="18" height="18" rx="2" fill="currentColor" fill-opacity="0.18"/>
+				<rect x="42" y="22" width="18" height="18" rx="2"/>
+				<path d="M26 26 L36 36 M36 26 L26 36" stroke-linecap="round"/>
+			`,
+		},
+	];
+
+	const THUMB_SIZES = [
+		{ value: 'small',  label: 'Small',  desc: '~140px columns' },
+		{ value: 'medium', label: 'Medium', desc: '~200px columns' },
+		{ value: 'large',  label: 'Large',  desc: '~280px columns' },
+		{ value: 'xlarge', label: 'XL',     desc: '~360px columns' },
 	];
 
 	async function initGalleryEditor( galleryId ) {
@@ -183,14 +292,26 @@
 	}
 
 	function renderEditorSettings( container, gallery, galleryId ) {
-		const typeOptions = DISPLAY_TYPES.map( ( t ) =>
-			`<option value="${ t.value }"${ t.value === gallery.display_type ? ' selected' : '' }>${ escHtml( t.label ) }</option>`
-		).join( '' );
-
 		const settings = gallery.settings || {};
-		const cols     = settings.columns ?? 3;
+		const selected = gallery.display_type || 'masonry';
+		const size     = settings.thumbnail_size || 'medium';
 		const autoplay = settings.autoplay ? '1' : '0';
 		const speed    = settings.speed ?? 4000;
+
+		const typeCards = DISPLAY_TYPES.map( ( t ) => `
+			<label class="bltgallery-type-card${ t.value === selected ? ' is-selected' : '' }" data-type="${ t.value }">
+				<input type="radio" name="bltgallery-display-type" value="${ t.value }"${ t.value === selected ? ' checked' : '' }>
+				<svg class="bltgallery-type-card__preview" viewBox="0 0 62 42" aria-hidden="true">
+					<g fill="none" stroke="currentColor" stroke-width="1.5">${ t.preview }</g>
+				</svg>
+				<span class="bltgallery-type-card__label">${ escHtml( t.label ) }</span>
+				<span class="bltgallery-type-card__desc">${ escHtml( t.desc ) }</span>
+			</label>
+		` ).join( '' );
+
+		const sizeOptions = THUMB_SIZES.map( ( s ) =>
+			`<option value="${ s.value }"${ s.value === size ? ' selected' : '' }>${ escHtml( s.label ) } — ${ escHtml( s.desc ) }</option>`
+		).join( '' );
 
 		container.innerHTML = `
 			<div class="bltgallery-field">
@@ -202,12 +323,15 @@
 				<textarea id="zyg-description" rows="3" class="large-text">${ escHtml( gallery.description || '' ) }</textarea>
 			</div>
 			<div class="bltgallery-field">
-				<label for="zyg-display-type">Display Type</label>
-				<select id="zyg-display-type">${ typeOptions }</select>
+				<span class="bltgallery-field__label">Display Type</span>
+				<div class="bltgallery-type-cards" role="radiogroup" aria-label="Display type">
+					${ typeCards }
+				</div>
 			</div>
-			<div class="bltgallery-field" id="zyg-columns-row">
-				<label for="zyg-columns">Columns</label>
-				<input type="number" id="zyg-columns" class="small-text" min="1" max="6" value="${ cols }">
+			<div class="bltgallery-field" id="zyg-size-row">
+				<label for="zyg-thumb-size">Thumbnail size</label>
+				<select id="zyg-thumb-size">${ sizeOptions }</select>
+				<p class="description">Columns auto-fit responsively to your page width based on this size — no manual column count needed.</p>
 			</div>
 			<div class="bltgallery-field" id="zyg-slideshow-row" style="display:none">
 				<label for="zyg-autoplay">Autoplay</label>
@@ -223,32 +347,45 @@
 			</div>
 		`;
 
-		// Toggle slideshow vs columns fields.
-		const typeSelect = container.querySelector( '#zyg-display-type' );
-		const colsRow    = container.querySelector( '#zyg-columns-row' );
-		const ssRow      = container.querySelector( '#zyg-slideshow-row' );
+		const cardsWrap = container.querySelector( '.bltgallery-type-cards' );
+		const sizeRow   = container.querySelector( '#zyg-size-row' );
+		const ssRow     = container.querySelector( '#zyg-slideshow-row' );
+
+		function selectedType() {
+			return cardsWrap.querySelector( 'input[name="bltgallery-display-type"]:checked' )?.value || 'masonry';
+		}
 
 		function updateTypeVisibility() {
-			const isSlide = typeSelect.value === 'slideshow';
-			colsRow.style.display = isSlide ? 'none' : '';
+			const type = selectedType();
+			const isSlide = type === 'slideshow';
+			sizeRow.style.display = isSlide ? 'none' : '';
 			ssRow.style.display   = isSlide ? '' : 'none';
 		}
+
+		cardsWrap.addEventListener( 'change', ( e ) => {
+			if ( e.target.name !== 'bltgallery-display-type' ) return;
+			cardsWrap.querySelectorAll( '.bltgallery-type-card' ).forEach( ( el ) => {
+				el.classList.toggle( 'is-selected', el.dataset.type === e.target.value );
+			} );
+			updateTypeVisibility();
+		} );
+
 		updateTypeVisibility();
-		typeSelect.addEventListener( 'change', updateTypeVisibility );
 
 		container.querySelector( '#zyg-save-btn' ).addEventListener( 'click', async ( e ) => {
 			e.target.disabled = true;
 			e.target.textContent = 'Saving…';
-			const isSlide = typeSelect.value === 'slideshow';
+			const type    = selectedType();
+			const isSlide = type === 'slideshow';
 			const body = {
 				title:        container.querySelector( '#zyg-title' ).value,
 				description:  container.querySelector( '#zyg-description' ).value,
-				display_type: typeSelect.value,
+				display_type: type,
 				settings: isSlide ? {
 					autoplay: container.querySelector( '#zyg-autoplay' ).value === '1',
 					speed:    parseInt( container.querySelector( '#zyg-speed' ).value, 10 ),
 				} : {
-					columns: parseInt( container.querySelector( '#zyg-columns' ).value, 10 ),
+					thumbnail_size: container.querySelector( '#zyg-thumb-size' ).value,
 				},
 			};
 			try {

@@ -97,24 +97,62 @@ abstract class AbstractDisplay {
 			$style_pairs[] = '--blt-gap:' . $gutter . 'px';
 			$style_pairs[] = '--blt-gutter:' . $gutter . 'px';
 		}
-		if ( isset( $gallery->settings['columns'] ) ) {
+
+		// Columns: explicit override → fixed; otherwise we drive a
+		// responsive auto-fill grid via the thumbnail size.
+		$fixed_cols = isset( $gallery->settings['columns'] ) && (int) $gallery->settings['columns'] > 0;
+		if ( $fixed_cols ) {
 			$style_pairs[] = '--blt-cols:' . (int) $gallery->settings['columns'];
 		}
+
+		$thumb_size = $this->thumb_min_px( $gallery );
+		$style_pairs[] = '--blt-thumb-min:' . $thumb_size . 'px';
+
 		$style_attr = $style_pairs ? ' style="' . esc_attr( implode( '; ', $style_pairs ) ) . '"' : '';
 
-		$captions = sanitize_key( (string) ( $gallery->settings['captions'] ?? '' ) );
+		$captions    = sanitize_key( (string) ( $gallery->settings['captions'] ?? '' ) );
 		$caption_mod = $captions ? ' bltgallery--captions-' . $captions : '';
+		$fixed_attr  = $fixed_cols ? ' data-fixed-cols="1"' : '';
 
 		printf(
-			'<div class="bltgallery bltgallery--%s%s" id="bltgallery-%d" data-type="%s" data-settings="%s"%s role="region" aria-label="%s">',
+			'<div class="bltgallery bltgallery--%s%s" id="bltgallery-%d" data-type="%s" data-settings="%s"%s%s role="region" aria-label="%s">',
 			esc_attr( $this->get_id() ),
 			esc_attr( $caption_mod ),
 			(int) $gallery->id,
 			esc_attr( $this->get_id() ),
 			esc_attr( $settings ),
+			$fixed_attr, // already-safe literal
 			$style_attr, // already escaped
 			esc_attr( $gallery->title )
 		);
+	}
+
+	/**
+	 * Resolve the responsive grid's minimum thumbnail width in pixels.
+	 *
+	 * Order of precedence:
+	 *   1. Per-gallery setting `thumb_min` (raw px value)
+	 *   2. Per-gallery setting `thumbnail_size` ("small" | "medium" | "large")
+	 *   3. Global setting `bltgallery_settings.thumb_width`
+	 *   4. Default 200px
+	 */
+	private function thumb_min_px( Gallery $gallery ): int {
+		if ( ! empty( $gallery->settings['thumb_min'] ) ) {
+			return max( 80, (int) $gallery->settings['thumb_min'] );
+		}
+
+		$size = sanitize_key( (string) ( $gallery->settings['thumbnail_size'] ?? '' ) );
+		$presets = [ 'small' => 140, 'medium' => 200, 'large' => 280, 'xlarge' => 360 ];
+		if ( isset( $presets[ $size ] ) ) {
+			return $presets[ $size ];
+		}
+
+		$general = get_option( 'bltgallery_settings', [] );
+		if ( is_array( $general ) && ! empty( $general['thumb_width'] ) ) {
+			return max( 80, (int) $general['thumb_width'] );
+		}
+
+		return 200;
 	}
 
 	protected function close_container(): void {
