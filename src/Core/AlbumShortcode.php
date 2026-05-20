@@ -103,9 +103,11 @@ class AlbumShortcode {
 				}
 			}
 		} elseif ( ! empty( $atts['category'] ) ) {
-			$category = sanitize_text_field( $atts['category'] );
-			foreach ( GalleryRepository::all( 200, 1 ) as $gallery ) {
-				if ( isset( $gallery->settings['category'] ) && $gallery->settings['category'] === $category ) {
+			$wanted = sanitize_title( (string) $atts['category'] );
+			foreach ( GalleryRepository::all( 500, 1 ) as $gallery ) {
+				$albums = (array) ( $gallery->settings['albums'] ?? [] );
+				$legacy = (string) ( $gallery->settings['category'] ?? '' );
+				if ( in_array( $wanted, $albums, true ) || $legacy === $wanted ) {
 					$galleries[] = $gallery;
 				}
 			}

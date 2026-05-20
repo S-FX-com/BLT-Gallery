@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace BltGallery\Core;
 
 use BltGallery\Admin\AdminMenu;
+use BltGallery\Api\AlbumEndpoint;
 use BltGallery\Api\GalleryEndpoint;
 use BltGallery\Api\ImageEndpoint;
 use BltGallery\Api\SettingsEndpoint;
@@ -124,6 +125,7 @@ final class Plugin {
 		( new SettingsEndpoint() )->register();
 		( new UploadEndpoint() )->register();
 		( new ImportEndpoint() )->register();
+		( new AlbumEndpoint() )->register();
 	}
 
 	public function enqueue_frontend_assets(): void {

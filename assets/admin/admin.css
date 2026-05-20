@@ -510,3 +510,245 @@
 }
 
 .bltgallery-muted { color: #94a3b8; }
+
+/* ── Gallery editor: two-column layout with album sidebar ───────────── */
+
+.bltgallery-editor-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 300px;
+	gap: 1.25rem;
+	align-items: start;
+}
+
+@media (max-width: 960px) {
+	.bltgallery-editor-layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.bltgallery-editor-layout__sidebar .bltgallery-panel {
+	margin-bottom: 1rem;
+}
+
+/* ── Album metabox (sidebar on the gallery editor) ──────────────────── */
+
+.bltgallery-album-list {
+	list-style: none;
+	margin: 0 0 0.5rem;
+	padding: 0;
+	max-height: 240px;
+	overflow-y: auto;
+}
+
+.bltgallery-album-list li {
+	margin: 0;
+}
+
+.bltgallery-album-list label {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.3rem 0;
+}
+
+.bltgallery-album-list small {
+	color: #94a3b8;
+	margin-left: auto;
+}
+
+.bltgallery-album-add {
+	margin: 0.5rem 0 0.75rem;
+	font-size: 0.85rem;
+}
+
+.bltgallery-album-add summary {
+	cursor: pointer;
+	color: var(--blt-accent);
+}
+
+.bltgallery-album-add__row {
+	display: flex;
+	gap: 0.4rem;
+	margin-top: 0.4rem;
+}
+
+.bltgallery-album-add__row input {
+	flex: 1;
+}
+
+.bltgallery-album-save {
+	border-top: 1px solid #e5e7eb;
+	padding-top: 0.6rem;
+}
+
+/* ── Image edit modal (native <dialog>) ─────────────────────────────── */
+
+.bltgallery-modal {
+	border: none;
+	border-radius: 8px;
+	padding: 0;
+	max-width: 640px;
+	width: 90vw;
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.bltgallery-modal::backdrop {
+	background: rgba(15, 23, 42, 0.55);
+}
+
+.bltgallery-modal__form {
+	display: flex;
+	flex-direction: column;
+}
+
+.bltgallery-modal__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.9rem 1.1rem;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.bltgallery-modal__header h2 {
+	margin: 0;
+	font-size: 1.1rem;
+}
+
+.bltgallery-modal__close {
+	background: transparent;
+	border: 0;
+	font-size: 1.5rem;
+	line-height: 1;
+	cursor: pointer;
+	color: #64748b;
+	padding: 0.2rem 0.5rem;
+}
+
+.bltgallery-modal__close:hover { color: #1d2327; }
+
+.bltgallery-modal__body {
+	display: grid;
+	grid-template-columns: 180px 1fr;
+	gap: 1rem;
+	padding: 1.1rem;
+}
+
+@media (max-width: 560px) {
+	.bltgallery-modal__body {
+		grid-template-columns: 1fr;
+	}
+}
+
+.bltgallery-modal__preview {
+	margin: 0;
+	background: #f3f4f6;
+	border-radius: 6px;
+	overflow: hidden;
+	aspect-ratio: 1;
+}
+
+.bltgallery-modal__preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.bltgallery-modal__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+}
+
+.bltgallery-modal__fields label {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-weight: 600;
+	font-size: 0.85rem;
+}
+
+.bltgallery-modal__fields input,
+.bltgallery-modal__fields textarea {
+	font: inherit;
+	font-weight: 400;
+}
+
+.bltgallery-modal__fields small {
+	color: #64748b;
+	font-weight: 400;
+}
+
+.bltgallery-modal__footer {
+	display: flex;
+	gap: 0.4rem;
+	justify-content: flex-end;
+	padding: 0.8rem 1.1rem;
+	border-top: 1px solid #e5e7eb;
+	background: #f9fafb;
+}
+
+/* ── Click-to-copy shortcode buttons (Galleries list, editor header) ─ */
+
+.bltgallery-shortcode-copy {
+	background: transparent;
+	border: 1px dashed transparent;
+	padding: 0.15rem 0.45rem;
+	border-radius: 4px;
+	cursor: pointer;
+	font: inherit;
+	transition: background 120ms ease, border-color 120ms ease;
+}
+
+.bltgallery-shortcode-copy code {
+	background: transparent;
+	padding: 0;
+}
+
+.bltgallery-shortcode-copy:hover {
+	background: #f1f5f9;
+	border-color: #cbd5e1;
+}
+
+.bltgallery-shortcode-copy.is-copied {
+	background: #dcfce7;
+	border-color: #86efac;
+}
+
+.bltgallery-copyable {
+	cursor: pointer;
+	padding: 0.15rem 0.45rem;
+	border-radius: 4px;
+	transition: background 120ms ease;
+}
+
+.bltgallery-copyable:hover { background: #f1f5f9; }
+.bltgallery-copyable.is-copied { background: #dcfce7; }
+
+/* ── Albums admin page (two-column) ─────────────────────────────────── */
+
+.bltgallery-albums-admin {
+	display: grid;
+	grid-template-columns: 320px minmax(0, 1fr);
+	gap: 1.25rem;
+	align-items: start;
+}
+
+@media (max-width: 860px) {
+	.bltgallery-albums-admin {
+		grid-template-columns: 1fr;
+	}
+}
+
+.bltgallery-field-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.bltgallery-field-stack label {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-weight: 600;
+}
