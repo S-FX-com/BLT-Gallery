@@ -837,16 +837,18 @@
 		const awsEl = document.getElementById( 'bltgallery-aws-settings' );
 		const r2El  = document.getElementById( 'bltgallery-r2-settings' );
 		const cfEl  = document.getElementById( 'bltgallery-cf-images-settings' );
+		const upEl  = document.getElementById( 'bltgallery-updates-settings' );
 
-		if ( ! genEl && ! awsEl && ! r2El && ! cfEl ) return;
+		if ( ! genEl && ! awsEl && ! r2El && ! cfEl && ! upEl ) return;
 
-		let general, aws, r2, cfImages;
+		let general, aws, r2, cfImages, updates;
 		try {
-			[ general, aws, r2, cfImages ] = await Promise.all( [
+			[ general, aws, r2, cfImages, updates ] = await Promise.all( [
 				api( '/settings' ),
 				api( '/settings/aws' ),
 				api( '/settings/r2' ),
 				api( '/settings/cf-images' ),
+				api( '/updates/status' ),
 			] );
 		} catch ( e ) {
 			showNotice( e.message, 'error' );
@@ -859,11 +861,50 @@
 		renderAwsSettings( awsEl, aws );
 		renderR2Settings( r2El, r2 );
 		renderCfImagesSettings( cfEl, cfImages );
+		renderUpdatesSettings( upEl, updates );
 
 		applyIntegrationVisibility( {
 			s3:        !! general.enable_s3,
 			r2:        !! general.enable_r2,
 			cf_images: !! general.enable_cf_images,
+		} );
+	}
+
+	function renderIntegrationCard( id, title, descHtml, enabled ) {
+		const label = escHtml( title );
+		return `
+			<div class="bltgallery-integration" data-enabled="${ enabled ? 'true' : 'false' }">
+				<input type="checkbox" id="${ id }" class="bltgallery-integration__input"${ enabled ? ' checked' : '' } tabindex="-1" aria-hidden="true">
+				<div class="bltgallery-integration__text">
+					<span class="bltgallery-integration__label">${ label }</span>
+					<span class="bltgallery-integration__desc">${ descHtml }</span>
+				</div>
+				<div class="bltgallery-integration__toggle" role="group" aria-label="${ label }">
+					<button type="button" class="bltgallery-pill bltgallery-pill--enable${ enabled ? ' is-active' : '' }" data-target="${ id }" data-value="1" aria-pressed="${ enabled ? 'true' : 'false' }">Enable</button>
+					<button type="button" class="bltgallery-pill bltgallery-pill--disable${ enabled ? '' : ' is-active' }" data-target="${ id }" data-value="0" aria-pressed="${ enabled ? 'false' : 'true' }">Disable</button>
+				</div>
+			</div>
+		`;
+	}
+
+	function bindIntegrationPills( container ) {
+		container.querySelectorAll( '.bltgallery-integration' ).forEach( ( card ) => {
+			const input = card.querySelector( '.bltgallery-integration__input' );
+			const pills = card.querySelectorAll( '.bltgallery-pill' );
+			pills.forEach( ( pill ) => {
+				pill.addEventListener( 'click', () => {
+					const next = pill.dataset.value === '1';
+					if ( input.checked === next ) return;
+					input.checked = next;
+					card.dataset.enabled = next ? 'true' : 'false';
+					pills.forEach( ( p ) => {
+						const active = ( p.dataset.value === '1' ) === next;
+						p.classList.toggle( 'is-active', active );
+						p.setAttribute( 'aria-pressed', active ? 'true' : 'false' );
+					} );
+					input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+				} );
+			} );
 		} );
 	}
 
@@ -898,23 +939,11 @@
 
 			<div class="bltgallery-field">
 				<span class="bltgallery-field__label">Integrations</span>
-				<p class="description">Tick a service to reveal its configuration panel below. Unticked services stay hidden.</p>
+				<p class="description">Enable a service to reveal its configuration panel below. Disabled services stay hidden.</p>
 				<div class="bltgallery-integration-row">
-					<label class="bltgallery-integration">
-						<input type="checkbox" id="zyg-enable-s3"${ g.enable_s3 ? ' checked' : '' }>
-						<span class="bltgallery-integration__label">Amazon S3</span>
-						<span class="bltgallery-integration__desc">Offload uploads to an S3 bucket (optionally with CloudFront).</span>
-					</label>
-					<label class="bltgallery-integration">
-						<input type="checkbox" id="zyg-enable-r2"${ g.enable_r2 ? ' checked' : '' }>
-						<span class="bltgallery-integration__label">Cloudflare R2</span>
-						<span class="bltgallery-integration__desc">S3-compatible storage with no egress fees.</span>
-					</label>
-					<label class="bltgallery-integration">
-						<input type="checkbox" id="zyg-enable-cf-images"${ g.enable_cf_images ? ' checked' : '' }>
-						<span class="bltgallery-integration__label">Cloudflare Image Resizing</span>
-						<span class="bltgallery-integration__desc">Serve every image through <code>/cdn-cgi/image/</code> for on-the-fly resize + AVIF/WebP.</span>
-					</label>
+					${ renderIntegrationCard( 'zyg-enable-s3', 'Amazon S3', 'Offload uploads to an S3 bucket (optionally with CloudFront).', !! g.enable_s3 ) }
+					${ renderIntegrationCard( 'zyg-enable-r2', 'Cloudflare R2', 'S3-compatible storage with no egress fees.', !! g.enable_r2 ) }
+					${ renderIntegrationCard( 'zyg-enable-cf-images', 'Cloudflare Image Resizing', 'Serve every image through <code>/cdn-cgi/image/</code> for on-the-fly resize + AVIF/WebP.', !! g.enable_cf_images ) }
 				</div>
 			</div>
 
@@ -939,7 +968,9 @@
 			</div>
 		`;
 
-		// Live preview: ticking a checkbox immediately shows its panel.
+		bindIntegrationPills( container );
+
+		// Live preview: flipping a pill immediately shows/hides its panel.
 		const toggles = {
 			s3:        container.querySelector( '#zyg-enable-s3' ),
 			r2:        container.querySelector( '#zyg-enable-r2' ),
@@ -1654,6 +1685,58 @@
 				e.target.textContent = 'Save Cloudflare Image Settings';
 			}
 		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Plugin update status (Settings page → Plugin Updates panel)
+	// ------------------------------------------------------------------
+
+	function renderUpdatesSettings( container, status ) {
+		if ( ! container ) return;
+		const paint = ( s ) => {
+			container.innerHTML = renderUpdatesMarkup( s );
+			container.querySelector( '#zyg-check-update' ).addEventListener( 'click', async ( e ) => {
+				const btn = e.target;
+				btn.disabled = true;
+				btn.textContent = 'Checking…';
+				try {
+					const next = await api( '/updates/check', { method: 'POST' } );
+					paint( next );
+					showNotice( next.update_available ? `Update available: ${ next.latest_version }.` : 'Plugin is up to date.' );
+				} catch ( err ) {
+					showNotice( err.message, 'error' );
+					btn.disabled = false;
+					btn.textContent = 'Check for Updates';
+				}
+			} );
+		};
+		paint( status );
+	}
+
+	function renderUpdatesMarkup( s ) {
+		s = s || {};
+		const current = escHtml( s.current_version || '—' );
+		const latest  = s.latest_version ? escHtml( s.latest_version ) : null;
+		const checked = s.last_checked_human ? `Last checked ${ escHtml( s.last_checked_human ) }.` : 'Not yet checked.';
+		let statusLine;
+		if ( s.update_available && latest ) {
+			const url = s.update_url || s.plugins_page || '#';
+			statusLine = `<span class="bltgallery-update-available">Update available: <strong>${ latest }</strong></span> — <a href="${ escHtml( url ) }">go to Plugins page</a> to install.`;
+		} else if ( latest ) {
+			statusLine = `Up to date (latest: <strong>${ latest }</strong>).`;
+		} else {
+			statusLine = 'No update channel is configured for this plugin yet — clicking the button forces WordPress to re-poll every source it knows about.';
+		}
+		return `
+			<div class="bltgallery-field">
+				<p><strong>Installed version:</strong> ${ current }</p>
+				<p>${ statusLine }</p>
+				<p class="description">${ escHtml( checked ) }</p>
+			</div>
+			<div class="bltgallery-field">
+				<button class="button button-secondary" id="zyg-check-update">Check for Updates</button>
+			</div>
+		`;
 	}
 
 	// ------------------------------------------------------------------

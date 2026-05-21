@@ -364,6 +364,16 @@ class AdminMenu {
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
+
+			<!-- Plugin Updates -->
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Plugin Updates', 'bltgallery' ); ?></h2>
+				</div>
+				<div class="bltgallery-panel__body" id="bltgallery-updates-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+				</div>
+			</div>
 		</div>
 		<?php
 	}

@@ -450,51 +450,129 @@
 	margin-right: 0.5rem;
 }
 
-/* ── Integrations (per-service enable checkboxes) ───────────────────── */
+/* ── Integrations (per-service enable / disable toggle cards) ────────── */
 
 .bltgallery-integration-row {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	grid-template-columns: 1fr;
 	gap: 0.6rem;
 	margin-top: 0.4rem;
 }
 
 .bltgallery-integration {
-	display: grid;
-	grid-template-columns: auto 1fr;
-	grid-template-areas:
-		"check label"
-		"check desc";
-	column-gap: 0.6rem;
-	padding: 0.75rem 0.85rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.75rem 0.95rem;
 	background: #fff;
 	border: 1px solid #c3c4c7;
 	border-radius: var(--blt-radius);
-	cursor: pointer;
 	transition: border-color 120ms ease, background 120ms ease;
 }
 
-.bltgallery-integration:has( input:checked ) {
+.bltgallery-integration[data-enabled="true"] {
 	border-color: var(--blt-accent);
 	background: #f5f9ff;
 }
 
-.bltgallery-integration input[type="checkbox"] {
-	grid-area: check;
-	align-self: start;
-	margin: 0.2rem 0 0;
+.bltgallery-integration__input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	border: 0;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+.bltgallery-integration__text {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	min-width: 0;
 }
 
 .bltgallery-integration__label {
-	grid-area: label;
 	font-weight: 600;
 }
 
 .bltgallery-integration__desc {
-	grid-area: desc;
 	font-size: 0.8rem;
 	color: #646970;
 	line-height: 1.35;
+}
+
+.bltgallery-integration__toggle {
+	flex: 0 0 auto;
+	display: inline-flex;
+	padding: 3px;
+	background: #f0f0f1;
+	border: 1px solid #c3c4c7;
+	border-radius: 999px;
+}
+
+.bltgallery-pill {
+	appearance: none;
+	border: 0;
+	background: transparent;
+	color: #50575e;
+	font-size: 0.78rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	padding: 0.32rem 0.95rem;
+	border-radius: 999px;
+	cursor: pointer;
+	transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.bltgallery-pill:hover:not( .is-active ) {
+	color: #1d2327;
+}
+
+.bltgallery-pill:focus-visible {
+	outline: 2px solid var(--blt-accent);
+	outline-offset: 2px;
+}
+
+.bltgallery-pill--enable.is-active {
+	background: var(--blt-accent);
+	color: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.bltgallery-pill--disable.is-active {
+	background: #fff;
+	color: #1d2327;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 600px) {
+	.bltgallery-integration {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.bltgallery-integration__toggle {
+		align-self: stretch;
+		justify-content: center;
+	}
+	.bltgallery-pill {
+		flex: 1 1 0;
+	}
+}
+
+/* ── Plugin update status ────────────────────────────────────────────── */
+
+.bltgallery-update-available {
+	display: inline-block;
+	padding: 0.1rem 0.55rem;
+	font-weight: 600;
+	color: #fff;
+	background: var(--blt-accent);
+	border-radius: 999px;
 }
 
 /* ── Album / category pill on the gallery list ──────────────────────── */

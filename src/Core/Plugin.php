@@ -82,6 +82,7 @@ final class Plugin {
 			$admin->init();
 			add_action( 'admin_init', [ $this->db, 'maybe_upgrade' ] );
 			add_action( 'admin_init', [ Migration::class, 'run' ] );
+			Updater::init();
 		}
 	}
 
