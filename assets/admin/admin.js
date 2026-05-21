@@ -1204,6 +1204,11 @@
 				<button class="button button-secondary" id="zyg-test-r2">Test R2 Connection</button>
 			</div>
 			<div id="zyg-r2-test-result"></div>
+
+			<div id="zyg-r2-migrate-card" style="margin-top:1.5rem;display:none">
+				<h3 style="margin-bottom:.5rem">Migrate existing image URLs</h3>
+				<div id="zyg-r2-migrate-body"></div>
+			</div>
 		`;
 
 		const publicUrlInput = container.querySelector( '#zyg-r2-public-url' );
@@ -1235,6 +1240,7 @@
 			try {
 				await api( '/settings/r2', { method: 'POST', body } );
 				showNotice( 'R2 settings saved.' );
+				renderR2MigrationCard( container );
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
@@ -1255,6 +1261,93 @@
 			} finally {
 				e.target.disabled = false;
 				e.target.textContent = 'Test R2 Connection';
+			}
+		} );
+
+		renderR2MigrationCard( container );
+	}
+
+	// ------------------------------------------------------------------
+	// R2 URL Migration (rewrites stored r2.dev URLs to custom domain)
+	// ------------------------------------------------------------------
+
+	async function renderR2MigrationCard( container ) {
+		const card = container.querySelector( '#zyg-r2-migrate-card' );
+		const body = container.querySelector( '#zyg-r2-migrate-body' );
+		if ( ! card || ! body ) return;
+
+		let status;
+		try {
+			status = await api( '/settings/r2/migrate-urls' );
+		} catch ( err ) {
+			// Endpoint not available or transient error — keep the card hidden.
+			return;
+		}
+
+		if ( ! status || ! status.unsafe_count ) {
+			card.style.display = 'none';
+			return;
+		}
+
+		card.style.display = '';
+
+		if ( ! status.ready ) {
+			body.innerHTML = `
+				<div class="notice notice-warning inline" style="margin:0">
+					<p><strong>${ escHtml( status.unsafe_count ) } image${ status.unsafe_count === 1 ? '' : 's' }</strong>
+					still reference <code>${ escHtml( status.sample_from_host || 'pub-….r2.dev' ) }</code>.
+					${ escHtml( status.blocked_reason || '' ) }</p>
+				</div>`;
+			return;
+		}
+
+		const samplesHtml = ( status.samples || [] ).map( ( s ) => `
+			<li style="margin-bottom:.5em;font-family:monospace;font-size:12px;word-break:break-all">
+				<span style="color:#b32d2e">${ escHtml( s.before ) }</span><br>
+				<span style="color:#1e8a3e">${ escHtml( s.after ) }</span>
+			</li>` ).join( '' );
+
+		body.innerHTML = `
+			<p>Found <strong>${ escHtml( status.unsafe_count ) } image${ status.unsafe_count === 1 ? '' : 's' }</strong>
+			whose URLs still point at <code>${ escHtml( status.sample_from_host || 'pub-….r2.dev' ) }</code>.
+			They will be rewritten to <code>${ escHtml( status.target_url ) }</code>.</p>
+			${ samplesHtml ? `<p style="margin-bottom:.25em"><strong>Preview:</strong></p><ul style="margin:0 0 .75em 1.25em">${ samplesHtml }</ul>` : '' }
+			<p style="color:#646970;font-size:13px"><strong>Tip:</strong> back up your database before running. The change rewrites the
+			<code>cloudfront_url</code> column and <code>meta.thumbs.*.url</code> values on every affected row.</p>
+			<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+				<button class="button button-primary" id="zyg-r2-migrate-run">Migrate ${ escHtml( status.unsafe_count ) } URL${ status.unsafe_count === 1 ? '' : 's' }</button>
+				<span id="zyg-r2-migrate-progress" style="color:#646970"></span>
+			</div>
+		`;
+
+		container.querySelector( '#zyg-r2-migrate-run' ).addEventListener( 'click', async ( e ) => {
+			if ( ! window.confirm( 'Rewrite all r2.dev image URLs to your custom domain? This updates the database in place. Make sure you have a backup.' ) ) {
+				return;
+			}
+			const btn      = e.target;
+			const progress = container.querySelector( '#zyg-r2-migrate-progress' );
+			btn.disabled = true;
+			let totalUpdated = 0;
+			let cursor       = 0;
+			let safety       = 10000; // hard ceiling so a logic bug can't loop forever
+			try {
+				while ( safety-- > 0 ) {
+					btn.textContent = `Migrating… (${ totalUpdated } done)`;
+					const res = await api( '/settings/r2/migrate-urls', { method: 'POST', body: { batch_size: 100, cursor } } );
+					totalUpdated += Number( res.updated || 0 );
+					cursor = Number( res.next_cursor || cursor );
+					progress.textContent = `${ totalUpdated } updated, ${ res.remaining } remaining`;
+					if ( ! res.more ) break;
+				}
+				btn.textContent = 'Migrate URLs';
+				progress.innerHTML = `<span style="color:#1e8a3e">&#10003; Migrated ${ totalUpdated } URL${ totalUpdated === 1 ? '' : 's' }.</span>`;
+				showNotice( `Migration complete. ${ totalUpdated } image URL${ totalUpdated === 1 ? '' : 's' } updated.` );
+				// Re-render the card to reflect the new (zero) count.
+				setTimeout( () => renderR2MigrationCard( container ), 800 );
+			} catch ( err ) {
+				progress.innerHTML = `<span style="color:#b32d2e">${ escHtml( err.message ) }</span>`;
+				btn.disabled = false;
+				btn.textContent = 'Migrate URLs';
 			}
 		} );
 	}
