@@ -353,9 +353,18 @@ class SettingsEndpoint {
 		return new WP_REST_Response( $masked );
 	}
 
-	public function update_r2_settings( WP_REST_Request $request ): WP_REST_Response {
+	public function update_r2_settings( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$current  = get_option( 'bltgallery_r2_settings', [] );
 		$incoming = $request->get_json_params() ?? [];
+
+		if ( array_key_exists( 'public_url', $incoming )
+			&& ! R2Storage::is_public_url_safe( (string) $incoming['public_url'] ) ) {
+			return new WP_Error(
+				'bltgallery_r2_public_url_invalid',
+				__( 'Cloudflare\'s default "pub-*.r2.dev" URLs cannot be used. Microsoft Defender, Teams Safe Links, and similar scanners block these hostnames because they are heavily abused by phishing campaigns. Connect a custom domain to your R2 bucket and enter that URL instead (see the instructions above the field).', 'bltgallery' ),
+				[ 'status' => 400 ]
+			);
+		}
 
 		$allowed = [
 			'account_id', 'access_key_id', 'secret_access_key',

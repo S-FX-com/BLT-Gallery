@@ -153,6 +153,30 @@ class R2Storage {
 			&& ! empty( $settings['bucket'] );
 	}
 
+	/**
+	 * Cloudflare's default `pub-<hash>.r2.dev` hostnames are heavily abused
+	 * by phishing campaigns and broadly blocked by Microsoft Defender /
+	 * Teams Safe Links, so we require galleries to be served from a custom
+	 * domain attached to the bucket.
+	 *
+	 * An empty value is treated as "not yet set" rather than unsafe.
+	 */
+	public static function is_public_url_safe( string $public_url ): bool {
+		$public_url = trim( $public_url );
+		if ( '' === $public_url ) {
+			return true;
+		}
+		$normalized = preg_match( '#^https?://#i', $public_url )
+			? $public_url
+			: 'https://' . ltrim( $public_url, '/' );
+		$host = parse_url( $normalized, PHP_URL_HOST );
+		if ( ! is_string( $host ) || '' === $host ) {
+			return true;
+		}
+		$host = strtolower( $host );
+		return 'r2.dev' !== $host && ! str_ends_with( $host, '.r2.dev' );
+	}
+
 	private function build_client(): S3HttpClient {
 		$account_id = $this->settings['account_id'] ?? '';
 		$endpoint   = "https://{$account_id}.r2.cloudflarestorage.com";
