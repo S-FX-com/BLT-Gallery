@@ -8,6 +8,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
 use BltGallery\Aws\S3Storage;
+use BltGallery\Core\UrlMigrator;
 use BltGallery\Storage\R2Storage;
 
 /**
@@ -92,6 +93,23 @@ class SettingsEndpoint {
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'test_r2_connection' ],
 				'permission_callback' => [ $this, 'permission' ],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/settings/r2/migrate-urls',
+			[
+				[
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_url_migration_status' ],
+					'permission_callback' => [ $this, 'permission' ],
+				],
+				[
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'run_url_migration' ],
+					'permission_callback' => [ $this, 'permission' ],
+				],
 			]
 		);
 
@@ -419,6 +437,63 @@ class SettingsEndpoint {
 				'message' => $e->getMessage(),
 			] );
 		}
+	}
+
+	/**
+	 * Surfaces what the R2 URL migration tool would do, so the admin UI
+	 * can decide whether to show the migration card and prefill the
+	 * sample before/after diff. Does not modify anything.
+	 */
+	public function get_url_migration_status(): WP_REST_Response {
+		$r2_settings = get_option( 'bltgallery_r2_settings', [] );
+		$target_url  = is_array( $r2_settings ) ? (string) ( $r2_settings['public_url'] ?? '' ) : '';
+		$target_safe = '' !== $target_url && R2Storage::is_public_url_safe( $target_url );
+		$count       = UrlMigrator::count_unsafe();
+
+		$blocked_reason = null;
+		if ( $count === 0 ) {
+			$blocked_reason = null;
+		} elseif ( '' === $target_url ) {
+			$blocked_reason = __( 'Set your Public Base URL to the bucket\'s custom domain first, then return here to migrate.', 'bltgallery' );
+		} elseif ( ! $target_safe ) {
+			$blocked_reason = __( 'Your Public Base URL is still an r2.dev hostname. Replace it with your custom domain, then return here to migrate.', 'bltgallery' );
+		}
+
+		$samples = $target_safe ? UrlMigrator::preview( $target_url )['samples'] : [];
+
+		return new WP_REST_Response( [
+			'unsafe_count'     => $count,
+			'target_url'       => $target_url,
+			'target_safe'      => $target_safe,
+			'sample_from_host' => UrlMigrator::sample_from_host(),
+			'samples'          => $samples,
+			'ready'            => $target_safe && $count > 0,
+			'blocked_reason'   => $blocked_reason,
+		] );
+	}
+
+	/**
+	 * Runs one batch of the URL migration. Re-call until `more` is false.
+	 */
+	public function run_url_migration( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$r2_settings = get_option( 'bltgallery_r2_settings', [] );
+		$target_url  = is_array( $r2_settings ) ? (string) ( $r2_settings['public_url'] ?? '' ) : '';
+
+		if ( '' === $target_url || ! R2Storage::is_public_url_safe( $target_url ) ) {
+			return new WP_Error(
+				'bltgallery_r2_migrate_no_target',
+				__( 'Cannot migrate: the saved Public Base URL is missing or is still an r2.dev hostname. Set a custom domain first.', 'bltgallery' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$params     = $request->get_json_params() ?? [];
+		$batch_size = isset( $params['batch_size'] ) ? (int) $params['batch_size'] : 100;
+		$cursor     = isset( $params['cursor'] ) ? max( 0, (int) $params['cursor'] ) : 0;
+
+		$result = UrlMigrator::migrate_batch( $target_url, $batch_size, $cursor );
+
+		return new WP_REST_Response( $result );
 	}
 
 	// ------------------------------------------------------------------
