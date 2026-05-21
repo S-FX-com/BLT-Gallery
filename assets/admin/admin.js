@@ -867,6 +867,44 @@
 		} );
 	}
 
+	function renderIntegrationCard( id, title, descHtml, enabled ) {
+		const label = escHtml( title );
+		return `
+			<div class="bltgallery-integration" data-enabled="${ enabled ? 'true' : 'false' }">
+				<input type="checkbox" id="${ id }" class="bltgallery-integration__input"${ enabled ? ' checked' : '' } tabindex="-1" aria-hidden="true">
+				<div class="bltgallery-integration__text">
+					<span class="bltgallery-integration__label">${ label }</span>
+					<span class="bltgallery-integration__desc">${ descHtml }</span>
+				</div>
+				<div class="bltgallery-integration__toggle" role="group" aria-label="${ label }">
+					<button type="button" class="bltgallery-pill bltgallery-pill--enable${ enabled ? ' is-active' : '' }" data-target="${ id }" data-value="1" aria-pressed="${ enabled ? 'true' : 'false' }">Enable</button>
+					<button type="button" class="bltgallery-pill bltgallery-pill--disable${ enabled ? '' : ' is-active' }" data-target="${ id }" data-value="0" aria-pressed="${ enabled ? 'false' : 'true' }">Disable</button>
+				</div>
+			</div>
+		`;
+	}
+
+	function bindIntegrationPills( container ) {
+		container.querySelectorAll( '.bltgallery-integration' ).forEach( ( card ) => {
+			const input = card.querySelector( '.bltgallery-integration__input' );
+			const pills = card.querySelectorAll( '.bltgallery-pill' );
+			pills.forEach( ( pill ) => {
+				pill.addEventListener( 'click', () => {
+					const next = pill.dataset.value === '1';
+					if ( input.checked === next ) return;
+					input.checked = next;
+					card.dataset.enabled = next ? 'true' : 'false';
+					pills.forEach( ( p ) => {
+						const active = ( p.dataset.value === '1' ) === next;
+						p.classList.toggle( 'is-active', active );
+						p.setAttribute( 'aria-pressed', active ? 'true' : 'false' );
+					} );
+					input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+				} );
+			} );
+		} );
+	}
+
 	/**
 	 * Per-integration panel visibility. The Settings page renders all
 	 * panels; we just toggle `.hidden` on the wrapping .bltgallery-panel.
@@ -898,23 +936,11 @@
 
 			<div class="bltgallery-field">
 				<span class="bltgallery-field__label">Integrations</span>
-				<p class="description">Tick a service to reveal its configuration panel below. Unticked services stay hidden.</p>
+				<p class="description">Enable a service to reveal its configuration panel below. Disabled services stay hidden.</p>
 				<div class="bltgallery-integration-row">
-					<label class="bltgallery-integration">
-						<input type="checkbox" id="zyg-enable-s3"${ g.enable_s3 ? ' checked' : '' }>
-						<span class="bltgallery-integration__label">Amazon S3</span>
-						<span class="bltgallery-integration__desc">Offload uploads to an S3 bucket (optionally with CloudFront).</span>
-					</label>
-					<label class="bltgallery-integration">
-						<input type="checkbox" id="zyg-enable-r2"${ g.enable_r2 ? ' checked' : '' }>
-						<span class="bltgallery-integration__label">Cloudflare R2</span>
-						<span class="bltgallery-integration__desc">S3-compatible storage with no egress fees.</span>
-					</label>
-					<label class="bltgallery-integration">
-						<input type="checkbox" id="zyg-enable-cf-images"${ g.enable_cf_images ? ' checked' : '' }>
-						<span class="bltgallery-integration__label">Cloudflare Image Resizing</span>
-						<span class="bltgallery-integration__desc">Serve every image through <code>/cdn-cgi/image/</code> for on-the-fly resize + AVIF/WebP.</span>
-					</label>
+					${ renderIntegrationCard( 'zyg-enable-s3', 'Amazon S3', 'Offload uploads to an S3 bucket (optionally with CloudFront).', !! g.enable_s3 ) }
+					${ renderIntegrationCard( 'zyg-enable-r2', 'Cloudflare R2', 'S3-compatible storage with no egress fees.', !! g.enable_r2 ) }
+					${ renderIntegrationCard( 'zyg-enable-cf-images', 'Cloudflare Image Resizing', 'Serve every image through <code>/cdn-cgi/image/</code> for on-the-fly resize + AVIF/WebP.', !! g.enable_cf_images ) }
 				</div>
 			</div>
 
@@ -939,7 +965,9 @@
 			</div>
 		`;
 
-		// Live preview: ticking a checkbox immediately shows its panel.
+		bindIntegrationPills( container );
+
+		// Live preview: flipping a pill immediately shows/hides its panel.
 		const toggles = {
 			s3:        container.querySelector( '#zyg-enable-s3' ),
 			r2:        container.querySelector( '#zyg-enable-r2' ),
