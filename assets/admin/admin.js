@@ -52,6 +52,19 @@
 		return String( str ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' );
 	}
 
+	// Mirrors R2Storage::is_public_url_safe() on the server.
+	function isR2DevPublicUrl( value ) {
+		const v = String( value || '' ).trim();
+		if ( ! v ) return false;
+		const normalized = /^https?:\/\//i.test( v ) ? v : 'https://' + v.replace( /^\/+/, '' );
+		try {
+			const host = new URL( normalized ).hostname.toLowerCase();
+			return host === 'r2.dev' || host.endsWith( '.r2.dev' );
+		} catch {
+			return false;
+		}
+	}
+
 	// ------------------------------------------------------------------
 	// Gallery List
 	// ------------------------------------------------------------------
@@ -1112,9 +1125,40 @@
 	function renderR2Settings( container, r2 ) {
 		if ( ! container ) return;
 		const a = r2 || {};
+		const persistedUnsafe = isR2DevPublicUrl( a.public_url );
 		container.innerHTML = `
 			<p>Store original files on <strong>Cloudflare R2</strong> to minimise local disk usage.
 			R2 is S3-compatible and has no egress fees.</p>
+
+			${ persistedUnsafe ? `
+			<div class="notice notice-warning inline" style="margin:0 0 1rem">
+				<p><strong>Your saved Public Base URL uses <code>r2.dev</code>.</strong>
+				Microsoft Defender, Teams Safe Links, and similar scanners block these hostnames
+				because they are heavily abused by phishing campaigns, which can prevent your galleries
+				from previewing or loading in those products. Existing uploads continue to work, but
+				new uploads should use a custom domain. Follow the steps below, then update the
+				Public Base URL field.</p>
+			</div>
+			` : '' }
+
+			<div class="notice notice-info inline" style="margin:0 0 1rem">
+				<p style="margin-top:0"><strong>Required: connect a custom domain to your bucket.</strong>
+				The plugin will not accept Cloudflare&rsquo;s default <code>pub-&hellip;.r2.dev</code> URL
+				because it is broadly blocked by Microsoft security scanners.</p>
+				<ol style="margin:0 0 0 1.5em">
+					<li>Open your bucket in the Cloudflare dashboard &rarr;
+						<strong>Settings</strong> &rarr; <strong>Custom Domains</strong> &rarr;
+						<strong>Connect Domain</strong>.</li>
+					<li>Enter a subdomain on a Cloudflare-managed zone (e.g.
+						<code>cdn.yourdomain.com</code> or <code>images.yourdomain.com</code>).</li>
+					<li>Cloudflare adds the DNS record and provisions an SSL certificate automatically
+						(usually 1&ndash;2 minutes).</li>
+					<li>Paste the resulting URL into <strong>Public Base URL</strong> below
+						(e.g. <code>https://cdn.yourdomain.com</code>) and save.</li>
+				</ol>
+				<p style="margin-bottom:0"><a href="https://developers.cloudflare.com/r2/buckets/public-buckets/#custom-domains" target="_blank" rel="noopener">Cloudflare R2 custom domain documentation &rarr;</a></p>
+			</div>
+
 			<div class="bltgallery-field">
 				<label for="zyg-r2-account-id">Cloudflare Account ID</label>
 				<input type="text" id="zyg-r2-account-id" class="regular-text" value="${ escHtml( a.account_id ?? '' ) }" placeholder="Found in the Cloudflare dashboard">
@@ -1137,8 +1181,11 @@
 			</div>
 			<div class="bltgallery-field">
 				<label for="zyg-r2-public-url">Public Base URL</label>
-				<input type="text" id="zyg-r2-public-url" class="regular-text" value="${ escHtml( a.public_url ?? '' ) }" placeholder="https://assets.example.com">
-				<p class="description">Your bucket&rsquo;s custom domain or the <code>pub-&hellip;.r2.dev</code> URL.</p>
+				<input type="text" id="zyg-r2-public-url" class="regular-text" value="${ escHtml( a.public_url ?? '' ) }" placeholder="https://cdn.yourdomain.com">
+				<p class="description">The custom domain you connected to your R2 bucket. <code>pub-&hellip;.r2.dev</code> URLs are not permitted.</p>
+				<p id="zyg-r2-public-url-error" class="description" style="color:#b32d2e;display:none;margin-top:.35em">
+					This looks like a <code>pub-&hellip;.r2.dev</code> URL. Connect a custom domain to your bucket (see steps above) and enter that hostname instead.
+				</p>
 			</div>
 			<div class="bltgallery-field bltgallery-field--toggle">
 				<label>
@@ -1159,7 +1206,19 @@
 			<div id="zyg-r2-test-result"></div>
 		`;
 
-		container.querySelector( '#zyg-save-r2' ).addEventListener( 'click', async ( e ) => {
+		const publicUrlInput = container.querySelector( '#zyg-r2-public-url' );
+		const publicUrlError = container.querySelector( '#zyg-r2-public-url-error' );
+		const saveBtn        = container.querySelector( '#zyg-save-r2' );
+		const validatePublicUrl = () => {
+			const bad = isR2DevPublicUrl( publicUrlInput.value );
+			publicUrlError.style.display = bad ? '' : 'none';
+			publicUrlInput.style.borderColor = bad ? '#b32d2e' : '';
+			saveBtn.disabled = bad;
+		};
+		publicUrlInput.addEventListener( 'input', validatePublicUrl );
+		validatePublicUrl();
+
+		saveBtn.addEventListener( 'click', async ( e ) => {
 			e.target.disabled = true;
 			e.target.textContent = 'Saving…';
 			const secret = container.querySelector( '#zyg-r2-secret-key' ).value;
