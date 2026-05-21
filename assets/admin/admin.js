@@ -837,16 +837,18 @@
 		const awsEl = document.getElementById( 'bltgallery-aws-settings' );
 		const r2El  = document.getElementById( 'bltgallery-r2-settings' );
 		const cfEl  = document.getElementById( 'bltgallery-cf-images-settings' );
+		const upEl  = document.getElementById( 'bltgallery-updates-settings' );
 
-		if ( ! genEl && ! awsEl && ! r2El && ! cfEl ) return;
+		if ( ! genEl && ! awsEl && ! r2El && ! cfEl && ! upEl ) return;
 
-		let general, aws, r2, cfImages;
+		let general, aws, r2, cfImages, updates;
 		try {
-			[ general, aws, r2, cfImages ] = await Promise.all( [
+			[ general, aws, r2, cfImages, updates ] = await Promise.all( [
 				api( '/settings' ),
 				api( '/settings/aws' ),
 				api( '/settings/r2' ),
 				api( '/settings/cf-images' ),
+				api( '/updates/status' ),
 			] );
 		} catch ( e ) {
 			showNotice( e.message, 'error' );
@@ -859,6 +861,7 @@
 		renderAwsSettings( awsEl, aws );
 		renderR2Settings( r2El, r2 );
 		renderCfImagesSettings( cfEl, cfImages );
+		renderUpdatesSettings( upEl, updates );
 
 		applyIntegrationVisibility( {
 			s3:        !! general.enable_s3,
@@ -1682,6 +1685,58 @@
 				e.target.textContent = 'Save Cloudflare Image Settings';
 			}
 		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Plugin update status (Settings page → Plugin Updates panel)
+	// ------------------------------------------------------------------
+
+	function renderUpdatesSettings( container, status ) {
+		if ( ! container ) return;
+		const paint = ( s ) => {
+			container.innerHTML = renderUpdatesMarkup( s );
+			container.querySelector( '#zyg-check-update' ).addEventListener( 'click', async ( e ) => {
+				const btn = e.target;
+				btn.disabled = true;
+				btn.textContent = 'Checking…';
+				try {
+					const next = await api( '/updates/check', { method: 'POST' } );
+					paint( next );
+					showNotice( next.update_available ? `Update available: ${ next.latest_version }.` : 'Plugin is up to date.' );
+				} catch ( err ) {
+					showNotice( err.message, 'error' );
+					btn.disabled = false;
+					btn.textContent = 'Check for Updates';
+				}
+			} );
+		};
+		paint( status );
+	}
+
+	function renderUpdatesMarkup( s ) {
+		s = s || {};
+		const current = escHtml( s.current_version || '—' );
+		const latest  = s.latest_version ? escHtml( s.latest_version ) : null;
+		const checked = s.last_checked_human ? `Last checked ${ escHtml( s.last_checked_human ) }.` : 'Not yet checked.';
+		let statusLine;
+		if ( s.update_available && latest ) {
+			const url = s.update_url || s.plugins_page || '#';
+			statusLine = `<span class="bltgallery-update-available">Update available: <strong>${ latest }</strong></span> — <a href="${ escHtml( url ) }">go to Plugins page</a> to install.`;
+		} else if ( latest ) {
+			statusLine = `Up to date (latest: <strong>${ latest }</strong>).`;
+		} else {
+			statusLine = 'No update channel is configured for this plugin yet — clicking the button forces WordPress to re-poll every source it knows about.';
+		}
+		return `
+			<div class="bltgallery-field">
+				<p><strong>Installed version:</strong> ${ current }</p>
+				<p>${ statusLine }</p>
+				<p class="description">${ escHtml( checked ) }</p>
+			</div>
+			<div class="bltgallery-field">
+				<button class="button button-secondary" id="zyg-check-update">Check for Updates</button>
+			</div>
+		`;
 	}
 
 	// ------------------------------------------------------------------

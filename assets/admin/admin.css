@@ -564,6 +564,17 @@
 	}
 }
 
+/* ── Plugin update status ────────────────────────────────────────────── */
+
+.bltgallery-update-available {
+	display: inline-block;
+	padding: 0.1rem 0.55rem;
+	font-weight: 600;
+	color: #fff;
+	background: var(--blt-accent);
+	border-radius: 999px;
+}
+
 /* ── Album / category pill on the gallery list ──────────────────────── */
 
 .bltgallery-cat-pill {

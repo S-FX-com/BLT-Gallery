@@ -7,7 +7,8 @@
  * Requires at least: 6.3
  * Tested up to:      7.0
  * Requires PHP:      8.1
- * Author:            Blt Gallery Contributors
+ * Author:            S-FX.com
+ * Author URI:        https://s-fx.com
  * License:           GPLv3
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       bltgallery

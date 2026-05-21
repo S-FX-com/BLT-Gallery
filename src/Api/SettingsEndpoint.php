@@ -111,6 +111,79 @@ class SettingsEndpoint {
 				],
 			]
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/updates/status',
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_update_status' ],
+				'permission_callback' => [ $this, 'permission' ],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/updates/check',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'check_for_update' ],
+				'permission_callback' => [ $this, 'permission' ],
+			]
+		);
+	}
+
+	// ------------------------------------------------------------------
+	// Plugin update status
+	// ------------------------------------------------------------------
+
+	public function get_update_status(): WP_REST_Response {
+		return new WP_REST_Response( $this->build_update_status() );
+	}
+
+	public function check_for_update(): WP_REST_Response {
+		// Force WordPress to re-poll all update sources on the next read
+		// by dropping the cached transient, then trigger an immediate
+		// refresh so the result is visible without waiting for a page load.
+		delete_site_transient( 'update_plugins' );
+
+		if ( ! function_exists( 'wp_update_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/update.php';
+		}
+		wp_update_plugins();
+
+		return new WP_REST_Response( $this->build_update_status() );
+	}
+
+	private function build_update_status(): array {
+		$basename = defined( 'BLT_GALLERY_PLUGIN_BASENAME' ) ? BLT_GALLERY_PLUGIN_BASENAME : plugin_basename( BLT_GALLERY_PLUGIN_FILE );
+		$current  = defined( 'BLT_GALLERY_VERSION' ) ? BLT_GALLERY_VERSION : '';
+
+		$transient    = get_site_transient( 'update_plugins' );
+		$last_checked = isset( $transient->last_checked ) ? (int) $transient->last_checked : 0;
+		$latest       = null;
+		$package_url  = null;
+		$update_url   = null;
+
+		if ( isset( $transient->response[ $basename ] ) ) {
+			$row         = $transient->response[ $basename ];
+			$latest      = isset( $row->new_version ) ? (string) $row->new_version : null;
+			$package_url = isset( $row->package )     ? (string) $row->package     : null;
+			$update_url  = isset( $row->url )         ? (string) $row->url         : null;
+		} elseif ( isset( $transient->no_update[ $basename ]->new_version ) ) {
+			$latest = (string) $transient->no_update[ $basename ]->new_version;
+		}
+
+		return [
+			'current_version' => $current,
+			'latest_version'  => $latest,
+			'update_available' => $latest !== null && version_compare( $latest, $current, '>' ),
+			'last_checked'    => $last_checked,
+			'last_checked_human' => $last_checked ? human_time_diff( $last_checked ) . ' ago' : null,
+			'package_url'     => $package_url,
+			'update_url'      => $update_url,
+			'plugins_page'    => self_admin_url( 'plugins.php' ),
+		];
 	}
 
 	// ------------------------------------------------------------------
