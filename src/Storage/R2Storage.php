@@ -73,7 +73,10 @@ class R2Storage {
 			throw new \RuntimeException( 'Image has no local file to upload.' );
 		}
 
-		$base_key = "galleries/{$image->gallery_id}/{$image->filename}";
+		// Mirror the on-disk gallery folder ("{id}-{slug}") so the bucket layout
+		// matches local storage and is easy to browse.
+		$folder   = basename( dirname( $image->local_path ) );
+		$base_key = "galleries/{$folder}/{$image->filename}";
 		$key      = $this->upload( $image->local_path, $base_key );
 
 		$image->s3_key         = $key;
@@ -87,7 +90,7 @@ class R2Storage {
 				continue;
 			}
 
-			$thumb_key = "galleries/{$image->gallery_id}/thumbs/{$size}/" . basename( $thumb['path'] );
+			$thumb_key = "galleries/{$folder}/thumbs/{$size}/" . basename( $thumb['path'] );
 			$uploaded  = $this->upload( $thumb['path'], $thumb_key );
 
 			$image->meta['thumbs'][ $size ]['s3_key'] = $uploaded;

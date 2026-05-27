@@ -41,6 +41,22 @@ class Gallery {
 	}
 
 	// ------------------------------------------------------------------
+	// Storage
+	// ------------------------------------------------------------------
+
+	/**
+	 * Folder name used to group this gallery's files, both in local uploads and
+	 * in S3/R2 buckets — e.g. "1-holiday-party". The numeric id prefix keeps the
+	 * folder unique even when two galleries share a slug, while the slug suffix
+	 * makes the folder easy to recognise when browsing storage. Falls back to
+	 * the bare id when neither slug nor title yields one.
+	 */
+	public function storage_folder(): string {
+		$slug = '' !== $this->slug ? $this->slug : sanitize_title( $this->title );
+		return '' !== $slug ? "{$this->id}-{$slug}" : (string) $this->id;
+	}
+
+	// ------------------------------------------------------------------
 	// Serialisation
 	// ------------------------------------------------------------------
 
