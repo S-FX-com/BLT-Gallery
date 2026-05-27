@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace BltGallery\Core;
 
+use BltGallery\Models\Gallery;
 use BltGallery\Models\Image;
 
 /**
@@ -33,15 +34,15 @@ class ImageProcessor {
 	/**
 	 * Process an uploaded file and populate an Image model.
 	 *
-	 * @param string $tmp_path Absolute path to the uploaded temp file.
-	 * @param int    $gallery_id
+	 * @param string  $tmp_path Absolute path to the uploaded temp file.
+	 * @param Gallery $gallery  Destination gallery (provides id + folder name).
 	 * @return Image  Populated model (not yet persisted).
 	 * @throws \RuntimeException On processing failure.
 	 */
-	public function process_upload( string $tmp_path, int $gallery_id ): Image {
+	public function process_upload( string $tmp_path, Gallery $gallery ): Image {
 		// Determine destination directory inside WP uploads.
 		$upload_dir = wp_upload_dir();
-		$dest_dir   = trailingslashit( $upload_dir['basedir'] ) . 'bltgallery/' . $gallery_id . '/';
+		$dest_dir   = trailingslashit( $upload_dir['basedir'] ) . 'bltgallery/' . $gallery->storage_folder() . '/';
 
 		if ( ! wp_mkdir_p( $dest_dir ) ) {
 			throw new \RuntimeException( 'Could not create upload directory.' );
@@ -75,7 +76,7 @@ class ImageProcessor {
 
 		// Build the Image model.
 		$image                 = new Image();
-		$image->gallery_id     = $gallery_id;
+		$image->gallery_id     = $gallery->id;
 		$image->filename       = basename( $dest_path );
 		$image->width          = $width;
 		$image->height         = $height;

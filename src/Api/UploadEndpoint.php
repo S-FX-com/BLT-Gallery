@@ -52,7 +52,8 @@ class UploadEndpoint {
 	public function handle( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$gallery_id = (int) $request->get_param( 'gallery_id' );
 
-		if ( ! GalleryRepository::find( $gallery_id ) ) {
+		$gallery = GalleryRepository::find( $gallery_id );
+		if ( ! $gallery ) {
 			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
@@ -73,7 +74,7 @@ class UploadEndpoint {
 		// Process: resize, strip EXIF, generate thumbs.
 		try {
 			$processor = new ImageProcessor();
-			$image     = $processor->process_upload( $file['tmp_name'], $gallery_id );
+			$image     = $processor->process_upload( $file['tmp_name'], $gallery );
 		} catch ( \Throwable $e ) {
 			return new WP_Error( 'processing_failed', $e->getMessage(), [ 'status' => 500 ] );
 		}

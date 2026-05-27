@@ -206,7 +206,7 @@ class NextGenImporter {
 
 			try {
 				// process_upload() copies the file – NextGEN originals are untouched.
-				$image             = $processor->process_upload( $file_path, $gallery->id );
+				$image             = $processor->process_upload( $file_path, $gallery );
 				$image->alt_text   = sanitize_text_field( $pic['alttext'] ?? '' );
 				$image->description = sanitize_textarea_field( $pic['description'] ?? '' );
 				ImageRepository::save( $image );
