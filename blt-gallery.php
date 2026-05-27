@@ -3,7 +3,7 @@
  * Plugin Name:       Blt Gallery
  * Plugin URI:        https://github.com/S-FX-com/BLT-Gallery
  * Description:       A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS S3 offloading, Cloudflare Images URL-based optimisation, WebP/AVIF thumbnails, and easy [blt_gallery] / [blt_album] shortcodes.
- * Version:           3.3.0
+ * Version:           3.3.1
  * Requires at least: 6.3
  * Tested up to:      7.0
  * Requires PHP:      8.1
