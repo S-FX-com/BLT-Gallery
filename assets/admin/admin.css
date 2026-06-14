@@ -773,7 +773,7 @@
 }
 
 .bltgallery-album-modal__body {
-	grid-template-columns: 260px minmax(0, 1fr);
+	grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
 	align-items: start;
 }
 
@@ -783,8 +783,38 @@
 	}
 }
 
+/* Grid children must be allowed to shrink, otherwise the WP `.regular-text`
+   inputs (25em wide by default) blow out their track and overlap the picker. */
+.bltgallery-album-modal__body > * {
+	min-width: 0;
+}
+
+.bltgallery-album-modal__body .bltgallery-field-stack label {
+	font-size: 0.85rem;
+}
+
+.bltgallery-album-modal__body .bltgallery-field-stack input,
+.bltgallery-album-modal__body .bltgallery-field-stack textarea {
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	box-sizing: border-box;
+	font-weight: 400;
+}
+
+.bltgallery-album-modal__body .bltgallery-field-stack input[readonly] {
+	background: #f6f7f7;
+	color: #50575e;
+}
+
+.bltgallery-album-modal__galleries {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
 .bltgallery-album-modal__galleries .description {
-	margin-top: 0;
+	margin: 0;
 }
 
 .bltgallery-album-picker {

@@ -53,6 +53,21 @@ class GalleryEndpoint {
 
 		register_rest_route(
 			self::NAMESPACE,
+			self::BASE . '/(?P<id>\d+)/render',
+			[
+				[
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'render_html' ],
+					'permission_callback' => '__return_true',
+					'args'                => [
+						'type' => [ 'type' => 'string', 'required' => false ],
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			self::BASE . '/(?P<id>\d+)',
 			[
 				[
@@ -123,6 +138,35 @@ class GalleryEndpoint {
 		$data['image_count'] = ImageRepository::count_by_gallery( $gallery->id );
 
 		return new WP_REST_Response( $data );
+	}
+
+	/**
+	 * Render a gallery's front-end display HTML, for opening a gallery inside
+	 * the album modal without a dedicated page. Reuses the [blt_gallery]
+	 * shortcode so the output matches a normal embed exactly.
+	 */
+	public function render_html( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$gallery = GalleryRepository::find( (int) $request->get_param( 'id' ) );
+
+		if ( ! $gallery ) {
+			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
+		}
+
+		$atts = [ 'id' => (string) $gallery->id ];
+		$type = (string) ( $request->get_param( 'type' ) ?? '' );
+		if ( '' !== $type ) {
+			$atts['type'] = sanitize_key( $type );
+		}
+
+		$html = ( new \BltGallery\Core\Shortcode() )->render( $atts );
+
+		return new WP_REST_Response(
+			[
+				'id'    => $gallery->id,
+				'title' => $gallery->title,
+				'html'  => $html,
+			]
+		);
 	}
 
 	public function update( WP_REST_Request $request ): WP_REST_Response|WP_Error {

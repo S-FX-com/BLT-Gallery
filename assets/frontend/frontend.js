@@ -11,8 +11,9 @@
 	// Masonry
 	// ------------------------------------------------------------------
 
-	function initMasonry() {
-		document.querySelectorAll( '.bltgallery--masonry' ).forEach( function ( container ) {
+	function initMasonry( root ) {
+		root = root || document;
+		root.querySelectorAll( '.bltgallery--masonry' ).forEach( function ( container ) {
 			var grid = container.querySelector( '.bltgallery-masonry__grid' );
 			if ( ! grid ) return;
 			if ( grid.dataset.lightbox ) {
@@ -34,8 +35,9 @@
 	// Slideshow
 	// ------------------------------------------------------------------
 
-	function initSlideshow() {
-		document.querySelectorAll( '.bltgallery--slideshow' ).forEach( function ( container ) {
+	function initSlideshow( root ) {
+		root = root || document;
+		root.querySelectorAll( '.bltgallery--slideshow' ).forEach( function ( container ) {
 			var ss     = container.querySelector( '.bltgallery-slideshow' );
 			if ( ! ss ) return;
 
@@ -203,8 +205,9 @@
 	// Lightbox
 	// ------------------------------------------------------------------
 
-	function initLightbox() {
-		document.querySelectorAll( '.bltgallery--lightbox' ).forEach( function ( container ) {
+	function initLightbox( root ) {
+		root = root || document;
+		root.querySelectorAll( '.bltgallery--lightbox' ).forEach( function ( container ) {
 			var modal    = container.querySelector( '.bltgallery-lightbox__modal' );
 			var template = container.querySelector( '.bltgallery-lightbox__data' );
 			var triggers = [ ...container.querySelectorAll( '.bltgallery-lightbox__trigger' ) ];
@@ -232,7 +235,7 @@
 		} );
 
 		// Masonry/tile grids with data-lightbox="1".
-		document.querySelectorAll( '[data-lightbox="1"]' ).forEach( function ( grid ) {
+		root.querySelectorAll( '[data-lightbox="1"]' ).forEach( function ( grid ) {
 			var container = grid.closest( '.bltgallery' );
 			if ( ! container || container.classList.contains( 'bltgallery--lightbox' ) ) return;
 
@@ -270,23 +273,132 @@
 			} );
 		} );
 
-		document.addEventListener( 'blt:open-lightbox', function ( e ) {
-			var container = e.target.closest( '.bltgallery' );
-			if ( container && container._bltLightbox ) {
-				container._bltLightbox.open( ( e.detail && e.detail.idx ) || 0 );
-			}
-		} );
+		// Attach the global bridge once, only for the full-document boot.
+		if ( root === document && ! document._bltOpenLightboxBound ) {
+			document._bltOpenLightboxBound = true;
+			document.addEventListener( 'blt:open-lightbox', function ( e ) {
+				var container = e.target.closest( '.bltgallery' );
+				if ( container && container._bltLightbox ) {
+					container._bltLightbox.open( ( e.detail && e.detail.idx ) || 0 );
+				}
+			} );
+		}
 	}
 
 	// ------------------------------------------------------------------
 	// Boot
 	// ------------------------------------------------------------------
 
+	// Initialise every gallery behaviour within a root (document by default).
+	// Used both at boot and for AJAX-injected galleries (album modal).
+	function initAll( root ) {
+		initMasonry( root );
+		initSlideshow( root );
+		initLightbox( root );
+		initPagination( root );
+	}
+
 	function boot() {
-		initMasonry();
-		initSlideshow();
-		initLightbox();
-		initPagination();
+		initAll( document );
+		initAlbumModals();
+	}
+
+	// ------------------------------------------------------------------
+	// Album → gallery modal
+	//
+	// Album cards rendered without an explicit album_link open the gallery
+	// inline in a full-screen modal. The gallery HTML is fetched once from
+	// /galleries/{id}/render, injected, initialised, and cached so reopening
+	// is instant. The gallery's own lightbox layers above this modal.
+	// ------------------------------------------------------------------
+
+	function initAlbumModals() {
+		var albums = document.querySelectorAll( '.bltgallery-album' );
+		if ( ! albums.length ) return;
+
+		var apiBase = ( window.bltGalleryFrontend && window.bltGalleryFrontend.apiBase )
+			? window.bltGalleryFrontend.apiBase
+			: '/wp-json/bltgallery/v1';
+
+		var modal = document.createElement( 'div' );
+		modal.className = 'bltgallery-gallery-modal';
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		modal.setAttribute( 'aria-label', 'Gallery' );
+		modal.hidden = true;
+		modal.innerHTML =
+			'<div class="bltgallery-gallery-modal__dialog">' +
+			'<button type="button" class="bltgallery-gallery-modal__close" aria-label="Close gallery">&times;</button>' +
+			'<h2 class="bltgallery-gallery-modal__title"></h2>' +
+			'<div class="bltgallery-gallery-modal__content"></div>' +
+			'</div>';
+		document.body.appendChild( modal );
+
+		var titleEl   = modal.querySelector( '.bltgallery-gallery-modal__title' );
+		var contentEl = modal.querySelector( '.bltgallery-gallery-modal__content' );
+		var closeBtn  = modal.querySelector( '.bltgallery-gallery-modal__close' );
+		var cache     = new Map(); // gallery id -> initialised wrapper node
+		var opener    = null;
+
+		function close() {
+			modal.hidden = true;
+			document.body.classList.remove( 'blt-lightbox-open' );
+			releaseFocus( modal );
+			if ( opener ) opener.focus();
+		}
+
+		function open( id, type, title, btn ) {
+			opener = btn || document.activeElement;
+			titleEl.textContent = title || '';
+			modal.hidden = false;
+			document.body.classList.add( 'blt-lightbox-open' );
+			closeBtn.focus();
+			trapFocus( modal );
+
+			contentEl.innerHTML = '';
+
+			if ( cache.has( id ) ) {
+				contentEl.appendChild( cache.get( id ) );
+				return;
+			}
+
+			contentEl.innerHTML = '<p class="bltgallery-gallery-modal__status">Loading…</p>';
+			var url = apiBase + '/galleries/' + id + '/render' +
+				( type ? '?type=' + encodeURIComponent( type ) : '' );
+
+			fetch( url, { headers: { Accept: 'application/json' } } )
+				.then( function ( r ) { if ( ! r.ok ) throw new Error( 'HTTP ' + r.status ); return r.json(); } )
+				.then( function ( data ) {
+					var wrap = document.createElement( 'div' );
+					wrap.innerHTML = data.html || '';
+					cache.set( id, wrap );
+					contentEl.innerHTML = '';
+					contentEl.appendChild( wrap );
+					initAll( wrap );
+				} )
+				.catch( function () {
+					contentEl.innerHTML = '<p class="bltgallery-gallery-modal__status">Could not load this gallery.</p>';
+				} );
+		}
+
+		closeBtn.addEventListener( 'click', close );
+		modal.addEventListener( 'click', function ( e ) { if ( e.target === modal ) close(); } );
+		modal.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) close(); } );
+
+		albums.forEach( function ( album ) {
+			album.addEventListener( 'click', function ( e ) {
+				var card = e.target.closest( '.bltgallery-album__card--gallery' );
+				if ( ! card || ! album.contains( card ) ) return;
+				e.preventDefault();
+				var titleNode = card.querySelector( '.bltgallery-album__title' );
+				open(
+					card.dataset.galleryId,
+					card.dataset.galleryType || '',
+					titleNode ? titleNode.textContent : '',
+					card
+				);
+			} );
+		} );
 	}
 
 	if ( document.readyState === 'loading' ) {
@@ -313,8 +425,9 @@
 	//     so the browser doesn't fetch them until they're near the viewport
 	// ------------------------------------------------------------------
 
-	function initPagination() {
-		document.querySelectorAll( '.bltgallery[data-pagination]' ).forEach( setupPaginatedGallery );
+	function initPagination( root ) {
+		root = root || document;
+		root.querySelectorAll( '.bltgallery[data-pagination]' ).forEach( setupPaginatedGallery );
 	}
 
 	function setupPaginatedGallery( container ) {

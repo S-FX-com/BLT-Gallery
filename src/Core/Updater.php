@@ -27,6 +27,17 @@ final class Updater {
 		}
 		require_once $loader;
 
+		// plugin-update-checker renders GitHub release notes (markdown) through
+		// Parsedown when a release has a body. The vendored PUC copy ships
+		// without its Parsedown dependency, so load our bundled copy here —
+		// otherwise checking for updates fatals with "Class Parsedown not found".
+		if ( ! class_exists( 'Parsedown' ) ) {
+			$parsedown = BLT_GALLERY_PLUGIN_DIR . 'lib/parsedown/Parsedown.php';
+			if ( file_exists( $parsedown ) ) {
+				require_once $parsedown;
+			}
+		}
+
 		if ( ! class_exists( PucFactory::class ) ) {
 			return;
 		}

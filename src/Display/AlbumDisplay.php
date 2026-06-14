@@ -139,13 +139,23 @@ class AlbumDisplay extends AbstractDisplay {
 		$count    = ImageRepository::count_by_gallery( $gallery->id );
 		$captions = sanitize_key( $atts['captions'] ?: 'below' );
 		$link     = (string) ( $gallery->settings['album_link'] ?? '' );
+		$gtype    = ! empty( $atts['gallery_type'] ) ? sanitize_key( (string) $atts['gallery_type'] ) : '';
 
 		echo '<li class="bltgallery-album__item">';
 
-		$open = $link
-			? '<a href="' . esc_url( $link ) . '" class="bltgallery-album__card bltgallery-album__card--linked">'
-			: '<div class="bltgallery-album__card">';
-		$close = $link ? '</a>' : '</div>';
+		if ( $link ) {
+			// Explicit per-gallery link wins: a normal anchor.
+			$open  = '<a href="' . esc_url( $link ) . '" class="bltgallery-album__card bltgallery-album__card--linked">';
+			$close = '</a>';
+		} else {
+			// No link → button that opens the gallery in a modal (JS-driven).
+			$open  = sprintf(
+				'<button type="button" class="bltgallery-album__card bltgallery-album__card--linked bltgallery-album__card--gallery" data-gallery-id="%d"%s aria-haspopup="dialog">',
+				$gallery->id,
+				$gtype ? ' data-gallery-type="' . esc_attr( $gtype ) . '"' : ''
+			);
+			$close = '</button>';
+		}
 
 		echo $open; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<figure class="bltgallery-album__figure">';
