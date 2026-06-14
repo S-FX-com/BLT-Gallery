@@ -1,0 +1,70 @@
+name: Version bump
+
+# Guarantees every PR carries a fresh plugin version. When a PR is opened or
+# updated, this bumps the patch component of the version (in blt-gallery.php –
+# both the header and the BLT_GALLERY_VERSION constant) one above whatever main
+# currently ships, then commits that back onto the PR branch. If the PR already
+# sits above main's version, it does nothing, so re-pushes don't keep bumping.
+#
+# Because the merge to main then carries a unique version, the Release workflow
+# can cut exactly one release per merge.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-bump-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  bump:
+    # Forks can't be pushed to with GITHUB_TOKEN; only run for same-repo PRs.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump patch version if not already ahead of main
+        run: |
+          set -euo pipefail
+
+          read_ver() {
+            grep -E "define\(\s*'BLT_GALLERY_VERSION'" "$1" \
+              | sed -E "s/.*'BLT_GALLERY_VERSION',[[:space:]]*'([^']+)'.*/\1/"
+          }
+
+          PR_VER="$(read_ver blt-gallery.php)"
+          git fetch origin main --quiet
+          git show origin/main:blt-gallery.php > /tmp/main-plugin.php
+          MAIN_VER="$(read_ver /tmp/main-plugin.php)"
+
+          echo "PR version:   $PR_VER"
+          echo "Main version: $MAIN_VER"
+
+          highest="$(printf '%s\n%s\n' "$PR_VER" "$MAIN_VER" | sort -V | tail -1)"
+          if [ "$PR_VER" != "$MAIN_VER" ] && [ "$PR_VER" = "$highest" ]; then
+            echo "PR already bumps the version ($PR_VER > $MAIN_VER); nothing to do."
+            exit 0
+          fi
+
+          IFS=. read -r MA MI PA <<< "$MAIN_VER"
+          NEW="${MA}.${MI}.$((PA + 1))"
+          echo "Bumping version to ${NEW}"
+
+          sed -i -E "s/^(\s*\*\s*Version:\s*).*/\1${NEW}/" blt-gallery.php
+          sed -i -E "s/(define\(\s*'BLT_GALLERY_VERSION',\s*')[^']+('\s*\))/\1${NEW}\2/" blt-gallery.php
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: bump version to ${NEW}"
+          git push origin "HEAD:${{ github.head_ref }}"

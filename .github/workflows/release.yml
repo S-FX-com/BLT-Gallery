@@ -1,24 +1,26 @@
 name: Release
 
-# Builds a clean plugin zip and publishes it as a GitHub Release asset
-# whenever a version tag is pushed. plugin-update-checker (wired up in
-# src/Core/Updater.php) then surfaces the new release to every install.
+# Cuts a GitHub Release on every push to main. The version is read straight
+# from blt-gallery.php (kept fresh by the Version bump workflow on each PR), a
+# matching v<version> tag is created, a clean plugin zip is built, and the
+# release is published with that zip attached. plugin-update-checker (wired up
+# in src/Core/Updater.php) then surfaces the new release to every install.
 #
-# Cutting a release:
-#   1. Bump `Version:` in blt-gallery.php and the BLT_GALLERY_VERSION constant
-#      (they must match).
-#   2. Commit, then tag: `git tag v3.2.1 && git push origin v3.2.1`
-#   3. This workflow runs, sanity-checks the tag against the header, builds
-#      blt-gallery-<version>.zip, and creates the GitHub Release with the
-#      zip attached.
+# If the version in blt-gallery.php was already released (e.g. a direct push to
+# main that didn't bump it), the patch is bumped automatically and committed
+# back to main so a fresh release can always be cut.
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
 
 jobs:
   build-and-release:
@@ -28,32 +30,65 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Resolve version from tag
+      - name: Resolve version (bump + retag if already released)
         id: version
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#v}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
 
-      - name: Verify tag matches plugin header + constant
+          read_ver() {
+            grep -E "define\(\s*'BLT_GALLERY_VERSION'" blt-gallery.php \
+              | sed -E "s/.*'BLT_GALLERY_VERSION',[[:space:]]*'([^']+)'.*/\1/"
+          }
+
+          git fetch --tags --quiet
+          VERSION="$(read_ver)"
+
+          if git rev-parse -q --verify "refs/tags/v${VERSION}" >/dev/null; then
+            echo "Tag v${VERSION} already exists; bumping patch to find a free version."
+            IFS=. read -r MA MI PA <<< "$VERSION"
+            PA=$((PA + 1))
+            while git rev-parse -q --verify "refs/tags/v${MA}.${MI}.${PA}" >/dev/null; do
+              PA=$((PA + 1))
+            done
+            VERSION="${MA}.${MI}.${PA}"
+            echo "Bumping to ${VERSION} and committing back to main."
+
+            sed -i -E "s/^(\s*\*\s*Version:\s*).*/\1${VERSION}/" blt-gallery.php
+            sed -i -E "s/(define\(\s*'BLT_GALLERY_VERSION',\s*')[^']+('\s*\))/\1${VERSION}\2/" blt-gallery.php
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -am "chore(release): bump version to ${VERSION}"
+            git push origin HEAD:main
+          fi
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}"    >> "$GITHUB_OUTPUT"
+
+      - name: Verify plugin header + constant agree
         run: |
           set -euo pipefail
           HEADER_VERSION="$(grep -E '^\s*\*\s*Version:' blt-gallery.php | head -1 | awk '{print $NF}')"
           CONST_VERSION="$(grep -E "define\(\s*'BLT_GALLERY_VERSION'" blt-gallery.php | sed -E "s/.*'BLT_GALLERY_VERSION',[[:space:]]*'([^']+)'.*/\1/")"
-          TAG_VERSION="${{ steps.version.outputs.version }}"
-          echo "Tag version:      $TAG_VERSION"
-          echo "Header version:   $HEADER_VERSION"
-          echo "Constant version: $CONST_VERSION"
-          if [ "$HEADER_VERSION" != "$TAG_VERSION" ]; then
-            echo "::error::Plugin header Version ($HEADER_VERSION) does not match tag ($TAG_VERSION). Bump blt-gallery.php and re-tag."
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "Release version: $VERSION"
+          echo "Header version:  $HEADER_VERSION"
+          echo "Constant version:$CONST_VERSION"
+          if [ "$HEADER_VERSION" != "$VERSION" ] || [ "$CONST_VERSION" != "$VERSION" ]; then
+            echo "::error::Version mismatch between header ($HEADER_VERSION), constant ($CONST_VERSION) and release ($VERSION)."
             exit 1
           fi
-          if [ "$CONST_VERSION" != "$TAG_VERSION" ]; then
-            echo "::error::BLT_GALLERY_VERSION constant ($CONST_VERSION) does not match tag ($TAG_VERSION). Bump it in blt-gallery.php and re-tag."
-            exit 1
-          fi
+
+      - name: Create and push tag
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG"
+          git push origin "$TAG"
 
       - name: Build clean release zip
         id: build
