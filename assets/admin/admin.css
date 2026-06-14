@@ -783,23 +783,31 @@
 	}
 }
 
+/* Create mode has no gallery picker, so the body is a single column. */
+.bltgallery-album-modal__body--single {
+	display: block;
+}
+
 /* Grid children must be allowed to shrink, otherwise the WP `.regular-text`
    inputs (25em wide by default) blow out their track and overlap the picker. */
 .bltgallery-album-modal__body > * {
 	min-width: 0;
 }
 
-.bltgallery-album-modal__body .bltgallery-field-stack label {
-	font-size: 0.85rem;
-}
-
 .bltgallery-album-modal__body .bltgallery-field-stack input,
-.bltgallery-album-modal__body .bltgallery-field-stack textarea {
+.bltgallery-album-modal__body--single .bltgallery-field-stack input,
+.bltgallery-album-modal__body .bltgallery-field-stack textarea,
+.bltgallery-album-modal__body--single .bltgallery-field-stack textarea {
 	width: 100%;
 	max-width: 100%;
 	margin: 0;
 	box-sizing: border-box;
 	font-weight: 400;
+}
+
+.bltgallery-album-modal__body .bltgallery-field-stack label,
+.bltgallery-album-modal__body--single .bltgallery-field-stack label {
+	font-size: 0.85rem;
 }
 
 .bltgallery-album-modal__body .bltgallery-field-stack input[readonly] {
@@ -890,19 +898,12 @@
 .bltgallery-copyable:hover { background: #f1f5f9; }
 .bltgallery-copyable.is-copied { background: #dcfce7; }
 
-/* ── Albums admin page (two-column) ─────────────────────────────────── */
+/* ── Albums admin page ──────────────────────────────────────────────── */
 
-.bltgallery-albums-admin {
-	display: grid;
-	grid-template-columns: 320px minmax(0, 1fr);
-	gap: 1.25rem;
-	align-items: start;
-}
-
-@media (max-width: 860px) {
-	.bltgallery-albums-admin {
-		grid-template-columns: 1fr;
-	}
+/* The album list spans the full width; new albums are created through the
+   "Add album" lightbox launched from the page header. */
+.bltgallery-albums-admin__list {
+	min-width: 0;
 }
 
 /* Auto-size columns so the shortcode cell stays on one line instead of

@@ -1909,28 +1909,6 @@
 
 		root.innerHTML = `
 			<div class="bltgallery-albums-admin">
-				<aside class="bltgallery-albums-admin__create">
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header"><h2>Add a new album</h2></div>
-						<div class="bltgallery-panel__body">
-							<form id="zyg-album-create-form" class="bltgallery-field-stack">
-								<label>
-									<span>Name</span>
-									<input type="text" name="name" class="regular-text" required>
-								</label>
-								<label>
-									<span>Slug (optional)</span>
-									<input type="text" name="slug" class="regular-text" placeholder="auto-generated from name">
-								</label>
-								<label>
-									<span>Description (optional)</span>
-									<textarea name="description" rows="3" class="large-text"></textarea>
-								</label>
-								<button type="submit" class="button button-primary">Add album</button>
-							</form>
-						</div>
-					</div>
-				</aside>
 				<section class="bltgallery-albums-admin__list">
 					<table class="wp-list-table widefat striped bltgallery-table bltgallery-albums-table">
 						<thead>
@@ -1952,31 +1930,16 @@
 
 		const rowsEl = root.querySelector( '#zyg-album-rows' );
 
-		root.querySelector( '#zyg-album-create-form' ).addEventListener( 'submit', async ( e ) => {
-			e.preventDefault();
-			const form = e.target;
-			const data = {
-				name:        form.elements.name.value.trim(),
-				slug:        form.elements.slug.value.trim(),
-				description: form.elements.description.value.trim(),
-			};
-			if ( ! data.name ) return;
-			const submit = form.querySelector( 'button[type="submit"]' );
-			submit.disabled = true;
-			try {
-				const album = await api( '/albums', { method: 'POST', body: data } );
+		// "Add album" button lives in the page header (rendered by PHP).
+		const addBtn = document.getElementById( 'bltgallery-add-album' );
+		if ( addBtn ) {
+			addBtn.onclick = () => openAlbumModal( 'create', { name: '', slug: '', description: '' }, ( album ) => {
 				albums = albums.filter( ( a ) => a.slug !== album.slug );
-				albums.push( { ...album, gallery_count: 0 } );
+				albums.push( { ...album, gallery_count: album.gallery_count || 0 } );
 				albums.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 				rowsEl.innerHTML = renderAlbumRows( albums );
-				form.reset();
-				showNotice( `Album "${ album.name }" added.` );
-			} catch ( err ) {
-				showNotice( err.message, 'error' );
-			} finally {
-				submit.disabled = false;
-			}
-		} );
+			} );
+		}
 
 		rowsEl.addEventListener( 'click', async ( e ) => {
 			const del = e.target.closest( '.zyg-album-delete' );
@@ -1997,7 +1960,7 @@
 			if ( edit ) {
 				const album = albums.find( ( a ) => a.slug === edit.dataset.slug );
 				if ( album ) {
-					openAlbumEditor( album, ( updated ) => {
+					openAlbumModal( 'edit', album, ( updated ) => {
 						const i = albums.findIndex( ( a ) => a.slug === updated.slug );
 						if ( i !== -1 ) albums[ i ] = updated;
 						albums.sort( ( a, b ) => a.name.localeCompare( b.name ) );
@@ -2014,12 +1977,16 @@
 	}
 
 	/**
-	 * Lightbox editor for an existing album: rename / re-describe it and pick
-	 * which galleries belong to it. Only galleries that are unassigned (in no
-	 * album) or already in this album are offered — matching the rule that a
-	 * gallery joins one album at a time from this screen.
+	 * Lightbox for creating or editing an album.
+	 *
+	 * - mode "create": name / slug / description only. Saving POSTs a new album.
+	 * - mode "edit": rename / re-describe, plus a gallery picker. Only galleries
+	 *   that are unassigned or already in this album are offered, matching the
+	 *   rule that a gallery joins one album at a time from this screen.
 	 */
-	function openAlbumEditor( album, onSaved ) {
+	function openAlbumModal( mode, album, onSaved ) {
+		const isEdit = 'edit' === mode;
+
 		let dialog = document.getElementById( 'bltgallery-album-modal' );
 		if ( ! dialog ) {
 			dialog = document.createElement( 'dialog' );
@@ -2028,91 +1995,114 @@
 			document.body.appendChild( dialog );
 		}
 
+		const slugField = isEdit
+			? `<input type="text" class="regular-text" value="${ escAttr( album.slug ) }" readonly>`
+			: `<input type="text" name="slug" class="regular-text" placeholder="auto-generated from name">`;
+
+		const galleriesSection = isEdit
+			? `<div class="bltgallery-album-modal__galleries">
+					<p class="description">Tick the galleries that belong to this album. Galleries already assigned to another album aren't shown.</p>
+					<div class="bltgallery-album-picker" id="zyg-album-picker">
+						<p class="bltgallery-loading">Loading galleries…</p>
+					</div>
+				</div>`
+			: '';
+
 		dialog.innerHTML = `
 			<form method="dialog" class="bltgallery-modal__form">
 				<header class="bltgallery-modal__header">
-					<h2>Edit album</h2>
+					<h2>${ isEdit ? 'Edit album' : 'Add album' }</h2>
 					<button type="button" class="bltgallery-modal__close" data-close aria-label="Close">&times;</button>
 				</header>
-				<div class="bltgallery-modal__body bltgallery-album-modal__body">
+				<div class="bltgallery-modal__body ${ isEdit ? 'bltgallery-album-modal__body' : 'bltgallery-album-modal__body--single' }">
 					<div class="bltgallery-field-stack">
 						<label>
 							<span>Name</span>
-							<input type="text" name="name" class="regular-text" value="${ escAttr( album.name ) }" required>
+							<input type="text" name="name" class="regular-text" value="${ escAttr( album.name || '' ) }" required>
 						</label>
 						<label>
-							<span>Slug</span>
-							<input type="text" class="regular-text" value="${ escAttr( album.slug ) }" readonly>
+							<span>Slug${ isEdit ? '' : ' (optional)' }</span>
+							${ slugField }
 						</label>
 						<label>
-							<span>Description</span>
+							<span>Description${ isEdit ? '' : ' (optional)' }</span>
 							<textarea name="description" rows="2" class="large-text">${ escHtml( album.description || '' ) }</textarea>
 						</label>
 					</div>
-					<div class="bltgallery-album-modal__galleries">
-						<p class="description">Tick the galleries that belong to this album. Galleries already assigned to another album aren't shown.</p>
-						<div class="bltgallery-album-picker" id="zyg-album-picker">
-							<p class="bltgallery-loading">Loading galleries…</p>
-						</div>
-					</div>
+					${ galleriesSection }
 				</div>
 				<footer class="bltgallery-modal__footer">
 					<button type="button" class="button" data-close>Cancel</button>
-					<button type="submit" class="button button-primary">Save album</button>
+					<button type="submit" class="button button-primary">${ isEdit ? 'Save album' : 'Add album' }</button>
 				</footer>
 			</form>
 		`;
 
 		const form   = dialog.querySelector( 'form' );
-		const picker  = dialog.querySelector( '#zyg-album-picker' );
+		const picker = dialog.querySelector( '#zyg-album-picker' );
 
 		dialog.querySelectorAll( '[data-close]' ).forEach( ( btn ) => {
 			btn.onclick = () => dialog.close();
 		} );
 
-		// Load galleries and render the checkbox picker.
-		( async () => {
-			try {
-				const galleries = await api( '/galleries?per_page=100' );
-				picker.innerHTML = renderGalleryPicker( galleries, album.slug );
-			} catch ( err ) {
-				picker.innerHTML = `<p class="bltgallery-error">${ escHtml( err.message ) }</p>`;
-			}
-		} )();
+		if ( isEdit ) {
+			// Load galleries and render the checkbox picker.
+			( async () => {
+				try {
+					const galleries = await api( '/galleries?per_page=100' );
+					picker.innerHTML = renderGalleryPicker( galleries, album.slug );
+				} catch ( err ) {
+					picker.innerHTML = `<p class="bltgallery-error">${ escHtml( err.message ) }</p>`;
+				}
+			} )();
+		}
 
 		form.onsubmit = async ( e ) => {
 			e.preventDefault();
 			const submit = form.querySelector( 'button[type="submit"]' );
-			submit.disabled = true;
-			submit.textContent = 'Saving…';
 			const name        = form.elements.name.value.trim();
 			const description = form.elements.description.value.trim();
-			const ids = [ ...picker.querySelectorAll( 'input[type="checkbox"]:checked' ) ]
-				.map( ( cb ) => parseInt( cb.value, 10 ) );
+			if ( ! name ) { form.elements.name.focus(); return; }
+			submit.disabled = true;
+			submit.textContent = 'Saving…';
 			try {
-				const updated = await api( `/albums/${ album.slug }`, {
-					method: 'PUT',
-					body:   { name, description },
-				} );
-				await api( `/albums/${ album.slug }/galleries`, {
-					method: 'POST',
-					body:   { gallery_ids: ids },
-				} );
-				onSaved( { ...album, name: updated.name, description: updated.description, gallery_count: ids.length } );
-				dialog.close();
-				showNotice( `Album "${ updated.name }" updated.` );
+				if ( isEdit ) {
+					const updated = await api( `/albums/${ album.slug }`, {
+						method: 'PUT',
+						body:   { name, description },
+					} );
+					const ids = [ ...picker.querySelectorAll( 'input[type="checkbox"]:checked' ) ]
+						.map( ( cb ) => parseInt( cb.value, 10 ) );
+					await api( `/albums/${ album.slug }/galleries`, {
+						method: 'POST',
+						body:   { gallery_ids: ids },
+					} );
+					onSaved( { ...album, name: updated.name, description: updated.description, gallery_count: ids.length } );
+					dialog.close();
+					showNotice( `Album "${ updated.name }" updated.` );
+				} else {
+					const created = await api( '/albums', {
+						method: 'POST',
+						body:   { name, slug: form.elements.slug.value.trim(), description },
+					} );
+					onSaved( { ...created, gallery_count: 0 } );
+					dialog.close();
+					showNotice( `Album "${ created.name }" added.` );
+				}
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
 				submit.disabled = false;
-				submit.textContent = 'Save album';
+				submit.textContent = isEdit ? 'Save album' : 'Add album';
 			}
 		};
 
 		if ( typeof dialog.showModal === 'function' ) {
 			dialog.showModal();
+			form.elements.name.focus();
 		} else {
 			dialog.setAttribute( 'open', '' );
+			form.elements.name.focus();
 		}
 	}
 
