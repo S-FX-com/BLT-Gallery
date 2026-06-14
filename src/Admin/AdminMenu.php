@@ -88,7 +88,12 @@ class AdminMenu {
 	public function render_albums_page(): void {
 		?>
 		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'Albums', 'bltgallery' ); ?></h1>
+			<div class="bltgallery-page-header">
+				<h1><?php esc_html_e( 'Albums', 'bltgallery' ); ?></h1>
+				<button type="button" class="button button-primary" id="bltgallery-add-album">
+					<?php esc_html_e( 'Add album', 'bltgallery' ); ?>
+				</button>
+			</div>
 			<p>
 				<?php esc_html_e(
 					'Albums group galleries the same way categories group posts. Galleries can belong to multiple albums; albums can then be rendered with',
