@@ -115,6 +115,66 @@ final class AlbumRepository {
 	}
 
 	/**
+	 * Replace the set of galleries assigned to an album.
+	 *
+	 * Galleries whose id appears in $gallery_ids gain this album's slug;
+	 * galleries that currently carry the slug but are absent from the list
+	 * lose it. Any *other* album each gallery belongs to is left untouched.
+	 * Returns the number of galleries whose membership actually changed.
+	 *
+	 * @param int[]|string[] $gallery_ids
+	 */
+	public static function set_galleries( string $slug, array $gallery_ids ): int {
+		$slug = sanitize_title( $slug );
+		if ( '' === $slug ) {
+			return 0;
+		}
+
+		$wanted  = array_map( 'intval', $gallery_ids );
+		$changed = 0;
+
+		foreach ( GalleryRepository::all( 500, 1 ) as $gallery ) {
+			$current = self::gallery_album_slugs( $gallery );
+			$has     = in_array( $slug, $current, true );
+			$want    = in_array( $gallery->id, $wanted, true );
+
+			if ( $has === $want ) {
+				continue;
+			}
+
+			if ( $want ) {
+				$current[] = $slug;
+			} else {
+				$current = array_filter( $current, static fn( $s ) => $s !== $slug );
+			}
+
+			// Persist on the modern `albums` array and drop the legacy
+			// single-slug `category` key so counts don't double up.
+			$gallery->settings['albums'] = array_values( array_unique( $current ) );
+			unset( $gallery->settings['category'] );
+			GalleryRepository::save( $gallery );
+			$changed++;
+		}
+
+		return $changed;
+	}
+
+	/**
+	 * Normalise a gallery's album membership across the modern `albums`
+	 * array and the legacy single `category` slug.
+	 *
+	 * @return string[]
+	 */
+	private static function gallery_album_slugs( \BltGallery\Models\Gallery $gallery ): array {
+		$albums = $gallery->settings['albums'] ?? null;
+		if ( is_array( $albums ) ) {
+			return array_values( array_filter( array_map( 'strval', $albums ) ) );
+		}
+		$legacy = (string) ( $gallery->settings['category'] ?? '' );
+		return '' !== $legacy ? [ $legacy ] : [];
+	}
+
+	/**
 	 * Auto-register any slug a gallery references but the user hasn't
 	 * formally defined yet. Keeps the Albums page complete even after a
 	 * NextGEN migration or a shortcode that referenced a new category.
