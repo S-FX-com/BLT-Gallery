@@ -1932,14 +1932,14 @@
 					</div>
 				</aside>
 				<section class="bltgallery-albums-admin__list">
-					<table class="wp-list-table widefat fixed striped bltgallery-table">
+					<table class="wp-list-table widefat striped bltgallery-table bltgallery-albums-table">
 						<thead>
 							<tr>
 								<th>Name</th>
 								<th>Slug</th>
 								<th>Galleries</th>
 								<th>Shortcode</th>
-								<th>Actions</th>
+								<th class="bltgallery-albums-table__actions">Actions</th>
 							</tr>
 						</thead>
 						<tbody id="zyg-album-rows">
@@ -1993,11 +1993,155 @@
 				}
 				return;
 			}
+			const edit = e.target.closest( '.zyg-album-edit' );
+			if ( edit ) {
+				const album = albums.find( ( a ) => a.slug === edit.dataset.slug );
+				if ( album ) {
+					openAlbumEditor( album, ( updated ) => {
+						const i = albums.findIndex( ( a ) => a.slug === updated.slug );
+						if ( i !== -1 ) albums[ i ] = updated;
+						albums.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+						rowsEl.innerHTML = renderAlbumRows( albums );
+					} );
+				}
+				return;
+			}
 			const copy = e.target.closest( '.bltgallery-shortcode-copy' );
 			if ( copy ) {
 				copyToClipboard( copy.dataset.copy, copy );
 			}
 		} );
+	}
+
+	/**
+	 * Lightbox editor for an existing album: rename / re-describe it and pick
+	 * which galleries belong to it. Only galleries that are unassigned (in no
+	 * album) or already in this album are offered — matching the rule that a
+	 * gallery joins one album at a time from this screen.
+	 */
+	function openAlbumEditor( album, onSaved ) {
+		let dialog = document.getElementById( 'bltgallery-album-modal' );
+		if ( ! dialog ) {
+			dialog = document.createElement( 'dialog' );
+			dialog.id = 'bltgallery-album-modal';
+			dialog.className = 'bltgallery-modal bltgallery-album-modal';
+			document.body.appendChild( dialog );
+		}
+
+		dialog.innerHTML = `
+			<form method="dialog" class="bltgallery-modal__form">
+				<header class="bltgallery-modal__header">
+					<h2>Edit album</h2>
+					<button type="button" class="bltgallery-modal__close" data-close aria-label="Close">&times;</button>
+				</header>
+				<div class="bltgallery-modal__body bltgallery-album-modal__body">
+					<div class="bltgallery-field-stack">
+						<label>
+							<span>Name</span>
+							<input type="text" name="name" class="regular-text" value="${ escAttr( album.name ) }" required>
+						</label>
+						<label>
+							<span>Slug</span>
+							<input type="text" class="regular-text" value="${ escAttr( album.slug ) }" readonly>
+						</label>
+						<label>
+							<span>Description</span>
+							<textarea name="description" rows="2" class="large-text">${ escHtml( album.description || '' ) }</textarea>
+						</label>
+					</div>
+					<div class="bltgallery-album-modal__galleries">
+						<p class="description">Tick the galleries that belong to this album. Galleries already assigned to another album aren't shown.</p>
+						<div class="bltgallery-album-picker" id="zyg-album-picker">
+							<p class="bltgallery-loading">Loading galleries…</p>
+						</div>
+					</div>
+				</div>
+				<footer class="bltgallery-modal__footer">
+					<button type="button" class="button" data-close>Cancel</button>
+					<button type="submit" class="button button-primary">Save album</button>
+				</footer>
+			</form>
+		`;
+
+		const form   = dialog.querySelector( 'form' );
+		const picker  = dialog.querySelector( '#zyg-album-picker' );
+
+		dialog.querySelectorAll( '[data-close]' ).forEach( ( btn ) => {
+			btn.onclick = () => dialog.close();
+		} );
+
+		// Load galleries and render the checkbox picker.
+		( async () => {
+			try {
+				const galleries = await api( '/galleries?per_page=100' );
+				picker.innerHTML = renderGalleryPicker( galleries, album.slug );
+			} catch ( err ) {
+				picker.innerHTML = `<p class="bltgallery-error">${ escHtml( err.message ) }</p>`;
+			}
+		} )();
+
+		form.onsubmit = async ( e ) => {
+			e.preventDefault();
+			const submit = form.querySelector( 'button[type="submit"]' );
+			submit.disabled = true;
+			submit.textContent = 'Saving…';
+			const name        = form.elements.name.value.trim();
+			const description = form.elements.description.value.trim();
+			const ids = [ ...picker.querySelectorAll( 'input[type="checkbox"]:checked' ) ]
+				.map( ( cb ) => parseInt( cb.value, 10 ) );
+			try {
+				const updated = await api( `/albums/${ album.slug }`, {
+					method: 'PUT',
+					body:   { name, description },
+				} );
+				await api( `/albums/${ album.slug }/galleries`, {
+					method: 'POST',
+					body:   { gallery_ids: ids },
+				} );
+				onSaved( { ...album, name: updated.name, description: updated.description, gallery_count: ids.length } );
+				dialog.close();
+				showNotice( `Album "${ updated.name }" updated.` );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				submit.disabled = false;
+				submit.textContent = 'Save album';
+			}
+		};
+
+		if ( typeof dialog.showModal === 'function' ) {
+			dialog.showModal();
+		} else {
+			dialog.setAttribute( 'open', '' );
+		}
+	}
+
+	function renderGalleryPicker( galleries, albumSlug ) {
+		const available = ( galleries || [] ).filter( ( g ) => {
+			const a = normaliseGalleryAlbums( g );
+			return a.length === 0 || a.includes( albumSlug );
+		} );
+
+		if ( ! available.length ) {
+			return `<p class="bltgallery-muted">No galleries available — every gallery is already assigned to another album.</p>`;
+		}
+
+		return `
+			<ul class="bltgallery-album-picker__list">
+				${ available.map( ( g ) => {
+					const inAlbum = normaliseGalleryAlbums( g ).includes( albumSlug );
+					return `
+						<li>
+							<label>
+								<input type="checkbox" value="${ g.id }"${ inAlbum ? ' checked' : '' }>
+								<span>${ escHtml( g.title || ( '#' + g.id ) ) }</span>
+								${ g.slug ? `<small>${ escHtml( g.slug ) }</small>` : '' }
+							</label>
+						</li>
+					`;
+				} ).join( '' ) }
+			</ul>
+		`;
 	}
 
 	function renderAlbumRows( albums ) {
@@ -2016,7 +2160,8 @@
 							<code>${ escHtml( sc ) }</code>
 						</button>
 					</td>
-					<td>
+					<td class="bltgallery-albums-table__actions">
+						<button type="button" class="button zyg-album-edit" data-slug="${ escAttr( a.slug ) }">Edit</button>
 						<button type="button" class="button button-link-delete zyg-album-delete" data-slug="${ escAttr( a.slug ) }">Delete</button>
 					</td>
 				</tr>

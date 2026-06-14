@@ -55,6 +55,21 @@ class AlbumEndpoint {
 				],
 			]
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/albums/(?P<slug>[a-z0-9\-_]+)/galleries',
+			[
+				[
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'set_galleries' ],
+					'permission_callback' => [ $this, 'manage_permission' ],
+					'args'                => [
+						'gallery_ids' => [ 'type' => 'array', 'required' => false ],
+					],
+				],
+			]
+		);
 	}
 
 	public function index(): WP_REST_Response {
@@ -112,6 +127,21 @@ class AlbumEndpoint {
 		}
 
 		return new WP_REST_Response( $album );
+	}
+
+	/**
+	 * Replace the galleries assigned to an album. Body: { gallery_ids: [..] }.
+	 */
+	public function set_galleries( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$slug = (string) $request->get_param( 'slug' );
+		if ( ! AlbumRepository::find( $slug ) ) {
+			return new WP_Error( 'not_found', __( 'Album not found.', 'bltgallery' ), [ 'status' => 404 ] );
+		}
+
+		$ids     = (array) ( $request->get_param( 'gallery_ids' ) ?? [] );
+		$changed = AlbumRepository::set_galleries( $slug, $ids );
+
+		return new WP_REST_Response( [ 'changed' => $changed ] );
 	}
 
 	public function delete( WP_REST_Request $request ): WP_REST_Response|WP_Error {
