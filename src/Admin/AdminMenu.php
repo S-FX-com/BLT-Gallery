@@ -48,6 +48,15 @@ class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
+			__( 'Sliders', 'bltgallery' ),
+			__( 'Sliders', 'bltgallery' ),
+			'manage_options',
+			self::MENU_SLUG . '-sliders',
+			[ $this, 'render_sliders_page' ]
+		);
+
+		add_submenu_page(
+			self::MENU_SLUG,
 			__( 'Settings', 'bltgallery' ),
 			__( 'Settings', 'bltgallery' ),
 			'manage_options',
@@ -111,6 +120,124 @@ class AdminMenu {
 			if ( window.BltGalleryAdmin && BltGalleryAdmin.initAlbumsPage ) {
 				BltGalleryAdmin.initAlbumsPage();
 			}
+		} );
+		</script>
+		<?php
+	}
+
+	// ------------------------------------------------------------------
+	// Sliders (builder)
+	// ------------------------------------------------------------------
+
+	public function render_sliders_page(): void {
+		$action    = sanitize_key( $_GET['action'] ?? 'list' );
+		$slider_id = isset( $_GET['slider_id'] ) ? (int) $_GET['slider_id'] : 0;
+
+		if ( 'edit' === $action && $slider_id > 0 ) {
+			$this->render_slider_editor( $slider_id );
+		} else {
+			$this->render_slider_list();
+		}
+	}
+
+	private function render_slider_list(): void {
+		$list_url = admin_url( 'admin.php?page=' . self::MENU_SLUG . '-sliders' );
+		?>
+		<div class="wrap bltgallery-wrap">
+			<div class="bltgallery-page-header">
+				<h1><?php esc_html_e( 'Sliders', 'bltgallery' ); ?></h1>
+				<button class="button button-primary" id="bltgallery-new-slider-btn">
+					<?php esc_html_e( '+ New Slider', 'bltgallery' ); ?>
+				</button>
+			</div>
+			<p>
+				<?php esc_html_e(
+					'Build an image slider from your galleries and the media library, then drop it anywhere with its shortcode. Every image is served through your Cloudflare optimisation pipeline.',
+					'bltgallery'
+				); ?>
+			</p>
+			<div id="bltgallery-notice"></div>
+
+			<div id="bltgallery-slider-list">
+				<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+			</div>
+		</div>
+
+		<script>
+		document.addEventListener( 'DOMContentLoaded', function () {
+			BltGalleryAdmin.initSlidersPage( <?php echo wp_json_encode( $list_url ); ?> );
+		} );
+		</script>
+		<?php
+	}
+
+	private function render_slider_editor( int $slider_id ): void {
+		$back_url = admin_url( 'admin.php?page=' . self::MENU_SLUG . '-sliders' );
+		?>
+		<div class="wrap bltgallery-wrap">
+			<div class="bltgallery-page-header">
+				<a href="<?php echo esc_url( $back_url ); ?>" class="button button-secondary">
+					&larr; <?php esc_html_e( 'Sliders', 'bltgallery' ); ?>
+				</a>
+				<h1 id="bltgallery-slider-editor-title"><?php esc_html_e( 'Edit Slider', 'bltgallery' ); ?></h1>
+				<code id="bltgallery-slider-shortcode"></code>
+			</div>
+			<div id="bltgallery-notice"></div>
+
+			<div class="bltgallery-editor-layout">
+				<div class="bltgallery-editor-layout__main">
+					<!-- Slides panel -->
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header bltgallery-panel__header--actions">
+							<h2><?php esc_html_e( 'Slides', 'bltgallery' ); ?></h2>
+							<div class="bltgallery-slider-add">
+								<button type="button" class="button button-primary" id="bltgallery-add-media">
+									<?php esc_html_e( '+ Add from media library', 'bltgallery' ); ?>
+								</button>
+								<button type="button" class="button button-secondary" id="bltgallery-add-gallery">
+									<?php esc_html_e( '+ Add from gallery', 'bltgallery' ); ?>
+								</button>
+							</div>
+						</div>
+						<div class="bltgallery-panel__body">
+							<div id="bltgallery-slider-slides">
+								<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Live preview panel -->
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header bltgallery-panel__header--actions">
+							<h2><?php esc_html_e( 'Preview', 'bltgallery' ); ?></h2>
+							<button type="button" class="button button-secondary" id="bltgallery-slider-refresh-preview">
+								<?php esc_html_e( 'Save & refresh preview', 'bltgallery' ); ?>
+							</button>
+						</div>
+						<div class="bltgallery-panel__body">
+							<div id="bltgallery-slider-preview" class="bltgallery-slider-preview">
+								<p class="bltgallery-muted"><?php esc_html_e( 'Save the slider to see a live preview here.', 'bltgallery' ); ?></p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<aside class="bltgallery-editor-layout__sidebar">
+					<div class="bltgallery-panel">
+						<div class="bltgallery-panel__header">
+							<h2><?php esc_html_e( 'Slider Settings', 'bltgallery' ); ?></h2>
+						</div>
+						<div class="bltgallery-panel__body" id="bltgallery-slider-settings">
+							<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</div>
+
+		<script>
+		document.addEventListener( 'DOMContentLoaded', function () {
+			BltGalleryAdmin.initSliderEditor( <?php echo (int) $slider_id; ?> );
 		} );
 		</script>
 		<?php
@@ -267,12 +394,67 @@ class AdminMenu {
 					[ 'limit',        'int',                                             __( 'Cap number of galleries rendered.', 'bltgallery' ) ],
 				],
 			],
+			[
+				'tag'      => 'blt_slider',
+				'title'    => __( 'Image slider', 'bltgallery' ),
+				'intro'    => __( 'Renders an image slider built in Blt Gallery → Sliders. Build it visually — adding images from the media library and/or your galleries — then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path is also supported for code-only sliders.', 'bltgallery' ),
+				'examples' => [
+					'[blt_slider id="3"]',
+					'[blt_slider slug="homepage-hero"]',
+					'[blt_slider id="3" autoplay="1" speed="6000" height="60vh"]',
+					'[blt_slider galleries="5,7"]',
+					'[blt_slider attachments="123,456" arrows="0" captions="off"]',
+				],
+				'attrs'    => [
+					[ 'id',          'int',                                             __( 'Saved slider ID (primary — built in Blt Gallery → Sliders).', 'bltgallery' ) ],
+					[ 'slug',        'string',                                          __( 'Saved slider slug (alternative to id).', 'bltgallery' ) ],
+					[ 'galleries',   'comma-separated ints',                            __( 'Ad-hoc: gallery IDs whose images feed the slider.', 'bltgallery' ) ],
+					[ 'slugs',       'comma-separated slugs',                           __( 'Ad-hoc: galleries by slug.', 'bltgallery' ) ],
+					[ 'images',      'comma-separated ints',                            __( 'Ad-hoc: specific Blt gallery image IDs.', 'bltgallery' ) ],
+					[ 'attachments', 'comma-separated ints',                            __( 'Ad-hoc: WordPress media library attachment IDs.', 'bltgallery' ) ],
+					[ 'title',       'string',                                          __( 'Accessible label for the carousel.', 'bltgallery' ) ],
+					[ 'captions',    'on · off',                                        __( 'Show the subtle image caption / photo credit.', 'bltgallery' ) ],
+					[ 'arrows',      '1 · 0',                                           __( 'Show the hover-reveal nav arrows.', 'bltgallery' ) ],
+					[ 'dots',        '1 · 0',                                           __( 'Show the dot counter.', 'bltgallery' ) ],
+					[ 'autoplay',    '1 · 0',                                           __( 'Auto-advance slides.', 'bltgallery' ) ],
+					[ 'speed',       'ms',                                              __( 'Autoplay interval (default 5000).', 'bltgallery' ) ],
+					[ 'loop',        '1 · 0',                                           __( 'Wrap from the last slide back to the first.', 'bltgallery' ) ],
+					[ 'height',      'px · vh · %',                                     __( 'Max height of each slide, e.g. 70vh.', 'bltgallery' ) ],
+					[ 'radius',      'px',                                              __( 'Slider border radius.', 'bltgallery' ) ],
+					[ 'order',       'menu · random · reverse',                         __( 'Slide order.', 'bltgallery' ) ],
+					[ 'limit',       'int',                                             __( 'Cap the number of slides rendered.', 'bltgallery' ) ],
+					[ 'class',       'string',                                          __( 'Extra CSS class on the wrapper.', 'bltgallery' ) ],
+					[ 'style',       'string',                                          __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
+				],
+			],
 		];
 	}
 
 	public function enqueue_assets( string $hook ): void {
 		if ( ! str_contains( $hook, self::MENU_SLUG ) ) {
 			return;
+		}
+
+		// The slider builder lets editors add images straight from the media
+		// library, so it needs the WordPress media modal scripts. It also loads
+		// the front-end bundle so the live preview renders + behaves exactly as
+		// it will on the site.
+		$current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		if ( self::MENU_SLUG . '-sliders' === $current_page ) {
+			wp_enqueue_media();
+			wp_enqueue_style(
+				'bltgallery-frontend',
+				BLT_GALLERY_PLUGIN_URL . 'assets/frontend/frontend.css',
+				[],
+				BLT_GALLERY_VERSION
+			);
+			wp_enqueue_script(
+				'bltgallery-frontend',
+				BLT_GALLERY_PLUGIN_URL . 'assets/frontend/frontend.js',
+				[],
+				BLT_GALLERY_VERSION,
+				true
+			);
 		}
 
 		wp_enqueue_style(

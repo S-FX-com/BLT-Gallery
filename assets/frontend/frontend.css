@@ -243,6 +243,159 @@
 
 .bltgallery-slideshow__dot.is-active { background: #2563eb; }
 
+/* ── Image Slider ───────────────────────────────────────────────────── */
+
+.bltgallery-slider {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--blt-radius);
+	background: #000;
+	user-select: none;
+}
+
+.bltgallery-slider__track {
+	display: flex;
+	transition: transform 0.45s ease;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.bltgallery-slider__slide {
+	flex: 0 0 100%;
+	position: relative;
+}
+
+.bltgallery-slider__slide:not(.is-active) {
+	visibility: hidden;
+}
+
+.bltgallery-slider__slide img {
+	display: block;
+	width: 100%;
+	max-height: var(--blt-slider-height, 80vh);
+	object-fit: contain;
+}
+
+/* Bottom overlay shared by the caption + dot counter. A soft gradient keeps
+   both legible over any image without a heavy bar. */
+.bltgallery-slider__footer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 2.25rem 1rem 0.85rem;
+	background: linear-gradient( to top, rgba( 0, 0, 0, 0.55 ), rgba( 0, 0, 0, 0 ) );
+	pointer-events: none;
+}
+
+/* Subtle caption — image description or photo credit. */
+.bltgallery-slider__caption {
+	margin: 0;
+	max-width: 90%;
+	color: rgba( 255, 255, 255, 0.92 );
+	text-align: center;
+	font-size: 0.85rem;
+	line-height: 1.4;
+	letter-spacing: 0.01em;
+	text-shadow: 0 1px 3px rgba( 0, 0, 0, 0.6 );
+}
+
+.bltgallery-slider__caption[hidden] { display: none; }
+
+/* Dot counter. */
+.bltgallery-slider__dots {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.45rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	pointer-events: auto;
+}
+
+.bltgallery-slider__dot {
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 50%;
+	border: 1.5px solid rgba( 255, 255, 255, 0.7 );
+	background: transparent;
+	cursor: pointer;
+	padding: 0;
+	transition: background var(--blt-transition), border-color var(--blt-transition), transform var(--blt-transition);
+}
+
+.bltgallery-slider__dot:hover { border-color: #fff; }
+
+.bltgallery-slider__dot.is-active {
+	background: #fff;
+	border-color: #fff;
+}
+
+/* Hover-only navigation arrows. */
+.bltgallery-slider__prev,
+.bltgallery-slider__next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 2.75rem;
+	height: 2.75rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 50%;
+	background: rgba( 0, 0, 0, 0.35 );
+	color: #fff;
+	font-size: 1.5rem;
+	line-height: 1;
+	cursor: pointer;
+	opacity: 0;
+	z-index: 3;
+	transition: opacity var(--blt-transition), background var(--blt-transition);
+}
+
+.bltgallery-slider__prev { left: 0.75rem; }
+.bltgallery-slider__next { right: 0.75rem; }
+
+.bltgallery-slider:hover .bltgallery-slider__prev,
+.bltgallery-slider:hover .bltgallery-slider__next,
+.bltgallery-slider:focus-within .bltgallery-slider__prev,
+.bltgallery-slider:focus-within .bltgallery-slider__next {
+	opacity: 0.85;
+}
+
+.bltgallery-slider__prev:hover,
+.bltgallery-slider__next:hover {
+	background: rgba( 0, 0, 0, 0.6 );
+	opacity: 1;
+}
+
+.bltgallery-slider__prev:focus-visible,
+.bltgallery-slider__next:focus-visible {
+	opacity: 1;
+	outline: 2px solid #fff;
+	outline-offset: 2px;
+}
+
+.bltgallery-slider__prev:disabled,
+.bltgallery-slider__next:disabled {
+	opacity: 0 !important;
+	pointer-events: none;
+}
+
+/* Touch / coarse-pointer devices have no hover — keep arrows gently visible. */
+@media (hover: none) {
+	.bltgallery-slider__prev,
+	.bltgallery-slider__next { opacity: 0.6; }
+}
+
 /* ── Lightbox thumbnail grid ────────────────────────────────────────── */
 
 .bltgallery-lightbox__grid {

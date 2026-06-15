@@ -32,41 +32,68 @@
 	}
 
 	// ------------------------------------------------------------------
-	// Slideshow
+	// Carousel (powers both Slideshow and Slider)
+	//
+	// `ns` is the BEM block used by the markup (e.g. "bltgallery-slideshow"
+	// or "bltgallery-slider"). The slider adds two extras over the slideshow:
+	// an optional non-looping mode (data-loop="false") and a shared caption
+	// element that updates from each slide's data-caption as you advance.
 	// ------------------------------------------------------------------
 
-	function initSlideshow( root ) {
+	function initCarousel( root, blockClass, ns, defaultSpeed ) {
 		root = root || document;
-		root.querySelectorAll( '.bltgallery--slideshow' ).forEach( function ( container ) {
-			var ss     = container.querySelector( '.bltgallery-slideshow' );
+		root.querySelectorAll( blockClass ).forEach( function ( container ) {
+			var ss = container.querySelector( '.' + ns );
 			if ( ! ss ) return;
 
-			var track  = ss.querySelector( '.bltgallery-slideshow__track' );
-			var slides = [ ...ss.querySelectorAll( '.bltgallery-slideshow__slide' ) ];
-			var dots   = [ ...ss.querySelectorAll( '.bltgallery-slideshow__dot' ) ];
-			var prev   = ss.querySelector( '.bltgallery-slideshow__prev' );
-			var next   = ss.querySelector( '.bltgallery-slideshow__next' );
+			var track   = ss.querySelector( '.' + ns + '__track' );
+			var slides  = [ ...ss.querySelectorAll( '.' + ns + '__slide' ) ];
+			var dots    = [ ...ss.querySelectorAll( '.' + ns + '__dot' ) ];
+			var prev    = ss.querySelector( '.' + ns + '__prev' );
+			var next    = ss.querySelector( '.' + ns + '__next' );
+			var caption = ss.querySelector( '.' + ns + '__caption' );
 
-			if ( slides.length < 2 ) return;
+			if ( ! track || slides.length < 2 ) return;
 
 			var current    = 0;
 			var autoplayId = null;
 			var autoplay   = ss.dataset.autoplay === 'true' && ! REDUCED_MOTION;
-			var speed      = parseInt( ss.dataset.speed, 10 ) || 4000;
+			var speed      = parseInt( ss.dataset.speed, 10 ) || defaultSpeed;
+			var loop       = ss.dataset.loop !== 'false';
+
+			function updateArrows() {
+				if ( loop ) return;
+				if ( prev ) prev.disabled = current === 0;
+				if ( next ) next.disabled = current === slides.length - 1;
+			}
+
+			function syncCaption() {
+				if ( ! caption ) return;
+				var text = slides[ current ].dataset.caption || '';
+				caption.textContent = text;
+				caption.hidden = text === '';
+			}
 
 			function goTo( idx ) {
+				var n = slides.length;
+				var target = loop ? ( idx + n ) % n : Math.max( 0, Math.min( n - 1, idx ) );
+
 				slides[ current ].classList.remove( 'is-active' );
 				slides[ current ].setAttribute( 'aria-hidden', 'true' );
 				if ( dots[ current ] ) dots[ current ].classList.remove( 'is-active' );
 
-				current = ( idx + slides.length ) % slides.length;
+				current = target;
 
 				slides[ current ].classList.add( 'is-active' );
 				slides[ current ].setAttribute( 'aria-hidden', 'false' );
 				if ( dots[ current ] ) dots[ current ].classList.add( 'is-active' );
 
 				track.style.transform = REDUCED_MOTION ? 'none' : 'translateX(-' + ( current * 100 ) + '%)';
+				syncCaption();
+				updateArrows();
 			}
+
+			function advance() { goTo( ( ! loop && current === slides.length - 1 ) ? 0 : current + 1 ); }
 
 			slides.forEach( function ( slide, i ) {
 				slide.setAttribute( 'aria-hidden', i === 0 ? 'false' : 'true' );
@@ -93,7 +120,7 @@
 				touchStartX = null;
 			} );
 
-			function startAutoplay() { if ( autoplay ) autoplayId = setInterval( function () { goTo( current + 1 ); }, speed ); }
+			function startAutoplay() { if ( autoplay ) autoplayId = setInterval( advance, speed ); }
 			function stopAutoplay()  { clearInterval( autoplayId ); }
 			function resetAutoplay() { stopAutoplay(); startAutoplay(); }
 
@@ -102,8 +129,17 @@
 			ss.addEventListener( 'focusin',    stopAutoplay );
 			ss.addEventListener( 'focusout',   startAutoplay );
 
+			updateArrows();
 			startAutoplay();
 		} );
+	}
+
+	function initSlideshow( root ) {
+		initCarousel( root || document, '.bltgallery--slideshow', 'bltgallery-slideshow', 4000 );
+	}
+
+	function initSlider( root ) {
+		initCarousel( root || document, '.bltgallery--slider', 'bltgallery-slider', 5000 );
 	}
 
 	// ------------------------------------------------------------------
@@ -294,6 +330,7 @@
 	function initAll( root ) {
 		initMasonry( root );
 		initSlideshow( root );
+		initSlider( root );
 		initLightbox( root );
 		initPagination( root );
 	}
@@ -406,6 +443,12 @@
 	} else {
 		boot();
 	}
+
+	// Expose a minimal init hook so other scripts (e.g. the admin slider
+	// builder's live preview) can initialise gallery/slider markup they inject
+	// after page load.
+	window.BltGallery = window.BltGallery || {};
+	window.BltGallery.init = initAll;
 
 	// ------------------------------------------------------------------
 	// AJAX Pagination

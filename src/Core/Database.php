@@ -10,10 +10,11 @@ namespace BltGallery\Core;
  * Tables:
  *   {prefix}blt_galleries  – gallery metadata
  *   {prefix}blt_images     – per-image records
+ *   {prefix}blt_sliders    – standalone image sliders (built in the admin)
  */
 class Database {
 
-	const DB_VERSION = '3.0.0';
+	const DB_VERSION = '3.1.0';
 
 	// ------------------------------------------------------------------
 	// Public API
@@ -26,6 +27,7 @@ class Database {
 
 		$galleries_table = $wpdb->prefix . 'blt_galleries';
 		$images_table    = $wpdb->prefix . 'blt_images';
+		$sliders_table   = $wpdb->prefix . 'blt_sliders';
 
 		$sql = "
 		CREATE TABLE {$galleries_table} (
@@ -66,6 +68,20 @@ class Database {
 			PRIMARY KEY  (id),
 			KEY gallery_id (gallery_id),
 			KEY sort_order (gallery_id, sort_order)
+		) {$charset_collate};
+
+		CREATE TABLE {$sliders_table} (
+			id            BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			title         VARCHAR(255)        NOT NULL DEFAULT '',
+			slug          VARCHAR(200)        NOT NULL DEFAULT '',
+			settings      LONGTEXT,
+			items         LONGTEXT,
+			created_at    DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updated_at    DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			author_id     BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			PRIMARY KEY  (id),
+			UNIQUE KEY slug (slug),
+			KEY author_id (author_id)
 		) {$charset_collate};
 		";
 
@@ -110,6 +126,7 @@ class Database {
 		// Order matters due to FK conventions (images references galleries).
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}blt_images" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}blt_galleries" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}blt_sliders" );
 	}
 
 	// ------------------------------------------------------------------
@@ -124,5 +141,10 @@ class Database {
 	public static function images_table(): string {
 		global $wpdb;
 		return $wpdb->prefix . 'blt_images';
+	}
+
+	public static function sliders_table(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'blt_sliders';
 	}
 }

@@ -6,8 +6,9 @@ A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS
 
 ## Features
 
-- **Five display types**: Masonry, Tile Grid, Slideshow, Lightbox, Album
-- **Two shortcodes**: `[blt_gallery]` (single gallery) and `[blt_album]` (collection of galleries)
+- **Six display types**: Masonry, Tile Grid, Slideshow, Lightbox, Album, Image Slider
+- **Three shortcodes**: `[blt_gallery]` (single gallery), `[blt_album]` (collection of galleries), and `[blt_slider]` (image slider)
+- **Visual slider builder**: assemble a slider from your galleries + the media library under **Blt Gallery → Sliders**, then copy its shortcode
 - **Rich shortcode attributes** for inline styling — `cols`, `gap`, `radius`, `captions`, `autoplay`, etc.
 - **No external dependencies**: standalone plugin — no NextGEN Gallery required
 - **REST API**: full CRUD via the WordPress REST API (`/bltgallery/v1/`)
@@ -97,6 +98,50 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 | `limit`        | int                                     | Cap number of galleries rendered         |
 | `sort_by`      | `menu` `date` `name` `random`           | Sort key within the album                |
 | `order`        | `asc` `desc`                            | Sort direction                           |
+
+### `[blt_slider]` — image slider
+
+Build a slider visually under **Blt Gallery → Sliders**: create one, add images from the **media library** and/or your **galleries**, drag to reorder, add an optional caption (description / photo credit) per slide, tweak the options, and copy the generated shortcode. A subtle caption, hover-reveal arrows, and a dot counter are built in, and every image is delivered through the plugin's Cloudflare optimisation pipeline.
+
+```
+[blt_slider id="3"]
+[blt_slider slug="homepage-hero"]
+[blt_slider id="3" autoplay="1" speed="6000" height="60vh"]
+```
+
+Per-placement attributes (any saved option can be overridden inline):
+
+| Attribute     | Values                          | Notes                                              |
+|---------------|---------------------------------|----------------------------------------------------|
+| `id`          | int                             | Saved slider ID (primary)                          |
+| `slug`        | string                          | Saved slider slug (alternative to `id`)            |
+| `captions`    | `on` `off`                      | Show the subtle caption / photo credit             |
+| `arrows`      | `1` / `0`                       | Show the hover-reveal nav arrows                   |
+| `dots`        | `1` / `0`                       | Show the dot counter                               |
+| `autoplay`    | `1` / `0`                       | Auto-advance slides                                |
+| `speed`       | ms                              | Autoplay interval (default 5000)                   |
+| `loop`        | `1` / `0`                       | Wrap from the last slide back to the first         |
+| `height`      | `px` `vh` `%`                   | Max height of each slide, e.g. `70vh`              |
+| `radius`      | px                              | Slider border radius                               |
+| `order`       | `menu` `random` `reverse`       | Slide order                                        |
+| `limit`       | int                             | Cap the number of slides rendered                  |
+| `class`       | string                          | Extra CSS class on the wrapper                     |
+| `style`       | string                          | Extra inline style on the wrapper                  |
+
+For code-only sliders you can skip the builder and source images inline instead of `id`/`slug`:
+
+```
+[blt_slider galleries="5,7"]
+[blt_slider attachments="123,456" arrows="0" captions="off"]
+[blt_slider galleries="5" attachments="123" images="44,45"]
+```
+
+| Attribute     | Values                          | Notes                                              |
+|---------------|---------------------------------|----------------------------------------------------|
+| `galleries`   | comma-separated ints            | Gallery IDs whose images feed the slider           |
+| `slugs`       | comma-separated slugs           | Galleries by slug                                  |
+| `images`      | comma-separated ints            | Specific Blt gallery image IDs                      |
+| `attachments` | comma-separated ints            | WordPress media attachment IDs                      |
 
 ## Cloudflare optimisation
 
