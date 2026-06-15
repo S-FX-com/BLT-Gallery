@@ -1730,6 +1730,35 @@
 				[ 'limit',        'int',                      'Cap number of galleries rendered.' ],
 			],
 		},
+		{
+			tag: 'blt_slider',
+			title: 'Image slider',
+			intro: 'Renders an image slider built in Blt Gallery → Sliders. Build it visually, then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path (galleries / attachments) is also supported for code-only sliders.',
+			examples: [
+				`[blt_slider id="3"]`,
+				`[blt_slider slug="homepage-hero"]`,
+				`[blt_slider id="3" autoplay="1" speed="6000" height="60vh"]`,
+				`[blt_slider galleries="5,7"]`,
+				`[blt_slider attachments="123,456" arrows="0" captions="off"]`,
+			],
+			attrs: [
+				[ 'id',          'int',                      'Saved slider ID (primary).' ],
+				[ 'slug',        'string',                   'Saved slider slug (alternative to id).' ],
+				[ 'galleries',   'comma-separated ints',     'Ad-hoc: gallery IDs whose images feed the slider.' ],
+				[ 'images',      'comma-separated ints',     'Ad-hoc: specific Blt gallery image IDs.' ],
+				[ 'attachments', 'comma-separated ints',     'Ad-hoc: WordPress media attachment IDs.' ],
+				[ 'captions',    'on · off',                 'Show the subtle caption / photo credit.' ],
+				[ 'arrows',      '1 · 0',                    'Show the hover-reveal nav arrows.' ],
+				[ 'dots',        '1 · 0',                    'Show the dot counter.' ],
+				[ 'autoplay',    '1 · 0',                    'Auto-advance slides.' ],
+				[ 'speed',       'ms',                       'Autoplay interval (default 5000).' ],
+				[ 'loop',        '1 · 0',                    'Wrap from the last slide back to the first.' ],
+				[ 'height',      'px · vh · %',              'Max height of each slide, e.g. 70vh.' ],
+				[ 'radius',      'px',                       'Slider border radius.' ],
+				[ 'order',       'menu · random · reverse',  'Slide order.' ],
+				[ 'limit',       'int',                      'Cap the number of slides rendered.' ],
+			],
+		},
 	];
 
 	function initShortcodesDoc() {
@@ -2160,6 +2189,545 @@
 	}
 
 	// ------------------------------------------------------------------
+	// Sliders — list page
+	// ------------------------------------------------------------------
+
+	async function initSlidersPage( listUrl ) {
+		const container = document.getElementById( 'bltgallery-slider-list' );
+		const newBtn    = document.getElementById( 'bltgallery-new-slider-btn' );
+		if ( ! container ) return;
+
+		newBtn?.addEventListener( 'click', () => openInlineCreateSlider( newBtn, listUrl ) );
+		await loadSliderList( container, listUrl );
+	}
+
+	function openInlineCreateSlider( newBtn, listUrl ) {
+		const existing = document.getElementById( 'bltgallery-inline-create' );
+		if ( existing ) {
+			existing.querySelector( 'input[name="title"]' )?.focus();
+			return;
+		}
+
+		const wrap     = document.createElement( 'div' );
+		wrap.id        = 'bltgallery-inline-create';
+		wrap.className = 'bltgallery-inline-create';
+		wrap.innerHTML = `
+			<form class="bltgallery-inline-create__form" novalidate>
+				<label class="bltgallery-inline-create__label" for="bltgallery-inline-create-title">New slider title</label>
+				<div class="bltgallery-inline-create__row">
+					<input id="bltgallery-inline-create-title" name="title" type="text" class="regular-text" placeholder="e.g. Homepage hero" required autocomplete="off">
+					<button type="submit" class="button button-primary">Create &amp; Edit</button>
+					<button type="button" class="button button-secondary" data-action="cancel">Cancel</button>
+				</div>
+				<p class="bltgallery-inline-create__hint description">You can add images and tweak options on the next screen.</p>
+			</form>
+		`;
+
+		const notice = document.getElementById( 'bltgallery-notice' );
+		notice.parentNode.insertBefore( wrap, notice.nextSibling );
+
+		const input  = wrap.querySelector( 'input[name="title"]' );
+		const submit = wrap.querySelector( 'button[type="submit"]' );
+		input.focus();
+
+		wrap.querySelector( '[data-action="cancel"]' ).addEventListener( 'click', () => wrap.remove() );
+
+		wrap.querySelector( 'form' ).addEventListener( 'submit', async ( e ) => {
+			e.preventDefault();
+			const title = input.value.trim();
+			if ( ! title ) { input.focus(); return; }
+			submit.disabled = true;
+			submit.textContent = 'Creating…';
+			try {
+				const slider = await api( '/sliders', { method: 'POST', body: { title } } );
+				window.location.href = listUrl + '&action=edit&slider_id=' + slider.id;
+			} catch ( err ) {
+				submit.disabled = false;
+				submit.textContent = 'Create & Edit';
+				showNotice( err.message, 'error' );
+			}
+		} );
+	}
+
+	async function loadSliderList( container, listUrl ) {
+		container.innerHTML = '<p class="bltgallery-loading">Loading…</p>';
+		try {
+			const sliders = await api( '/sliders' );
+			renderSliderTable( container, sliders, listUrl );
+		} catch ( e ) {
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+		}
+	}
+
+	function renderSliderTable( container, sliders, listUrl ) {
+		if ( ! sliders.length ) {
+			container.innerHTML = '<div class="bltgallery-empty"><p>No sliders yet. Create your first one!</p></div>';
+			return;
+		}
+
+		const rows = sliders.map( ( s ) => {
+			const shortcode = `[blt_slider id="${ s.id }"]`;
+			const editUrl   = listUrl + '&action=edit&slider_id=' + s.id;
+			return `
+				<tr>
+					<td><strong><a href="${ escAttr( editUrl ) }">${ escHtml( s.title ) }</a></strong></td>
+					<td>${ s.item_count || 0 }</td>
+					<td>
+						<button type="button" class="bltgallery-shortcode-copy" data-copy="${ escAttr( shortcode ) }" title="Click to copy">
+							<code>${ escHtml( shortcode ) }</code>
+						</button>
+					</td>
+					<td>${ escHtml( s.created_at ? new Date( s.created_at ).toLocaleDateString() : '' ) }</td>
+					<td>
+						<a href="${ escAttr( editUrl ) }" class="button button-secondary">Edit</a>
+						<button class="button bltgallery-slider-delete" data-id="${ s.id }" data-title="${ escAttr( s.title ) }">Delete</button>
+					</td>
+				</tr>
+			`;
+		} ).join( '' );
+
+		container.innerHTML = `
+			<table class="wp-list-table widefat fixed striped bltgallery-table">
+				<thead>
+					<tr><th>Title</th><th>Slides</th><th>Shortcode</th><th>Created</th><th>Actions</th></tr>
+				</thead>
+				<tbody>${ rows }</tbody>
+			</table>
+		`;
+
+		container.querySelectorAll( '.bltgallery-slider-delete' ).forEach( ( btn ) => {
+			btn.addEventListener( 'click', async () => {
+				if ( ! window.confirm( `Delete slider "${ btn.dataset.title }"? This cannot be undone.` ) ) return;
+				btn.disabled = true;
+				try {
+					await api( `/sliders/${ btn.dataset.id }`, { method: 'DELETE' } );
+					btn.closest( 'tr' ).remove();
+					if ( container.querySelectorAll( 'tbody tr' ).length === 0 ) {
+						renderSliderTable( container, [], listUrl );
+					}
+				} catch ( e ) {
+					showNotice( e.message, 'error' );
+					btn.disabled = false;
+				}
+			} );
+		} );
+
+		container.querySelectorAll( '.bltgallery-shortcode-copy' ).forEach( ( btn ) => {
+			btn.addEventListener( 'click', () => copyToClipboard( btn.dataset.copy, btn ) );
+		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Sliders — editor / builder
+	// ------------------------------------------------------------------
+
+	function sliderUid() { return 's' + Math.random().toString( 36 ).slice( 2, 9 ); }
+
+	async function initSliderEditor( sliderId ) {
+		const titleH      = document.getElementById( 'bltgallery-slider-editor-title' );
+		const shortcodeEl = document.getElementById( 'bltgallery-slider-shortcode' );
+		const settingsEl  = document.getElementById( 'bltgallery-slider-settings' );
+		const slidesEl    = document.getElementById( 'bltgallery-slider-slides' );
+		const previewEl   = document.getElementById( 'bltgallery-slider-preview' );
+
+		let slider;
+		try {
+			slider = await api( `/sliders/${ sliderId }` );
+		} catch ( e ) {
+			showNotice( e.message, 'error' );
+			if ( settingsEl ) settingsEl.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		// Working state — `slides` carries resolved metadata plus the caption
+		// override; `readForm` is wired up by renderSliderSettings.
+		const state = {
+			slides:   ( slider.slides || [] ).map( ( s ) => ( { ...s, _uid: sliderUid() } ) ),
+			readForm: () => ( { title: slider.title, settings: slider.settings || {} } ),
+		};
+
+		if ( titleH ) titleH.textContent = slider.title;
+		if ( shortcodeEl ) {
+			shortcodeEl.textContent = `[blt_slider id="${ sliderId }"]`;
+			makeCopyable( shortcodeEl );
+		}
+
+		function itemsPayload() {
+			return state.slides.map( ( s ) => ( { source: s.source, ref: s.ref, caption: s.caption || '' } ) );
+		}
+
+		async function persist() {
+			const { title, settings } = state.readForm();
+			const saved = await api( `/sliders/${ sliderId }`, {
+				method: 'PUT',
+				body:   { title, settings, items: itemsPayload() },
+			} );
+			if ( titleH ) titleH.textContent = saved.title;
+			return saved;
+		}
+
+		function rerenderSlides() { renderSliderSlides( slidesEl, state, rerenderSlides ); }
+
+		rerenderSlides();
+		renderSliderSettings( settingsEl, slider, state, async ( btn ) => {
+			const label = btn.textContent;
+			btn.disabled = true;
+			btn.textContent = 'Saving…';
+			try {
+				await persist();
+				showNotice( 'Slider saved.' );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				btn.disabled = false;
+				btn.textContent = label;
+			}
+		} );
+
+		document.getElementById( 'bltgallery-add-media' )?.addEventListener( 'click', () => addSlidesFromMedia( state, rerenderSlides ) );
+		document.getElementById( 'bltgallery-add-gallery' )?.addEventListener( 'click', () => openSliderGalleryPicker( state, rerenderSlides ) );
+
+		document.getElementById( 'bltgallery-slider-refresh-preview' )?.addEventListener( 'click', async ( e ) => {
+			const btn   = e.currentTarget;
+			const label = btn.textContent;
+			btn.disabled = true;
+			btn.textContent = 'Saving…';
+			try {
+				await persist();
+				await refreshSliderPreview( sliderId, previewEl );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				btn.disabled = false;
+				btn.textContent = label;
+			}
+		} );
+	}
+
+	function renderSliderSettings( container, slider, state, onSave ) {
+		if ( ! container ) return;
+		const s        = slider.settings || {};
+		const offish   = ( v ) => v === '0' || v === 0 || v === false;
+		const captions = s.captions === 'off' ? 'off' : 'on';
+		const arrows   = offish( s.arrows ) ? '0' : '1';
+		const dots     = offish( s.dots ) ? '0' : '1';
+		const loop     = offish( s.loop ) ? '0' : '1';
+		const autoplay = s.autoplay ? '1' : '0';
+		const speed    = s.speed ?? 5000;
+		const height   = s.height || '';
+		const radius   = s.radius ?? 6;
+		const yesNo    = ( id, val ) => `
+			<select id="${ id }">
+				<option value="1"${ val === '1' ? ' selected' : '' }>On</option>
+				<option value="0"${ val === '0' ? ' selected' : '' }>Off</option>
+			</select>`;
+
+		container.innerHTML = `
+			<div class="bltgallery-field">
+				<label for="zyg-slider-title">Title</label>
+				<input type="text" id="zyg-slider-title" class="regular-text" value="${ escAttr( slider.title || '' ) }">
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-captions">Captions</label>
+				<select id="zyg-slider-captions">
+					<option value="on"${ captions === 'on' ? ' selected' : '' }>On — description / photo credit</option>
+					<option value="off"${ captions === 'off' ? ' selected' : '' }>Off</option>
+				</select>
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-arrows">Hover arrows</label>
+				${ yesNo( 'zyg-slider-arrows', arrows ) }
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-dots">Dot counter</label>
+				${ yesNo( 'zyg-slider-dots', dots ) }
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-autoplay">Autoplay</label>
+				${ yesNo( 'zyg-slider-autoplay', autoplay ) }
+				<label for="zyg-slider-speed" style="margin-left:1rem">Speed (ms)</label>
+				<input type="number" id="zyg-slider-speed" class="small-text" min="1000" max="30000" step="500" value="${ speed }">
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-loop">Loop</label>
+				${ yesNo( 'zyg-slider-loop', loop ) }
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-height">Max height (optional)</label>
+				<input type="text" id="zyg-slider-height" class="regular-text" value="${ escAttr( height ) }" placeholder="e.g. 70vh or 480px">
+				<p class="description">Limits how tall each slide can be. Leave blank for the default.</p>
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-radius">Corner radius (px)</label>
+				<input type="number" id="zyg-slider-radius" class="small-text" min="0" max="200" value="${ radius }">
+			</div>
+			<div class="bltgallery-field">
+				<button class="button button-primary" id="zyg-slider-save">Save slider</button>
+			</div>
+		`;
+
+		state.readForm = () => ( {
+			title: container.querySelector( '#zyg-slider-title' ).value,
+			settings: {
+				captions: container.querySelector( '#zyg-slider-captions' ).value,
+				arrows:   container.querySelector( '#zyg-slider-arrows' ).value,
+				dots:     container.querySelector( '#zyg-slider-dots' ).value,
+				autoplay: container.querySelector( '#zyg-slider-autoplay' ).value === '1',
+				speed:    parseInt( container.querySelector( '#zyg-slider-speed' ).value, 10 ) || 5000,
+				loop:     container.querySelector( '#zyg-slider-loop' ).value,
+				height:   container.querySelector( '#zyg-slider-height' ).value.trim(),
+				radius:   parseInt( container.querySelector( '#zyg-slider-radius' ).value, 10 ) || 0,
+			},
+		} );
+
+		container.querySelector( '#zyg-slider-save' ).addEventListener( 'click', ( e ) => onSave( e.target ) );
+	}
+
+	function renderSliderSlides( container, state, rerender ) {
+		if ( ! container ) return;
+		if ( ! state.slides.length ) {
+			container.innerHTML = '<p class="bltgallery-image-grid__empty">No slides yet. Add images from the media library or a gallery above.</p>';
+			return;
+		}
+
+		container.innerHTML = `
+			<p class="bltgallery-image-grid__hint">Drag to reorder. Captions are optional — leave blank to use the image's own caption.</p>
+			<ul class="bltgallery-slider-slides" id="zyg-slide-list"></ul>
+		`;
+		const list = container.querySelector( '#zyg-slide-list' );
+
+		state.slides.forEach( ( slide ) => {
+			const li = document.createElement( 'li' );
+			li.className  = 'bltgallery-slider-slide' + ( slide.missing ? ' is-missing' : '' );
+			li.draggable  = true;
+			li.dataset.uid = slide._uid;
+
+			const thumb = slide.thumb_url || slide.url || '';
+			const sourceLabel = slide.source === 'attachment' ? 'Media library' : 'Gallery image';
+
+			li.innerHTML = `
+				<span class="bltgallery-slider-slide__handle" aria-hidden="true">⠿</span>
+				${ thumb
+					? `<img class="bltgallery-slider-slide__thumb" src="${ escAttr( thumb ) }" alt="${ escAttr( slide.alt || '' ) }" loading="lazy" width="72" height="72">`
+					: `<span class="bltgallery-slider-slide__thumb bltgallery-slider-slide__thumb--missing">?</span>` }
+				<div class="bltgallery-slider-slide__meta">
+					<span class="bltgallery-slider-slide__source">${ escHtml( sourceLabel ) }${ slide.missing ? ' — source not found' : '' }</span>
+					<input type="text" class="bltgallery-slider-slide__caption" placeholder="${ escAttr( slide.default_caption || 'Caption / photo credit (optional)' ) }" value="${ escAttr( slide.caption || '' ) }">
+				</div>
+				<button type="button" class="button-link-delete bltgallery-slider-slide__remove" aria-label="Remove slide">&times;</button>
+			`;
+
+			li.querySelector( '.bltgallery-slider-slide__caption' ).addEventListener( 'input', ( e ) => {
+				slide.caption = e.target.value;
+			} );
+
+			li.querySelector( '.bltgallery-slider-slide__remove' ).addEventListener( 'click', () => {
+				const idx = state.slides.findIndex( ( s ) => s._uid === slide._uid );
+				if ( idx > -1 ) state.slides.splice( idx, 1 );
+				rerender();
+			} );
+
+			list.appendChild( li );
+		} );
+
+		initSlideDragReorder( list, state );
+	}
+
+	function initSlideDragReorder( list, state ) {
+		let dragEl = null;
+
+		list.addEventListener( 'dragstart', ( e ) => {
+			dragEl = e.target.closest( 'li' );
+			dragEl?.classList.add( 'is-dragging' );
+		} );
+
+		list.addEventListener( 'dragover', ( e ) => {
+			e.preventDefault();
+			if ( ! dragEl ) return;
+			const target = e.target.closest( 'li' );
+			if ( ! target || target === dragEl ) return;
+			const rect  = target.getBoundingClientRect();
+			const after = e.clientY > rect.top + rect.height / 2;
+			list.insertBefore( dragEl, after ? target.nextSibling : target );
+		} );
+
+		list.addEventListener( 'dragend', () => {
+			dragEl?.classList.remove( 'is-dragging' );
+			dragEl = null;
+			// Re-sync the in-memory order with the DOM (captions stay intact).
+			const order = [ ...list.querySelectorAll( 'li' ) ].map( ( li ) => li.dataset.uid );
+			state.slides.sort( ( a, b ) => order.indexOf( a._uid ) - order.indexOf( b._uid ) );
+		} );
+	}
+
+	function addSlidesFromMedia( state, rerender ) {
+		if ( ! window.wp || ! window.wp.media ) {
+			showNotice( 'The WordPress media library is unavailable on this page.', 'error' );
+			return;
+		}
+		const frame = window.wp.media( {
+			title:    'Add images to slider',
+			multiple: 'add',
+			library:  { type: 'image' },
+			button:   { text: 'Add to slider' },
+		} );
+
+		frame.on( 'select', () => {
+			frame.state().get( 'selection' ).forEach( ( att ) => {
+				const a     = att.toJSON();
+				const sizes = a.sizes || {};
+				const thumb = ( sizes.thumbnail && sizes.thumbnail.url ) || ( sizes.medium && sizes.medium.url ) || a.url;
+				state.slides.push( {
+					_uid:            sliderUid(),
+					source:          'attachment',
+					ref:             a.id,
+					caption:         '',
+					default_caption: a.caption || '',
+					thumb_url:       thumb,
+					url:             a.url,
+					alt:             a.alt || '',
+					title:           a.title || '',
+					missing:         false,
+				} );
+			} );
+			rerender();
+		} );
+
+		frame.open();
+	}
+
+	async function openSliderGalleryPicker( state, rerender ) {
+		let dialog = document.getElementById( 'bltgallery-slider-gallery-modal' );
+		if ( ! dialog ) {
+			dialog = document.createElement( 'dialog' );
+			dialog.id = 'bltgallery-slider-gallery-modal';
+			dialog.className = 'bltgallery-modal bltgallery-slider-gallery-modal';
+			document.body.appendChild( dialog );
+		}
+
+		dialog.innerHTML = `
+			<form method="dialog" class="bltgallery-modal__form">
+				<header class="bltgallery-modal__header">
+					<h2>Add images from a gallery</h2>
+					<button type="button" class="bltgallery-modal__close" data-close aria-label="Close">&times;</button>
+				</header>
+				<div class="bltgallery-modal__body">
+					<div class="bltgallery-field">
+						<label for="zyg-slider-gallery-select">Gallery</label>
+						<select id="zyg-slider-gallery-select"><option value="">Loading…</option></select>
+					</div>
+					<div class="bltgallery-field bltgallery-field--toggle">
+						<label><input type="checkbox" id="zyg-slider-gallery-all"> Select all</label>
+					</div>
+					<div id="zyg-slider-gallery-images" class="bltgallery-slider-picker">
+						<p class="bltgallery-muted">Choose a gallery to list its images.</p>
+					</div>
+				</div>
+				<footer class="bltgallery-modal__footer">
+					<button type="button" class="button" data-close>Cancel</button>
+					<button type="submit" class="button button-primary">Add selected</button>
+				</footer>
+			</form>
+		`;
+
+		const select   = dialog.querySelector( '#zyg-slider-gallery-select' );
+		const imagesEl = dialog.querySelector( '#zyg-slider-gallery-images' );
+		const allCb    = dialog.querySelector( '#zyg-slider-gallery-all' );
+		const form     = dialog.querySelector( 'form' );
+		let   loaded   = [];
+
+		dialog.querySelectorAll( '[data-close]' ).forEach( ( b ) => { b.onclick = () => dialog.close(); } );
+
+		try {
+			const galleries = await api( '/galleries?per_page=100' );
+			select.innerHTML = '<option value="">Select a gallery…</option>' +
+				galleries.map( ( g ) => `<option value="${ g.id }">${ escHtml( g.title || ( '#' + g.id ) ) }</option>` ).join( '' );
+		} catch ( e ) {
+			select.innerHTML = '<option value="">Failed to load galleries</option>';
+		}
+
+		select.addEventListener( 'change', async () => {
+			allCb.checked = false;
+			const gid = select.value;
+			if ( ! gid ) {
+				imagesEl.innerHTML = '<p class="bltgallery-muted">Choose a gallery to list its images.</p>';
+				loaded = [];
+				return;
+			}
+			imagesEl.innerHTML = '<p class="bltgallery-loading">Loading images…</p>';
+			try {
+				loaded = await api( `/galleries/${ gid }/images` );
+				if ( ! loaded.length ) {
+					imagesEl.innerHTML = '<p class="bltgallery-muted">This gallery has no images.</p>';
+					return;
+				}
+				imagesEl.innerHTML = `
+					<ul class="bltgallery-slider-picker__list">
+						${ loaded.map( ( img, i ) => `
+							<li>
+								<label>
+									<input type="checkbox" value="${ i }">
+									<img src="${ escAttr( img.thumb_url || img.url ) }" alt="${ escAttr( img.alt_text || img.filename ) }" loading="lazy">
+									<span>${ escHtml( img.title || img.alt_text || img.filename ) }</span>
+								</label>
+							</li>
+						` ).join( '' ) }
+					</ul>
+				`;
+			} catch ( e ) {
+				imagesEl.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			}
+		} );
+
+		allCb.addEventListener( 'change', () => {
+			imagesEl.querySelectorAll( 'input[type="checkbox"]' ).forEach( ( cb ) => { cb.checked = allCb.checked; } );
+		} );
+
+		form.onsubmit = ( e ) => {
+			e.preventDefault();
+			const picked = [ ...imagesEl.querySelectorAll( 'input[type="checkbox"]:checked' ) ]
+				.map( ( cb ) => loaded[ parseInt( cb.value, 10 ) ] )
+				.filter( Boolean );
+			picked.forEach( ( img ) => {
+				state.slides.push( {
+					_uid:            sliderUid(),
+					source:          'image',
+					ref:             img.id,
+					caption:         '',
+					default_caption: img.caption || '',
+					thumb_url:       img.thumb_url || img.url,
+					url:             img.url,
+					alt:             img.alt_text || img.filename || '',
+					title:           img.title || '',
+					missing:         false,
+				} );
+			} );
+			dialog.close();
+			if ( picked.length ) rerender();
+		};
+
+		if ( typeof dialog.showModal === 'function' ) {
+			dialog.showModal();
+		} else {
+			dialog.setAttribute( 'open', '' );
+		}
+	}
+
+	async function refreshSliderPreview( sliderId, previewEl ) {
+		if ( ! previewEl ) return;
+		previewEl.innerHTML = '<p class="bltgallery-loading">Loading preview…</p>';
+		try {
+			const data = await api( `/sliders/${ sliderId }/render` );
+			previewEl.innerHTML = data.html || '<p class="bltgallery-muted">Nothing to preview yet — add some slides.</p>';
+			if ( window.BltGallery && typeof window.BltGallery.init === 'function' ) {
+				window.BltGallery.init( previewEl );
+			}
+		} catch ( e ) {
+			previewEl.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+		}
+	}
+
+	// ------------------------------------------------------------------
 	// Auto-init pages
 	// ------------------------------------------------------------------
 
@@ -2186,6 +2754,8 @@
 		initImporter,
 		initShortcodesDoc,
 		initAlbumsPage,
+		initSlidersPage,
+		initSliderEditor,
 	};
 
 } )();

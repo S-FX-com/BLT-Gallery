@@ -49,12 +49,19 @@ class SliderDisplay extends AbstractDisplay {
 
 		$count = count( $images );
 
+		// Optional saved max-height, validated against a CSS length whitelist.
+		$height       = trim( (string) ( $gallery->settings['height'] ?? '' ) );
+		$height_style = ( '' !== $height && preg_match( '/^[0-9.]+(px|vh|vw|rem|em|%)$/', $height ) )
+			? ' style="--blt-slider-height:' . esc_attr( $height ) . '"'
+			: '';
+
 		printf(
-			'<div class="bltgallery-slider" data-autoplay="%s" data-speed="%d" data-loop="%s" role="group" aria-roledescription="carousel" aria-label="%s">',
+			'<div class="bltgallery-slider" data-autoplay="%s" data-speed="%d" data-loop="%s" role="group" aria-roledescription="carousel" aria-label="%s"%s>',
 			$autoplay ? 'true' : 'false',
 			$speed,
 			$loop ? 'true' : 'false',
-			esc_attr( $gallery->title )
+			esc_attr( $gallery->title ),
+			$height_style
 		);
 
 		// Slides.

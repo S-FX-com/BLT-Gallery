@@ -6,40 +6,46 @@ namespace BltGallery\Core;
 
 use BltGallery\Display\SliderDisplay;
 use BltGallery\Models\Gallery;
-use BltGallery\Models\Image;
+use BltGallery\Models\Slider;
 
 /**
- * [blt_slider] – build a lightweight image slider from any mix of sources and
- * drop it anywhere on the site. Images can come from existing galleries, from
- * specific gallery images, and/or directly from the WordPress media library —
- * all delivered through the same Cloudflare optimisation pipeline the rest of
- * the plugin uses.
+ * [blt_slider] – render an image slider.
  *
- * Examples:
- *   [blt_slider galleries="5"]
- *   [blt_slider galleries="5,7" autoplay="1" speed="6000"]
- *   [blt_slider attachments="123,456,789"]
- *   [blt_slider galleries="5" attachments="123" images="44,45" order="menu"]
- *   [blt_slider galleries="5" arrows="0" dots="1" captions="off" loop="0"]
- *   [blt_slider attachments="12,13" radius="12" height="70vh" class="my-hero"]
+ * The primary path renders a slider built in the admin (Blt Gallery →
+ * Sliders), referenced by id or slug:
  *
- * Supported attributes (all optional; supply at least one source):
- *   galleries    – comma-separated gallery IDs whose images feed the slider
+ *   [blt_slider id="3"]
+ *   [blt_slider slug="homepage-hero"]
+ *
+ * Any saved option can be overridden per placement, e.g.
+ *   [blt_slider id="3" autoplay="1" speed="6000" height="60vh"]
+ *
+ * An ad-hoc path is also supported for quick, code-only sliders assembled
+ * straight from sources without saving anything:
+ *
+ *   [blt_slider galleries="5,7"]
+ *   [blt_slider attachments="123,456"]
+ *   [blt_slider galleries="5" attachments="123" images="44,45"]
+ *
+ * Supported attributes:
+ *   id           – saved slider ID (primary)
+ *   slug         – saved slider slug (alternative to id)
+ *   galleries    – comma-separated gallery IDs (ad-hoc)
  *   gallery      – alias for `galleries`
- *   slugs        – comma-separated gallery slugs (alternative to galleries)
- *   images       – comma-separated Blt image IDs (specific gallery images)
- *   attachments  – comma-separated WordPress media library attachment IDs
- *   title        – accessible label for the carousel
- *   captions     – "on" (default) | "off"
- *   arrows       – "1" (default) | "0"   show hover nav arrows
- *   dots         – "1" (default) | "0"   show the dot counter
- *   autoplay     – "1" | "0" (default)
- *   speed        – ms between slides when autoplaying (default 5000)
- *   loop         – "1" (default) | "0"   wrap from last slide back to first
+ *   slugs        – comma-separated gallery slugs (ad-hoc)
+ *   images       – comma-separated Blt image IDs (ad-hoc)
+ *   attachments  – comma-separated WP media attachment IDs (ad-hoc)
+ *   title        – accessible label for the carousel (ad-hoc)
+ *   captions     – "on" | "off"
+ *   arrows       – "1" | "0"      show hover nav arrows
+ *   dots         – "1" | "0"      show the dot counter
+ *   autoplay     – "1" | "0"
+ *   speed        – ms between slides when autoplaying
+ *   loop         – "1" | "0"      wrap from last slide back to first
  *   height       – CSS max-height for slides, e.g. "70vh" or "480px"
  *   radius       – border-radius in px
  *   limit        – cap the number of slides rendered
- *   order        – "menu" (default) | "random" | "reverse"
+ *   order        – "menu" | "random" | "reverse"
  *   class        – extra CSS class on the wrapping div
  *   style        – extra inline style on the wrapping div
  */
@@ -48,6 +54,8 @@ class SliderShortcode {
 	public function render( array $atts, string $content = '', string $tag = 'blt_slider' ): string {
 		$atts = shortcode_atts(
 			[
+				'id'          => '',
+				'slug'        => '',
 				'galleries'   => '',
 				'gallery'     => '',
 				'slugs'       => '',
@@ -71,7 +79,24 @@ class SliderShortcode {
 			$tag
 		);
 
-		$images = $this->resolve_images( $atts );
+		$slider = $this->resolve_slider( $atts );
+
+		// A saved slider supplies its own title/settings; an ad-hoc one is
+		// assembled entirely from attributes.
+		if ( $slider instanceof Slider ) {
+			$items    = $slider->items;
+			$settings = $slider->settings;
+			$title    = $slider->title;
+		} elseif ( null === $slider ) {
+			// id/slug was given but no matching slider exists.
+			return '<!-- blt_slider: slider not found -->';
+		} else {
+			$items    = $this->build_adhoc_items( $atts );
+			$settings = [];
+			$title    = '' !== trim( (string) $atts['title'] ) ? sanitize_text_field( $atts['title'] ) : '';
+		}
+
+		$images = SliderResolver::to_images( $items );
 		$images = $this->apply_query_modifiers( $images, $atts );
 
 		if ( empty( $images ) ) {
@@ -81,8 +106,9 @@ class SliderShortcode {
 		wp_enqueue_style( 'bltgallery-frontend' );
 		wp_enqueue_script( 'bltgallery-frontend' );
 
-		$gallery = $this->build_virtual_gallery( $atts );
-		$display = new SliderDisplay();
+		$gallery     = $this->build_virtual_gallery( $title, $settings, $atts );
+		$gallery->id = $slider instanceof Slider ? $slider->id : 0;
+		$display     = new SliderDisplay();
 
 		ob_start();
 		echo $this->open_outer_wrapper( $atts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -92,47 +118,43 @@ class SliderShortcode {
 	}
 
 	/**
-	 * Collect images from every requested source, preserving source order:
-	 * galleries first, then explicit Blt image IDs, then media attachments.
-	 * Blt images are de-duplicated by ID so overlapping sources don't repeat.
+	 * Locate a saved slider when id/slug is supplied.
 	 *
-	 * @return Image[]
+	 * @return Slider|false|null  Slider when found, false when no id/slug was
+	 *                            given (ad-hoc mode), null when id/slug given
+	 *                            but no slider matched.
 	 */
-	private function resolve_images( array $atts ): array {
-		$images = [];
-		$seen   = []; // Blt image IDs already added.
+	private function resolve_slider( array $atts ): Slider|false|null {
+		if ( '' !== trim( (string) $atts['id'] ) ) {
+			return SliderRepository::find( (int) $atts['id'] );
+		}
+		if ( '' !== trim( (string) $atts['slug'] ) ) {
+			return SliderRepository::find_by_slug( sanitize_title( $atts['slug'] ) );
+		}
+		return false;
+	}
 
-		// 1. Whole galleries (by ID, then by slug).
+	/**
+	 * Build slide descriptors from the ad-hoc source attributes, preserving
+	 * source order: galleries first, then explicit Blt image IDs, then media
+	 * attachments.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function build_adhoc_items( array $atts ): array {
+		$items = [];
+
 		foreach ( $this->resolve_gallery_ids( $atts ) as $gallery_id ) {
-			foreach ( ImageRepository::find_by_gallery( $gallery_id ) as $image ) {
-				if ( ! isset( $seen[ $image->id ] ) ) {
-					$seen[ $image->id ] = true;
-					$images[]           = $image;
-				}
-			}
+			$items[] = [ 'source' => 'gallery', 'ref' => $gallery_id ];
 		}
-
-		// 2. Specific Blt gallery images.
 		foreach ( $this->parse_ids( $atts['images'] ) as $image_id ) {
-			if ( isset( $seen[ $image_id ] ) ) {
-				continue;
-			}
-			$image = ImageRepository::find( $image_id );
-			if ( $image ) {
-				$seen[ $image_id ] = true;
-				$images[]          = $image;
-			}
+			$items[] = [ 'source' => 'image', 'ref' => $image_id ];
 		}
-
-		// 3. Direct WordPress media library attachments.
 		foreach ( $this->parse_ids( $atts['attachments'] ) as $att_id ) {
-			$image = $this->image_from_attachment( $att_id );
-			if ( $image ) {
-				$images[] = $image;
-			}
+			$items[] = [ 'source' => 'attachment', 'ref' => $att_id ];
 		}
 
-		return $images;
+		return $items;
 	}
 
 	/**
@@ -154,62 +176,8 @@ class SliderShortcode {
 	}
 
 	/**
-	 * Wrap a WordPress media library attachment in an Image value object so it
-	 * flows through the same render path (and Cloudflare URL rewriting) as
-	 * gallery images. The full-size URL is stored as `cloudfront_url` purely so
-	 * Image::get_url() returns it; thumbnail sizes are mapped from WordPress's
-	 * generated sizes for a working srcset when Cloudflare resizing is off.
-	 */
-	private function image_from_attachment( int $att_id ): ?Image {
-		if ( $att_id <= 0 || ! wp_attachment_is_image( $att_id ) ) {
-			return null;
-		}
-
-		$full = wp_get_attachment_image_url( $att_id, 'full' );
-		if ( ! $full ) {
-			return null;
-		}
-
-		$meta = wp_get_attachment_metadata( $att_id );
-
-		$image                 = new Image();
-		$image->cloudfront_url = $full;
-		$image->alt_text       = (string) get_post_meta( $att_id, '_wp_attachment_image_alt', true );
-		$image->caption        = (string) wp_get_attachment_caption( $att_id );
-		$image->width          = (int) ( $meta['width'] ?? 0 );
-		$image->height         = (int) ( $meta['height'] ?? 0 );
-		$image->mime_type      = (string) get_post_mime_type( $att_id );
-		$image->filename       = wp_basename( (string) ( get_attached_file( $att_id ) ?: $full ) );
-
-		// Map our three logical sizes onto the best available WP size, falling
-		// back to the plugin's registered sizes and finally the full image.
-		$thumbs    = [];
-		$size_map  = [
-			'thumb'  => [ 'bltgallery-thumb', 'medium' ],
-			'medium' => [ 'bltgallery-medium', 'large' ],
-			'large'  => [ 'bltgallery-large', 'full' ],
-		];
-		foreach ( $size_map as $logical => $candidates ) {
-			foreach ( $candidates as $wp_size ) {
-				$src = wp_get_attachment_image_src( $att_id, $wp_size );
-				if ( $src ) {
-					$thumbs[ $logical ] = [
-						'url'    => $src[0],
-						'width'  => (int) $src[1],
-						'height' => (int) $src[2],
-					];
-					break;
-				}
-			}
-		}
-		$image->meta = [ 'thumbs' => $thumbs ];
-
-		return $image;
-	}
-
-	/**
-	 * @param Image[] $images
-	 * @return Image[]
+	 * @param \BltGallery\Models\Image[] $images
+	 * @return \BltGallery\Models\Image[]
 	 */
 	private function apply_query_modifiers( array $images, array $atts ): array {
 		switch ( sanitize_key( (string) $atts['order'] ) ) {
@@ -228,16 +196,17 @@ class SliderShortcode {
 		return $images;
 	}
 
-	private function build_virtual_gallery( array $atts ): Gallery {
+	/**
+	 * Merge stored settings with per-placement attribute overrides into the
+	 * virtual gallery handed to SliderDisplay.
+	 */
+	private function build_virtual_gallery( string $title, array $settings, array $atts ): Gallery {
 		$gallery               = new Gallery();
 		$gallery->display_type = 'slider';
-		$gallery->title        = '' !== trim( (string) $atts['title'] )
-			? sanitize_text_field( $atts['title'] )
-			: __( 'Image slider', 'bltgallery' );
+		$gallery->title        = '' !== trim( $title ) ? $title : __( 'Image slider', 'bltgallery' );
 
-		$settings = [];
 		if ( '' !== $atts['captions'] ) {
-			$settings['captions'] = '0' === (string) $atts['captions'] || 'off' === sanitize_key( (string) $atts['captions'] ) ? 'off' : 'on';
+			$settings['captions'] = ( '0' === (string) $atts['captions'] || 'off' === sanitize_key( (string) $atts['captions'] ) ) ? 'off' : 'on';
 		}
 		if ( '' !== $atts['arrows'] ) {
 			$settings['arrows'] = $atts['arrows'];
@@ -257,6 +226,12 @@ class SliderShortcode {
 		if ( '' !== $atts['radius'] ) {
 			$settings['radius'] = (int) $atts['radius'];
 		}
+		// A `height` attribute overrides any saved height. Validated against a
+		// CSS length whitelist; SliderDisplay emits it as --blt-slider-height.
+		$height = trim( (string) $atts['height'] );
+		if ( '' !== $height && preg_match( '/^[0-9.]+(px|vh|vw|rem|em|%)$/', $height ) ) {
+			$settings['height'] = $height;
+		}
 
 		$gallery->settings = $settings;
 
@@ -266,13 +241,6 @@ class SliderShortcode {
 	private function open_outer_wrapper( array $atts ): string {
 		$extra_class = trim( (string) $atts['class'] );
 		$extra_style = trim( (string) $atts['style'] );
-
-		// A `height` attribute drives the per-slide max-height via a custom prop.
-		$height = trim( (string) $atts['height'] );
-		if ( '' !== $height && preg_match( '/^[0-9.]+(px|vh|vw|rem|em|%)$/', $height ) ) {
-			$prop        = '--blt-slider-height:' . $height;
-			$extra_style = '' === $extra_style ? $prop : rtrim( $extra_style, ';' ) . '; ' . $prop;
-		}
 
 		return sprintf(
 			'<div class="bltgallery-shortcode%s"%s>',

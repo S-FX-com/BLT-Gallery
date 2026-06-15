@@ -444,6 +444,12 @@
 		boot();
 	}
 
+	// Expose a minimal init hook so other scripts (e.g. the admin slider
+	// builder's live preview) can initialise gallery/slider markup they inject
+	// after page load.
+	window.BltGallery = window.BltGallery || {};
+	window.BltGallery.init = initAll;
+
 	// ------------------------------------------------------------------
 	// AJAX Pagination
 	//

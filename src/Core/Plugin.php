@@ -10,6 +10,7 @@ use BltGallery\Api\GalleryEndpoint;
 use BltGallery\Api\ImageEndpoint;
 use BltGallery\Api\SettingsEndpoint;
 use BltGallery\Api\ImportEndpoint;
+use BltGallery\Api\SliderEndpoint;
 use BltGallery\Api\UploadEndpoint;
 use BltGallery\Display\LightboxDisplay;
 use BltGallery\Display\MasonryDisplay;
@@ -130,6 +131,7 @@ final class Plugin {
 		( new UploadEndpoint() )->register();
 		( new ImportEndpoint() )->register();
 		( new AlbumEndpoint() )->register();
+		( new SliderEndpoint() )->register();
 	}
 
 	public function enqueue_frontend_assets(): void {
