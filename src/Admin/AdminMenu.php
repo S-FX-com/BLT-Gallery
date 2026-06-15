@@ -267,6 +267,38 @@ class AdminMenu {
 					[ 'limit',        'int',                                             __( 'Cap number of galleries rendered.', 'bltgallery' ) ],
 				],
 			],
+			[
+				'tag'      => 'blt_slider',
+				'title'    => __( 'Image slider', 'bltgallery' ),
+				'intro'    => __( 'Builds a lightweight slider from any mix of sources — whole galleries, specific gallery images, and images added directly from the media library — all served through the same Cloudflare optimisation pipeline. Captions, hover arrows, and a dot counter are built in.', 'bltgallery' ),
+				'examples' => [
+					'[blt_slider galleries="5"]',
+					'[blt_slider galleries="5,7" autoplay="1" speed="6000"]',
+					'[blt_slider attachments="123,456,789"]',
+					'[blt_slider galleries="5" attachments="123" images="44,45"]',
+					'[blt_slider galleries="5" arrows="0" captions="off" loop="0"]',
+					'[blt_slider attachments="12,13" height="70vh" radius="12"]',
+				],
+				'attrs'    => [
+					[ 'galleries',   'comma-separated ints',                            __( 'Gallery IDs whose images feed the slider.', 'bltgallery' ) ],
+					[ 'slugs',       'comma-separated slugs',                           __( 'Galleries by slug (alternative to `galleries`).', 'bltgallery' ) ],
+					[ 'images',      'comma-separated ints',                            __( 'Specific Blt gallery image IDs.', 'bltgallery' ) ],
+					[ 'attachments', 'comma-separated ints',                            __( 'WordPress media library attachment IDs (add images directly).', 'bltgallery' ) ],
+					[ 'title',       'string',                                          __( 'Accessible label for the carousel.', 'bltgallery' ) ],
+					[ 'captions',    'on · off',                                        __( 'Show the subtle image caption / photo credit.', 'bltgallery' ) ],
+					[ 'arrows',      '1 · 0',                                           __( 'Show the hover-reveal nav arrows.', 'bltgallery' ) ],
+					[ 'dots',        '1 · 0',                                           __( 'Show the dot counter.', 'bltgallery' ) ],
+					[ 'autoplay',    '1 · 0',                                           __( 'Auto-advance slides.', 'bltgallery' ) ],
+					[ 'speed',       'ms',                                              __( 'Autoplay interval (default 5000).', 'bltgallery' ) ],
+					[ 'loop',        '1 · 0',                                           __( 'Wrap from the last slide back to the first.', 'bltgallery' ) ],
+					[ 'height',      'px · vh · %',                                     __( 'Max height of each slide, e.g. 70vh.', 'bltgallery' ) ],
+					[ 'radius',      'px',                                              __( 'Slider border radius.', 'bltgallery' ) ],
+					[ 'order',       'menu · random · reverse',                         __( 'Slide order.', 'bltgallery' ) ],
+					[ 'limit',       'int',                                             __( 'Cap the number of slides rendered.', 'bltgallery' ) ],
+					[ 'class',       'string',                                          __( 'Extra CSS class on the wrapper.', 'bltgallery' ) ],
+					[ 'style',       'string',                                          __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
+				],
+			],
 		];
 	}
 
