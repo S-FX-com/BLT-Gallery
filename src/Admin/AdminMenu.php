@@ -581,6 +581,16 @@ class AdminMenu {
 				</div>
 			</div>
 
+			<!-- Modula Gallery Migration -->
+			<div class="bltgallery-panel">
+				<div class="bltgallery-panel__header">
+					<h2><?php esc_html_e( 'Migrate from Modula', 'bltgallery' ); ?></h2>
+				</div>
+				<div class="bltgallery-panel__body" id="bltgallery-modula-importer">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Checking for Modula galleries…', 'bltgallery' ); ?></p>
+				</div>
+			</div>
+
 			<!-- Post-migration cleanup: backup + delete legacy NextGEN files -->
 			<div class="bltgallery-panel" id="bltgallery-nextgen-cleanup-panel" hidden>
 				<div class="bltgallery-panel__header">
