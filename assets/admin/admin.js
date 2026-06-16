@@ -1353,39 +1353,26 @@
 	}
 
 	// ------------------------------------------------------------------
-	// NextGEN Gallery Importer
+	// Gallery Importers (NextGEN, Modula)
 	// ------------------------------------------------------------------
 
 	async function initImporter() {
-		const container = document.getElementById( 'bltgallery-nextgen-importer' );
-		if ( ! container ) return;
-
-		let status;
-		try {
-			status = await api( '/import/nextgen/status' );
-		} catch ( e ) {
-			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
-			return;
-		}
-
-		if ( ! status.available ) {
-			container.innerHTML = `
-				<div class="notice notice-warning inline"><p>${ escHtml( status.message ) }</p></div>
-				<p>Install and activate <strong>Imagely NextGEN Gallery</strong> and create at least one gallery, then return to this page.</p>
-			`;
-			return;
-		}
-
-		// Load gallery preview.
-		let preview;
-		try {
-			preview = await api( '/import/nextgen/preview' );
-		} catch ( e ) {
-			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
-			return;
-		}
-
-		renderImporterGalleryList( container, preview.galleries );
+		// Imagely NextGEN Gallery.
+		await initSourceImporter( {
+			containerId: 'bltgallery-nextgen-importer',
+			endpoint:    'nextgen',
+			sourceName:  'NextGEN Gallery',
+			setupHint:   'Install and activate <strong>Imagely NextGEN Gallery</strong> and create at least one gallery, then return to this page.',
+			detectedMsg: 'NextGEN Gallery detected. Select galleries to import below.',
+			note:        'Your original NextGEN Gallery data and files will not be modified. BltGallery copies files into its own upload directory.',
+			idKey:       'gid',
+			titleFor:    ( g ) => g.title || g.name,
+			descFor:     ( g ) => g.galdesc,
+			onImported:  ( result ) => {
+				// Reveal the cleanup panel if anything was actually migrated.
+				if ( result.images_imported > 0 ) initCleanup();
+			},
+		} );
 
 		// If any BltGallery galleries already exist, surface the cleanup
 		// panel right away so the user can revisit the page later to back
@@ -1396,30 +1383,79 @@
 				initCleanup();
 			}
 		} catch {}
+
+		// Modula.
+		await initSourceImporter( {
+			containerId: 'bltgallery-modula-importer',
+			endpoint:    'modula',
+			sourceName:  'Modula',
+			setupHint:   'Install and activate <strong>Modula</strong> and create at least one gallery, then return to this page.',
+			detectedMsg: 'Modula galleries detected. Select galleries to import below.',
+			note:        'Your original Modula galleries and media-library files are left untouched. BltGallery copies each image into its own upload directory.',
+			idKey:       'id',
+			titleFor:    ( g ) => g.title,
+			descFor:     ( g ) => g.description,
+		} );
 	}
 
-	function renderImporterGalleryList( container, galleries ) {
+	/**
+	 * Drive a single migration source (status → preview → run) inside its
+	 * own panel. `opts` describes the source-specific endpoint, labels, and
+	 * the shape of each preview row.
+	 */
+	async function initSourceImporter( opts ) {
+		const container = document.getElementById( opts.containerId );
+		if ( ! container ) return;
+
+		let status;
+		try {
+			status = await api( `/import/${ opts.endpoint }/status` );
+		} catch ( e ) {
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		if ( ! status.available ) {
+			container.innerHTML = `
+				<div class="notice notice-warning inline"><p>${ escHtml( status.message ) }</p></div>
+				<p>${ opts.setupHint }</p>
+			`;
+			return;
+		}
+
+		let preview;
+		try {
+			preview = await api( `/import/${ opts.endpoint }/preview` );
+		} catch ( e ) {
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		renderImporterGalleryList( container, preview.galleries, opts );
+	}
+
+	function renderImporterGalleryList( container, galleries, opts ) {
 		if ( ! galleries || galleries.length === 0 ) {
-			container.innerHTML = '<p>No galleries found in NextGEN Gallery.</p>';
+			container.innerHTML = `<p>No galleries found in ${ escHtml( opts.sourceName ) }.</p>`;
 			return;
 		}
 
 		const rows = galleries.map( ( g ) => `
 			<tr>
-				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g.gid ) ) }" checked></td>
-				<td><strong>${ escHtml( g.title || g.name ) }</strong></td>
-				<td>${ escHtml( g.galdesc || '—' ) }</td>
+				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }" checked></td>
+				<td><strong>${ escHtml( opts.titleFor( g ) || '' ) }</strong></td>
+				<td>${ escHtml( opts.descFor( g ) || '—' ) }</td>
 				<td>${ escHtml( String( g.image_count ) ) }</td>
 			</tr>
 		` ).join( '' );
 
 		container.innerHTML = `
-			<div class="notice notice-success inline"><p>NextGEN Gallery detected. Select galleries to import below.</p></div>
-			<p><strong>Note:</strong> Your original NextGEN Gallery data and files will not be modified. BltGallery copies files into its own upload directory.</p>
+			<div class="notice notice-success inline"><p>${ escHtml( opts.detectedMsg ) }</p></div>
+			<p><strong>Note:</strong> ${ escHtml( opts.note ) }</p>
 			<table class="wp-list-table widefat fixed striped bltgallery-table" style="margin-bottom:1rem">
 				<thead>
 					<tr>
-						<th style="width:40px"><input type="checkbox" id="zyg-import-check-all" checked></th>
+						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all" checked></th>
 						<th>Gallery Title</th>
 						<th>Description</th>
 						<th>Images</th>
@@ -1428,20 +1464,20 @@
 				<tbody>${ rows }</tbody>
 			</table>
 			<div style="display:flex;gap:12px;align-items:center">
-				<button class="button button-primary" id="zyg-run-import">Import Selected Galleries</button>
-				<span id="zyg-import-status"></span>
+				<button class="button button-primary zyg-run-import">Import Selected Galleries</button>
+				<span class="zyg-import-status"></span>
 			</div>
-			<div id="zyg-import-results"></div>
+			<div class="zyg-import-results"></div>
 		`;
 
 		// Select all toggle.
-		container.querySelector( '#zyg-import-check-all' ).addEventListener( 'change', ( e ) => {
+		container.querySelector( '.zyg-import-check-all' ).addEventListener( 'change', ( e ) => {
 			container.querySelectorAll( '.zyg-import-check' ).forEach( ( cb ) => {
 				cb.checked = e.target.checked;
 			} );
 		} );
 
-		container.querySelector( '#zyg-run-import' ).addEventListener( 'click', async ( e ) => {
+		container.querySelector( '.zyg-run-import' ).addEventListener( 'click', async ( e ) => {
 			const checked = [ ...container.querySelectorAll( '.zyg-import-check:checked' ) ];
 			if ( checked.length === 0 ) {
 				showNotice( 'Please select at least one gallery to import.', 'error' );
@@ -1451,13 +1487,13 @@
 			const gallery_ids = checked.map( ( cb ) => parseInt( cb.value, 10 ) );
 
 			e.target.disabled = true;
-			const statusEl  = container.querySelector( '#zyg-import-status' );
-			const resultsEl = container.querySelector( '#zyg-import-results' );
+			const statusEl  = container.querySelector( '.zyg-import-status' );
+			const resultsEl = container.querySelector( '.zyg-import-results' );
 			statusEl.textContent = 'Importing… this may take a while for large galleries.';
 			resultsEl.innerHTML  = '';
 
 			try {
-				const result = await api( '/import/nextgen/run', {
+				const result = await api( `/import/${ opts.endpoint }/run`, {
 					method: 'POST',
 					body:   { gallery_ids },
 				} );
@@ -1480,9 +1516,8 @@
 
 				showNotice( `Migration complete. ${ result.images_imported } image(s) migrated.` );
 
-				// Reveal the cleanup panel if anything was actually migrated.
-				if ( result.images_imported > 0 ) {
-					initCleanup();
+				if ( typeof opts.onImported === 'function' ) {
+					opts.onImported( result );
 				}
 			} catch ( err ) {
 				statusEl.textContent = '';
