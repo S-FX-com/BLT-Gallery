@@ -196,8 +196,74 @@ class R2Storage {
 		return self::load_settings_static();
 	}
 
-	private static function load_settings_static(): array {
-		$raw = get_option( 'bltgallery_r2_settings', [] );
-		return is_array( $raw ) ? $raw : [];
+	/**
+	 * The stored R2 settings, with the BLT family shared store filling in any
+	 * field this site has not set locally.
+	 *
+	 * Per-field precedence is the plugin's own option first, then the shared
+	 * store (there is no wp-config constant for these). Nothing here writes
+	 * back to `bltgallery_r2_settings`: a shared value is read-only, so the
+	 * Settings screen keeps showing an empty field as empty.
+	 *
+	 * BLT_Family::get() is itself gated on a per-plugin opt-in that defaults
+	 * off, so on a site that has not granted it this returns exactly the array
+	 * it always did.
+	 *
+	 * Public because StorageOffloader::driver() resolves the legacy
+	 * `auto_offload` flag from the same array and must not read the raw option
+	 * behind this accessor's back.
+	 */
+	public static function load_settings_static(): array {
+		$raw      = get_option( 'bltgallery_r2_settings', [] );
+		$settings = is_array( $raw ) ? $raw : [];
+
+		if ( ! class_exists( 'BLT_Family' ) ) {
+			return $settings;
+		}
+
+		/*
+		 * account_id comes from the 'cloudflare' group, not 'r2': for R2 it is
+		 * whichever Cloudflare account owns the bucket (often the agency's),
+		 * which is the same value BLT Secure's account field holds.
+		 */
+		$shared = [
+			'account_id'        => [ 'cloudflare', 'account_id' ],
+			'endpoint'          => [ 'r2', 'endpoint' ],
+			'region'            => [ 'r2', 'region' ],
+			'bucket'            => [ 'r2', 'bucket' ],
+			'access_key_id'     => [ 'r2', 'access_key_id' ],
+			'secret_access_key' => [ 'r2', 'secret_access_key' ],
+			'public_url'        => [ 'r2', 'public_url' ],
+		];
+
+		foreach ( $shared as $key => [ $group, $field ] ) {
+			if ( '' !== (string) ( $settings[ $key ] ?? '' ) ) {
+				continue;
+			}
+
+			$value = (string) \BLT_Family::get( 'blt-gallery', $group, $field );
+
+			if ( '' === $value ) {
+				continue;
+			}
+
+			/*
+			 * public_url has to clear the same gate a locally-entered value
+			 * does. SettingsEndpoint rejects a save on an *.r2.dev host and
+			 * refuses to migrate to one, because Microsoft Defender and Teams
+			 * Safe Links block those hostnames. A shared value that skipped the
+			 * check would get written into image->cloudfront_url and the
+			 * thumbnail meta, and the admin would then have no way to correct it
+			 * from this plugin's own Settings screen — the local field it can
+			 * edit is empty, so there is nothing there to fix.
+			 */
+			if ( 'public_url' === $key && ! self::is_public_url_safe( $value ) ) {
+				continue;
+			}
+
+			$settings[ $key ] = $value;
+		}
+
+		return $settings;
 	}
 }

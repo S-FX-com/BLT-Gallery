@@ -116,6 +116,8 @@ jobs:
             --exclude='phpcs.xml*' \
             --exclude='phpunit.xml*' \
             --exclude='composer.lock' \
+            --exclude='/DESIGN.md' \
+            --exclude='/blt-family-smoke.php' \
             ./ "$STAGING/"
           ZIP="blt-gallery-${VERSION}.zip"
           (cd /tmp/build && zip -rq "$GITHUB_WORKSPACE/$ZIP" "$SLUG")

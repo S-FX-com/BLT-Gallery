@@ -51,8 +51,11 @@ class StorageOffloader {
 			return 's3';
 		}
 
-		$r2 = get_option( 'bltgallery_r2_settings', [] );
-		if ( is_array( $r2 ) && ! empty( $r2['auto_offload'] ) && R2Storage::is_configured() ) {
+		// Through the accessor, not get_option(): R2Storage::load_settings_static()
+		// is where the BLT family shared-store fallback lives, and a site whose
+		// R2 credentials resolve there must not look unconfigured here.
+		$r2 = R2Storage::load_settings_static();
+		if ( ! empty( $r2['auto_offload'] ) && R2Storage::is_configured() ) {
 			return 'r2';
 		}
 
