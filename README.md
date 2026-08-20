@@ -186,6 +186,7 @@ Migrations run as a background job, so a library of several thousand photos is n
 - **You can close the page.** The copy continues on the server. Reopen *Migrate* at any time and the panel picks the run back up where it is.
 - **It resumes, it doesn't restart.** Work is saved after every few images, so a PHP timeout, a memory ceiling, or a restarted worker costs seconds rather than the whole run.
 - **You can stop it.** *Cancel migration* halts the run; galleries copied up to that point are kept.
+- **Migrated galleries are ticked off.** Each imported gallery records where it came from, and the picker shows that source gallery as *Imported* — unticked, with a link to its copy — so a second run doesn't quietly duplicate it. A run that was interrupted shows as *Partly imported* instead. Galleries brought across before the plugin tracked this are recognised by their slug and labelled as a name match.
 
 Passes are triggered by WP-Cron plus an immediate loopback request. If a host blocks both, the page notices the job has stalled and drives it in the foreground instead — leave the tab open in that case.
 

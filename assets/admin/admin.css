@@ -1169,3 +1169,32 @@
 	flex-wrap: wrap;
 	margin-top: 1rem;
 }
+
+/* ── Migration status flags ─────────────────────────────────────────── */
+
+.bltgallery-import-flag {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 3px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+
+.bltgallery-import-flag--done {
+	background: #edfaef;
+	color: #135e26;
+	border: 1px solid #b8e6c1;
+}
+
+.bltgallery-import-flag--partial {
+	background: #fcf3e4;
+	color: #8a5700;
+	border: 1px solid #f0d090;
+}
+
+/* Already migrated: still selectable, just visibly settled. */
+.bltgallery-import-row--done > td { opacity: 0.72; }
+.bltgallery-import-row--done > td:first-child,
+.bltgallery-import-row--done > td:last-child { opacity: 1; }

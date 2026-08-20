@@ -49,6 +49,22 @@ interface SourceImporter {
 	public function get_galleries(): array;
 
 	/**
+	 * Which key in a get_galleries() row holds the source gallery's id.
+	 * NextGEN calls it `gid`, Modula `id`.
+	 */
+	public function id_key(): string;
+
+	/**
+	 * The slug create_target_gallery() would build for a source gallery,
+	 * before any uniqueness suffix.
+	 *
+	 * Used to recognise galleries migrated before the plugin started keeping
+	 * an import record. Returns an empty string when the source gallery is
+	 * gone.
+	 */
+	public function target_slug_base( int $source_id ): string;
+
+	/**
 	 * Build the work queue for a migration.
 	 *
 	 * @param int[]|null $gallery_ids Source gallery IDs to migrate, or null for all.

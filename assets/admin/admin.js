@@ -1489,27 +1489,40 @@
 			return;
 		}
 
+		// Already-migrated galleries start unticked: importing one again does
+		// not update the previous copy, it makes a second one.
+		const fresh = galleries.filter( ( g ) => ! g.imported );
+		const done  = galleries.length - fresh.length;
+
 		const rows = galleries.map( ( g ) => `
-			<tr>
-				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }" checked></td>
+			<tr${ g.imported ? ' class="bltgallery-import-row--done"' : '' }>
+				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }"${ g.imported ? '' : ' checked' }></td>
 				<td><strong>${ escHtml( opts.titleFor( g ) || '' ) }</strong></td>
 				<td>${ escHtml( opts.descFor( g ) || '—' ) }</td>
 				<td>${ escHtml( fmtInt( g.image_count ) ) }</td>
+				<td>${ importedCell( g.imported ) }</td>
 			</tr>
 		` ).join( '' );
 
-		const totalImages = galleries.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+		const totalImages = fresh.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+
+		const doneNote = done > 0
+			? `<p class="bltgallery-muted"><strong>${ escHtml( fmtInt( done ) ) }</strong> of these ${ 1 === done ? 'has' : 'have' } already been migrated and ${ 1 === done ? 'is' : 'are' } unticked.
+				Importing one again creates a second copy rather than updating the first.</p>`
+			: '';
 
 		container.innerHTML = `
 			<div class="notice notice-success inline"><p>${ escHtml( opts.detectedMsg ) }</p></div>
 			<p><strong>Note:</strong> ${ escHtml( opts.note ) }</p>
-			<table class="wp-list-table widefat fixed striped bltgallery-table" style="margin-bottom:1rem">
+			${ doneNote }
+			<table class="wp-list-table widefat striped bltgallery-table" style="margin-bottom:1rem">
 				<thead>
 					<tr>
-						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all" checked></th>
+						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all"${ fresh.length === galleries.length ? ' checked' : '' }></th>
 						<th>Gallery Title</th>
 						<th>Description</th>
-						<th>Images</th>
+						<th style="width:6em">Images</th>
+						<th style="width:18em">Status</th>
 					</tr>
 				</thead>
 				<tbody>${ rows }</tbody>
@@ -1836,6 +1849,35 @@
 	// ------------------------------------------------------------------
 	// Progress helpers
 	// ------------------------------------------------------------------
+
+	/**
+	 * The Status cell in the picker: how — and whether — this source gallery
+	 * has already been brought across.
+	 */
+	function importedCell( imported ) {
+		if ( ! imported ) return '<span class="bltgallery-muted">Not imported</span>';
+
+		const link = `<a href="${ escAttr( imported.gallery_url ) }">${ escHtml( imported.title ) }</a>`;
+
+		if ( 'partial' === imported.state ) {
+			return `<span class="bltgallery-import-flag bltgallery-import-flag--partial">Partly imported</span>
+				<span class="bltgallery-muted"> — ${ link } was left unfinished</span>`;
+		}
+
+		// Matched by slug rather than a stored record: migrated before the
+		// plugin started keeping track, so say so rather than overstate it.
+		if ( 'slug' === imported.matched_by ) {
+			return `<span class="bltgallery-import-flag bltgallery-import-flag--done">Imported</span>
+				<span class="bltgallery-muted" title="Matched by name — this gallery predates import tracking."> — ${ link }</span>`;
+		}
+
+		const when = imported.completed_at
+			? new Date( imported.completed_at ).toLocaleDateString()
+			: '';
+
+		return `<span class="bltgallery-import-flag bltgallery-import-flag--done">Imported</span>
+			<span class="bltgallery-muted"> — ${ link }${ when ? `, ${ escHtml( when ) }` : '' }</span>`;
+	}
 
 	function isJobActive( job ) {
 		return 'queued' === job.status || 'running' === job.status;

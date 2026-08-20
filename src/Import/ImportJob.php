@@ -141,6 +141,7 @@ class ImportJob {
 				'imported'  => 0,
 				'skipped'   => 0,
 				'done'      => false,
+				'stamped'   => false,
 			];
 			$total_images += $total;
 		}

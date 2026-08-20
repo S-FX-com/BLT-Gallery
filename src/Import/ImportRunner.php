@@ -378,6 +378,7 @@ class ImportRunner {
 			if ( $entry['offset'] >= $entry['total'] ) {
 				$job['queue'][ $index ]['done'] = true;
 				$job                            = ImportJob::save( $job );
+				$job                            = self::settle_entry( $job, $index );
 				continue;
 			}
 
@@ -392,6 +393,7 @@ class ImportRunner {
 			if ( $attempt['count'] > self::MAX_SLICE_ATTEMPTS ) {
 				$job = self::skip_stuck_image( $job, $index, $entry );
 				$job = ImportJob::save( $job );
+				$job = self::settle_entry( $job, $index );
 				continue;
 			}
 
@@ -430,6 +432,7 @@ class ImportRunner {
 
 			$job = ImportJob::add_errors( $job, $copied['errors'] );
 			$job = ImportJob::save( $job );
+			$job = self::settle_entry( $job, $index );
 
 			self::touch_lock( $source );
 
@@ -439,6 +442,37 @@ class ImportRunner {
 		}
 
 		return $job;
+	}
+
+	/**
+	 * Tick a queue entry off once it has finished.
+	 *
+	 * Writes the completion mark onto the destination gallery so the Migrate
+	 * screen can show that source gallery as already migrated. The `stamped`
+	 * flag is persisted with the job, so a resumed pass — or a second worker
+	 * racing on the same entry — never writes it twice.
+	 */
+	private static function settle_entry( array $job, int $index ): array {
+		$entry = $job['queue'][ $index ] ?? null;
+
+		if (
+			! is_array( $entry )
+			|| empty( $entry['done'] )
+			|| empty( $entry['target_id'] )
+			|| ! empty( $entry['stamped'] )
+		) {
+			return $job;
+		}
+
+		ImportLedger::stamp_complete(
+			(int) $entry['target_id'],
+			(int) $entry['imported'],
+			(int) $entry['skipped']
+		);
+
+		$job['queue'][ $index ]['stamped'] = true;
+
+		return ImportJob::save( $job );
 	}
 
 	/**
@@ -526,6 +560,17 @@ class ImportRunner {
 
 		try {
 			$target = $importer->create_target_gallery( (int) $entry['source_id'] );
+
+			// Note where it came from straight away, before a single image is
+			// copied, so an interrupted run still leaves a trail linking the
+			// two. ImportLedger marks it finished later.
+			$target = ImportLedger::stamp_source(
+				$target,
+				(string) $job['source'],
+				(int) $entry['source_id'],
+				(string) $entry['title'],
+				(string) $job['id']
+			);
 		} catch ( \Throwable $e ) {
 			$job['queue'][ $index ]['done']       = true;
 			$job['progress']['images_processed'] += max( 0, (int) $entry['total'] );
