@@ -5,7 +5,8 @@
     "type": "wordpress-plugin",
     "authors": [
         {
-            "name": "BLT Gallery Contributors"
+            "name": "S-FX.com",
+            "homepage": "https://www.s-fx.com"
         }
     ],
     "require": {

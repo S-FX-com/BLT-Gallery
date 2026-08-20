@@ -15,11 +15,11 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
  * `Version:` (e.g. `v3.2.1`) and WP will offer the update on the
  * Plugins page like any wordpress.org plugin.
  *
- * Checks are manual only. GitHub is contacted when — and only when — an
- * administrator asks: the "Check for updates" link on the Plugins page, or
- * the "Check again" button on Dashboard → Updates. No cron event, no check on
- * admin page loads. Whatever the last check found stays cached and keeps
- * being offered until someone checks again.
+ * Check policy is the shared BLT family one, applied by
+ * BLT_Family_Updates::apply(): at most one automatic check a day, anchored to
+ * 00:00 site time, with manual checks ("Check for updates" on the Plugins row,
+ * "Check again" on Dashboard → Updates, and the link on BLT Gallery →
+ * Settings) always running immediately.
  */
 final class Updater {
 
@@ -27,9 +27,12 @@ final class Updater {
 	private const BRANCH      = 'main';
 
 	/**
-	 * Hours between automatic checks. 0 = never check on our own.
+	 * The configured checker, so the Settings screen can report when the last
+	 * check ran. Null until init() has run (admin requests only).
+	 *
+	 * @var object|null
 	 */
-	private const CHECK_PERIOD_HOURS = 0;
+	private static ?object $checker = null;
 
 	public static function init(): void {
 		$loader = BLT_GALLERY_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
@@ -53,26 +56,20 @@ final class Updater {
 			return;
 		}
 
-		/**
-		 * Hours between automatic update checks. Zero — the default here —
-		 * turns every automatic check off: plugin-update-checker clears its
-		 * cron event and registers none of its admin_init / load-plugins.php
-		 * / load-update.php hooks, so nothing reaches out to GitHub on its
-		 * own. Filter it to a positive number to restore periodic checks.
-		 *
-		 * @param int $hours
-		 */
-		$check_period = (int) apply_filters( 'bltgallery_update_check_period', self::CHECK_PERIOD_HOURS );
-
-		// Slug intentionally omitted — PUC derives it from the install
-		// directory name (plugin_basename), so updates land back in whatever
-		// folder the plugin is currently installed under (e.g. BLT-Gallery/
-		// or blt-gallery/) instead of forcing a rename.
+		// Slug intentionally omitted. PUC then derives it from the main plugin
+		// file name — basename( plugin_basename( $file ), '.php' ), i.e.
+		// 'blt-gallery' — while the folder it updates in place always comes
+		// from the install path, so the plugin keeps working under either
+		// BLT-Gallery/ or blt-gallery/ without forcing a rename.
+		//
+		// The check period MUST be 24, not 0: a checker built with 0 registers
+		// none of PUC's scheduler hooks and cannot be revived afterwards.
+		// BLT_Family_Updates then holds automatic checks to one a day.
 		$checker = PucFactory::buildUpdateChecker(
 			self::GITHUB_REPO,
 			BLT_GALLERY_PLUGIN_FILE,
 			'',
-			max( 0, $check_period )
+			24
 		);
 
 		$checker->setBranch( self::BRANCH );
@@ -92,96 +89,58 @@ final class Updater {
 			$checker->setAuthentication( $token );
 		}
 
-		self::wire_manual_recheck( $checker );
-
-		add_filter( 'site_transient_update_plugins', [ self::class, 'attach_plugin_icons' ], 20 );
-	}
-
-	/**
-	 * Show the BLT Gallery mark on the plugin's card in Dashboard → Updates.
-	 *
-	 * Icons normally come from a plugin's wordpress.org asset directory, which
-	 * a GitHub-hosted plugin doesn't have, so WordPress falls back to a generic
-	 * placeholder. Point it at the bundled logo instead.
-	 *
-	 * @param mixed $transient The update_plugins site transient.
-	 * @return mixed
-	 */
-	public static function attach_plugin_icons( $transient ) {
-		if ( ! is_object( $transient ) ) {
-			return $transient;
-		}
-
-		$basename = BLT_GALLERY_PLUGIN_BASENAME;
-		$base_url = BLT_GALLERY_PLUGIN_URL . 'assets/img/';
-
-		$icons = [
-			'1x'      => $base_url . 'icon-128x128.png',
-			'2x'      => $base_url . 'icon-256x256.png',
-			'svg'     => $base_url . 'blt-gallery-mark.svg',
-			'default' => $base_url . 'icon-256x256.png',
-		];
-
-		// `response` holds plugins with an update pending, `no_update` the
-		// rest; both are rendered with an icon in one screen or another.
-		foreach ( [ 'response', 'no_update' ] as $bucket ) {
-			if ( empty( $transient->{$bucket} ) || ! is_array( $transient->{$bucket} ) ) {
-				continue;
-			}
-
-			if ( ! isset( $transient->{$bucket}[ $basename ] ) || ! is_object( $transient->{$bucket}[ $basename ] ) ) {
-				continue;
-			}
-
-			$transient->{$bucket}[ $basename ]->icons = $icons;
-		}
-
-		return $transient;
-	}
-
-	/**
-	 * Honour the "Check again" button on Dashboard → Updates.
-	 *
-	 * With automatic checks off, plugin-update-checker no longer hooks that
-	 * screen at all, so WordPress would refresh every other plugin and
-	 * silently skip this one. Pressing the button is an explicit request, so
-	 * we run a check for it — but only for the button, not for merely opening
-	 * the page.
-	 *
-	 * @param object $checker The plugin-update-checker instance.
-	 */
-	private static function wire_manual_recheck( object $checker ): void {
-		if ( ! method_exists( $checker, 'checkForUpdates' ) ) {
-			return;
-		}
-
-		add_action(
-			'load-update-core.php',
-			static function () use ( $checker ): void {
-				// WordPress appends ?force-check=1 when the button is pressed.
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				if ( empty( $_GET['force-check'] ) ) {
-					return;
-				}
-
-				if ( ! current_user_can( 'update_plugins' ) ) {
-					return;
-				}
-
-				$checker->checkForUpdates();
-			}
+		// One automatic check a day at midnight site time, manual checks always
+		// immediate, and the BLT mark on the plugin's update-screen card.
+		\BLT_Family_Updates::apply(
+			$checker,
+			[
+				'basename'  => BLT_GALLERY_PLUGIN_BASENAME,
+				'icons_url' => BLT_GALLERY_PLUGIN_URL . 'assets/img/',
+			]
 		);
+
+		self::$checker = $checker;
+	}
+
+	/**
+	 * The configured plugin-update-checker instance, or null on a request where
+	 * init() never ran (front end, or PUC missing).
+	 */
+	public static function checker(): ?object {
+		return self::$checker;
+	}
+
+	/**
+	 * The slug plugin-update-checker registered this plugin under, which is
+	 * what its manual-check link keys on.
+	 *
+	 * Because buildUpdateChecker() is called with an empty slug, PUC derives it
+	 * as basename( plugin_basename( __FILE__ ), '.php' ) — the main file name,
+	 * not the install directory. Mirror that exactly.
+	 */
+	public static function checker_slug(): string {
+		return basename( plugin_basename( BLT_GALLERY_PLUGIN_FILE ), '.php' );
 	}
 
 	/**
 	 * Optional GitHub PAT for private repos or higher rate limits. Set via
 	 * the BLT_GALLERY_GITHUB_TOKEN PHP constant in wp-config.php — never
 	 * commit a token to the repo.
+	 *
+	 * Precedence: wp-config constant → the BLT family shared store. There is
+	 * no per-plugin option for this token, and nothing here ever writes one.
 	 */
 	private static function auth_token(): string {
+		$token = '';
+
 		if ( defined( 'BLT_GALLERY_GITHUB_TOKEN' ) && is_string( BLT_GALLERY_GITHUB_TOKEN ) ) {
-			return (string) BLT_GALLERY_GITHUB_TOKEN;
+			$token = (string) BLT_GALLERY_GITHUB_TOKEN;
 		}
-		return '';
+
+		if ( '' === $token && class_exists( 'BLT_Family' ) ) {
+			$token = (string) \BLT_Family::get( 'blt-gallery', 'github', 'token' );
+		}
+
+		return $token;
 	}
 }

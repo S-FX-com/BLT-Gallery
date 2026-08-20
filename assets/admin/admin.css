@@ -3,40 +3,45 @@
 :root {
 	--blt-accent:       #2563eb;
 	--blt-accent-hover: #1d4ed8;
-	--blt-radius:       6px;
+	/*
+	 * Page-local radius for the .bltgallery-* components below. Deliberately
+	 * not the shared design system's own radius token (see
+	 * assets/css/blt-design-system.css): redeclaring that one here on :root
+	 * would silently retune every .blt-card on these screens.
+	 */
+	--bltgallery-radius: 6px;
 }
 
 /* ── Wrap ─────────────────────────────────────────────────────────────── */
 
+/*
+ * Wider than the design system's default .blt-ui measure: these screens are
+ * image grids and side-by-side editors, not settings forms. This sheet is
+ * enqueued after blt-design-system.css (see AdminMenu::enqueue_assets), so it
+ * wins on equal specificity.
+ */
 .bltgallery-wrap { max-width: 1200px; }
 
-.bltgallery-page-header {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	margin-bottom: 1.5rem;
-	flex-wrap: wrap;
-}
+/*
+ * Header layout (flex, wrap, gap, alignment) comes from
+ * .blt-admin-page-header in the shared design system now. What is left here
+ * is the trailing gap before the first card, plus the h1 sizing the editor
+ * headers rely on to keep their back button and shortcode chip at the two
+ * ends of the row.
+ */
+.bltgallery-page-header { margin-bottom: 1.5rem; }
 
 .bltgallery-page-header h1 { margin: 0; flex: 1; }
 
 /* ── Panel ────────────────────────────────────────────────────────────── */
 
-.bltgallery-panel {
-	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: var(--blt-radius);
-	margin-bottom: 1.5rem;
-}
-
-.bltgallery-panel__header {
-	padding: 0.75rem 1rem;
-	border-bottom: 1px solid #eee;
-}
-
-.bltgallery-panel__header h2 { margin: 0; font-size: 1rem; }
-
-.bltgallery-panel__body { padding: 1.25rem 1rem; }
+/*
+ * Surface, border, radius, spacing and padding all come from .blt-card /
+ * .blt-card-header / .blt-card-body — every .bltgallery-panel rendered in
+ * AdminMenu.php carries those classes as well. The .bltgallery-panel* names
+ * stay because admin.js keys on them (e.g. closest( '.bltgallery-panel' )
+ * when it shows or hides an integration panel).
+ */
 
 /* ── Fields ───────────────────────────────────────────────────────────── */
 
@@ -69,7 +74,7 @@
 	text-align: center;
 	background: #f8fafc;
 	border: 2px dashed #cbd5e1;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	color: #64748b;
 }
 
@@ -84,7 +89,7 @@
 
 .bltgallery-uploader__zone {
 	border: 2px dashed #94a3b8;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	padding: 2.5rem;
 	text-align: center;
 	cursor: pointer;
@@ -146,7 +151,7 @@
 
 .bltgallery-image-grid__item {
 	border: 2px solid transparent;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	overflow: hidden;
 	cursor: grab;
 	transition: border-color .15s;
@@ -199,7 +204,7 @@
 	background: #fff;
 	border: 1px solid #c3c4c7;
 	border-left: 4px solid var(--blt-accent);
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	padding: 1rem 1.25rem;
 	margin: 0 0 1.25rem;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -250,7 +255,7 @@
 	padding: 0.9rem 0.9rem 0.75rem;
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	cursor: pointer;
 	transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
 	color: #1d2327;
@@ -361,7 +366,7 @@
 	padding: 0.75rem 0.85rem;
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	cursor: pointer;
 }
 
@@ -442,7 +447,7 @@
 	background: #fef2f2;
 	border: 1px solid #fca5a5;
 	border-left: 4px solid #dc2626;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 }
 
 .bltgallery-cleanup__confirm input[type="text"] {
@@ -466,7 +471,7 @@
 	padding: 0.75rem 0.95rem;
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	transition: border-color 120ms ease, background 120ms ease;
 }
 
@@ -969,7 +974,7 @@
 	gap: 0.75rem;
 	padding: 0.5rem;
 	border: 1px solid #e2e4e7;
-	border-radius: var(--blt-radius);
+	border-radius: var(--bltgallery-radius);
 	background: #fff;
 }
 

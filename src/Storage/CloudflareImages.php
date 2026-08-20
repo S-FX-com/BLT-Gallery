@@ -116,8 +116,41 @@ final class CloudflareImages {
 		return $url;
 	}
 
+	/**
+	 * The stored Cloudflare Images settings, with the BLT family shared store
+	 * supplying the zone when this site has not set one locally.
+	 *
+	 * Precedence is the plugin's own option first, then the shared store; the
+	 * option is never written from a shared value.
+	 *
+	 * WARNING, and the reason this fallback is spelled out at length:
+	 * is_enabled() gates on zone_url being non-empty, so resolving one here
+	 * can flip URL transformation ON for a site that has the integration
+	 * ticked in General settings but never entered a zone. That is acceptable
+	 * only because BLT_Family::get() sits behind the family layer's
+	 * per-plugin opt-in, which defaults off — including on upgrade — and can
+	 * only be granted deliberately, per plugin and per group, on the BLT
+	 * screen. See includes/blt-family/README.md ("The opt-in rule").
+	 */
 	public static function settings(): array {
-		$raw = get_option( 'bltgallery_cf_images_settings', [] );
-		return is_array( $raw ) ? $raw : [];
+		$raw      = get_option( 'bltgallery_cf_images_settings', [] );
+		$settings = is_array( $raw ) ? $raw : [];
+
+		if ( '' === (string) ( $settings['zone_url'] ?? '' ) && class_exists( 'BLT_Family' ) ) {
+			$zone = trim( (string) \BLT_Family::get( 'blt-gallery', 'cloudflare', 'zone_host' ) );
+
+			if ( '' !== $zone ) {
+				// The shared field is a bare hostname ("example.com"); this
+				// setting is a URL, and transform()/relativize() both need the
+				// scheme to recognise an on-zone source.
+				if ( ! preg_match( '#^https?://#i', $zone ) ) {
+					$zone = 'https://' . ltrim( $zone, '/' );
+				}
+
+				$settings['zone_url'] = $zone;
+			}
+		}
+
+		return $settings;
 	}
 }

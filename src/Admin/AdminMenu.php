@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace BltGallery\Admin;
 
+use BltGallery\Core\Updater;
+
 /**
  * Registers the BLT Gallery admin menu and renders pure-PHP views.
  * No build step required.
@@ -25,7 +27,9 @@ class AdminMenu {
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this, 'render_galleries_page' ],
-			$this->get_menu_icon(),
+			// Second argument keeps this screen's historical dashicon as the
+			// degraded fallback if the bundled mark ever goes missing.
+			\BLT_Family_Brand::menu_icon( BLT_GALLERY_PLUGIN_DIR, 'dashicons-format-gallery' ),
 			58
 		);
 
@@ -97,9 +101,12 @@ class AdminMenu {
 
 	public function render_albums_page(): void {
 		?>
-		<div class="wrap bltgallery-wrap">
-			<div class="bltgallery-page-header">
-				<h1><?php esc_html_e( 'Albums', 'bltgallery' ); ?></h1>
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
+				<h1>
+					<?php echo $this->brand_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- KSES-filtered SVG from the shared brand class. ?>
+					<?php esc_html_e( 'Albums', 'bltgallery' ); ?>
+				</h1>
 				<button type="button" class="button button-primary" id="bltgallery-add-album">
 					<?php esc_html_e( 'Add album', 'bltgallery' ); ?>
 				</button>
@@ -144,9 +151,12 @@ class AdminMenu {
 	private function render_slider_list(): void {
 		$list_url = admin_url( 'admin.php?page=' . self::MENU_SLUG . '-sliders' );
 		?>
-		<div class="wrap bltgallery-wrap">
-			<div class="bltgallery-page-header">
-				<h1><?php esc_html_e( 'Sliders', 'bltgallery' ); ?></h1>
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
+				<h1>
+					<?php echo $this->brand_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- KSES-filtered SVG from the shared brand class. ?>
+					<?php esc_html_e( 'Sliders', 'bltgallery' ); ?>
+				</h1>
 				<button class="button button-primary" id="bltgallery-new-slider-btn">
 					<?php esc_html_e( '+ New Slider', 'bltgallery' ); ?>
 				</button>
@@ -175,8 +185,8 @@ class AdminMenu {
 	private function render_slider_editor( int $slider_id ): void {
 		$back_url = admin_url( 'admin.php?page=' . self::MENU_SLUG . '-sliders' );
 		?>
-		<div class="wrap bltgallery-wrap">
-			<div class="bltgallery-page-header">
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
 				<a href="<?php echo esc_url( $back_url ); ?>" class="button button-secondary">
 					&larr; <?php esc_html_e( 'Sliders', 'bltgallery' ); ?>
 				</a>
@@ -188,8 +198,8 @@ class AdminMenu {
 			<div class="bltgallery-editor-layout">
 				<div class="bltgallery-editor-layout__main">
 					<!-- Slides panel -->
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header bltgallery-panel__header--actions">
+					<div class="bltgallery-panel blt-card">
+						<div class="bltgallery-panel__header bltgallery-panel__header--actions blt-card-header">
 							<h2><?php esc_html_e( 'Slides', 'bltgallery' ); ?></h2>
 							<div class="bltgallery-slider-add">
 								<button type="button" class="button button-primary" id="bltgallery-add-media">
@@ -200,7 +210,7 @@ class AdminMenu {
 								</button>
 							</div>
 						</div>
-						<div class="bltgallery-panel__body">
+						<div class="bltgallery-panel__body blt-card-body">
 							<div id="bltgallery-slider-slides">
 								<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 							</div>
@@ -208,14 +218,14 @@ class AdminMenu {
 					</div>
 
 					<!-- Live preview panel -->
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header bltgallery-panel__header--actions">
+					<div class="bltgallery-panel blt-card">
+						<div class="bltgallery-panel__header bltgallery-panel__header--actions blt-card-header">
 							<h2><?php esc_html_e( 'Preview', 'bltgallery' ); ?></h2>
 							<button type="button" class="button button-secondary" id="bltgallery-slider-refresh-preview">
 								<?php esc_html_e( 'Save & refresh preview', 'bltgallery' ); ?>
 							</button>
 						</div>
-						<div class="bltgallery-panel__body">
+						<div class="bltgallery-panel__body blt-card-body">
 							<div id="bltgallery-slider-preview" class="bltgallery-slider-preview">
 								<p class="bltgallery-muted"><?php esc_html_e( 'Save the slider to see a live preview here.', 'bltgallery' ); ?></p>
 							</div>
@@ -224,11 +234,11 @@ class AdminMenu {
 				</div>
 
 				<aside class="bltgallery-editor-layout__sidebar">
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header">
+					<div class="bltgallery-panel blt-card">
+						<div class="bltgallery-panel__header blt-card-header">
 							<h2><?php esc_html_e( 'Slider Settings', 'bltgallery' ); ?></h2>
 						</div>
-						<div class="bltgallery-panel__body" id="bltgallery-slider-settings">
+						<div class="bltgallery-panel__body blt-card-body" id="bltgallery-slider-settings">
 							<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 						</div>
 					</div>
@@ -247,8 +257,13 @@ class AdminMenu {
 	public function render_shortcodes_page(): void {
 		$docs = $this->shortcode_docs();
 		?>
-		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'Shortcodes', 'bltgallery' ); ?></h1>
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
+				<h1>
+					<?php echo $this->brand_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- KSES-filtered SVG from the shared brand class. ?>
+					<?php esc_html_e( 'Shortcodes', 'bltgallery' ); ?>
+				</h1>
+			</div>
 			<p>
 				<?php esc_html_e(
 					'Drop these shortcodes into any post, page, or widget to display galleries. Every shortcode attribute below overrides the corresponding gallery setting for that single placement.',
@@ -258,11 +273,11 @@ class AdminMenu {
 
 			<div id="bltgallery-shortcodes-doc">
 				<?php foreach ( $docs as $sc ) : ?>
-					<div class="bltgallery-panel bltgallery-shortcode-doc">
-						<div class="bltgallery-panel__header">
+					<div class="bltgallery-panel blt-card bltgallery-shortcode-doc">
+						<div class="bltgallery-panel__header blt-card-header">
 							<h2><code>[<?php echo esc_html( $sc['tag'] ); ?>]</code> — <?php echo esc_html( $sc['title'] ); ?></h2>
 						</div>
-						<div class="bltgallery-panel__body">
+						<div class="bltgallery-panel__body blt-card-body">
 							<p><?php echo esc_html( $sc['intro'] ); ?></p>
 
 							<h3><?php esc_html_e( 'Examples', 'bltgallery' ); ?></h3>
@@ -436,11 +451,40 @@ class AdminMenu {
 			return;
 		}
 
+		$current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+		/*
+		 * Shared BLT admin design system (DESIGN.md §2), on this plugin's own
+		 * screens only. Deliberately enqueued FIRST — before frontend.css below
+		 * and before admin.css — for two different reasons:
+		 *
+		 *   - admin.css is page-specific and should still win where the two
+		 *     overlap;
+		 *   - frontend.css declares `--blt-radius` on :root (6px) and so does
+		 *     the design system (8px). On the Sliders screen both sheets load,
+		 *     and at equal specificity the later one wins. The live preview's
+		 *     whole job is to look like the published page, so the front-end
+		 *     sheet has to be the one that wins there. The cost is that the
+		 *     admin cards on that single screen round at 6px rather than the
+		 *     family's 8px.
+		 *
+		 * The real fix is to stop the two namespaces colliding, but `--blt-radius`
+		 * is not internal to frontend.css: AbstractDisplay and AlbumDisplay emit
+		 * it as an inline custom property on the front-end wrapper, driven by
+		 * each gallery's own `radius` setting, so renaming it is a front-end API
+		 * change and belongs in its own pass.
+		 */
+		wp_enqueue_style(
+			'blt-gallery-design-system',
+			BLT_GALLERY_PLUGIN_URL . 'assets/css/blt-design-system.css',
+			[],
+			BLT_GALLERY_VERSION
+		);
+
 		// The slider builder lets editors add images straight from the media
 		// library, so it needs the WordPress media modal scripts. It also loads
 		// the front-end bundle so the live preview renders + behaves exactly as
 		// it will on the site.
-		$current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 		if ( self::MENU_SLUG . '-sliders' === $current_page ) {
 			wp_enqueue_media();
 			wp_enqueue_style(
@@ -502,16 +546,21 @@ class AdminMenu {
 
 	public function render_settings_page(): void {
 		?>
-		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'BLT Gallery Settings', 'bltgallery' ); ?></h1>
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
+				<h1>
+					<?php echo $this->brand_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- KSES-filtered SVG from the shared brand class. ?>
+					<?php esc_html_e( 'BLT Gallery Settings', 'bltgallery' ); ?>
+				</h1>
+			</div>
 			<div id="bltgallery-notice"></div>
 
 			<!-- General Settings -->
-			<div class="bltgallery-panel">
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card">
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'General', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-general-settings">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-general-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
@@ -524,42 +573,69 @@ class AdminMenu {
 			?>
 
 			<!-- AWS S3 & CloudFront Settings (hidden until enabled in General) -->
-			<div class="bltgallery-panel"<?php echo $enable_s3 ? '' : ' hidden'; ?>>
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card"<?php echo $enable_s3 ? '' : ' hidden'; ?>>
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Amazon S3 & CloudFront', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-aws-settings">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-aws-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Cloudflare R2 Settings (hidden until enabled in General) -->
-			<div class="bltgallery-panel"<?php echo $enable_r2 ? '' : ' hidden'; ?>>
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card"<?php echo $enable_r2 ? '' : ' hidden'; ?>>
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Cloudflare R2', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-r2-settings">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-r2-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Cloudflare Image Resizing (hidden until enabled in General) -->
-			<div class="bltgallery-panel"<?php echo $enable_cfi ? '' : ' hidden'; ?>>
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card"<?php echo $enable_cfi ? '' : ' hidden'; ?>>
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Cloudflare Image Resizing', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-cf-images-settings">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-cf-images-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
+			<?php
+			// The automatic check runs once a day, at midnight site time
+			// (BLT_Family_Updates). This link is the explicit path: it hits
+			// plugin-update-checker's own nonced handler, which ignores the
+			// daily floor and reports the result on the Plugins screen.
+			$updates_checker    = Updater::checker();
+			$updates_last_check = $updates_checker ? \BLT_Family_Updates::last_check_time( $updates_checker ) : 0;
+			?>
 			<!-- Plugin Updates -->
-			<div class="bltgallery-panel">
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card">
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Plugin Updates', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-updates-settings">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-updates-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+				</div>
+				<div class="bltgallery-panel__body blt-card-body">
+					<p>
+						<a class="button button-secondary" href="<?php echo esc_url( \BLT_Family_Updates::check_now_url( Updater::checker_slug() ) ); ?>">
+							<?php esc_html_e( 'Check for Updates', 'bltgallery' ); ?>
+						</a>
+					</p>
+					<p class="description">
+						<?php esc_html_e( 'BLT Gallery checks GitHub for a new release once a day, at midnight site time. Checking here asks GitHub straight away.', 'bltgallery' ); ?>
+						<?php
+						if ( $updates_last_check ) {
+							printf(
+								/* translators: %s: human-readable time difference, e.g. "3 hours". */
+								esc_html__( 'Last checked %s ago.', 'bltgallery' ),
+								esc_html( human_time_diff( $updates_last_check ) )
+							);
+						}
+						?>
+					</p>
 				</div>
 			</div>
 		</div>
@@ -568,36 +644,41 @@ class AdminMenu {
 
 	public function render_import_page(): void {
 		?>
-		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'Migrate Galleries', 'bltgallery' ); ?></h1>
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
+				<h1>
+					<?php echo $this->brand_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- KSES-filtered SVG from the shared brand class. ?>
+					<?php esc_html_e( 'Migrate Galleries', 'bltgallery' ); ?>
+				</h1>
+			</div>
 			<div id="bltgallery-notice"></div>
 
 			<!-- NextGEN Gallery Migration -->
-			<div class="bltgallery-panel">
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card">
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Migrate from Imagely NextGEN Gallery', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-nextgen-importer">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-nextgen-importer">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Checking for NextGEN Gallery…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Modula Gallery Migration -->
-			<div class="bltgallery-panel">
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card">
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Migrate from Modula', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-modula-importer">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-modula-importer">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Checking for Modula galleries…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
 
 			<!-- Post-migration cleanup: backup + delete legacy NextGEN files -->
-			<div class="bltgallery-panel" id="bltgallery-nextgen-cleanup-panel" hidden>
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card" id="bltgallery-nextgen-cleanup-panel" hidden>
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><?php esc_html_e( 'Clean up NextGEN Gallery files', 'bltgallery' ); ?></h2>
 				</div>
-				<div class="bltgallery-panel__body" id="bltgallery-nextgen-cleanup">
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-nextgen-cleanup">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Scanning…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
@@ -618,9 +699,12 @@ class AdminMenu {
 	private function render_gallery_list(): void {
 		$list_url   = admin_url( 'admin.php?page=' . self::MENU_SLUG );
 		?>
-		<div class="wrap bltgallery-wrap">
-			<div class="bltgallery-page-header">
-				<h1><?php esc_html_e( 'Galleries', 'bltgallery' ); ?></h1>
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
+				<h1>
+					<?php echo $this->brand_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- KSES-filtered SVG from the shared brand class. ?>
+					<?php esc_html_e( 'Galleries', 'bltgallery' ); ?>
+				</h1>
 				<button class="button button-primary" id="bltgallery-new-gallery-btn">
 					<?php esc_html_e( '+ New Gallery', 'bltgallery' ); ?>
 				</button>
@@ -645,8 +729,8 @@ class AdminMenu {
 	private function render_gallery_editor( int $gallery_id ): void {
 		$back_url = admin_url( 'admin.php?page=' . self::MENU_SLUG );
 		?>
-		<div class="wrap bltgallery-wrap">
-			<div class="bltgallery-page-header">
+		<div class="wrap blt-ui bltgallery-wrap">
+			<div class="bltgallery-page-header blt-admin-page-header">
 				<a href="<?php echo esc_url( $back_url ); ?>" class="button button-secondary">
 					&larr; <?php esc_html_e( 'Galleries', 'bltgallery' ); ?>
 				</a>
@@ -658,21 +742,21 @@ class AdminMenu {
 			<div class="bltgallery-editor-layout">
 				<div class="bltgallery-editor-layout__main">
 					<!-- Settings panel -->
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header">
+					<div class="bltgallery-panel blt-card">
+						<div class="bltgallery-panel__header blt-card-header">
 							<h2><?php esc_html_e( 'Gallery Settings', 'bltgallery' ); ?></h2>
 						</div>
-						<div class="bltgallery-panel__body" id="bltgallery-editor-settings">
+						<div class="bltgallery-panel__body blt-card-body" id="bltgallery-editor-settings">
 							<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 						</div>
 					</div>
 
 					<!-- Images panel -->
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header">
+					<div class="bltgallery-panel blt-card">
+						<div class="bltgallery-panel__header blt-card-header">
 							<h2><?php esc_html_e( 'Images', 'bltgallery' ); ?></h2>
 						</div>
-						<div class="bltgallery-panel__body">
+						<div class="bltgallery-panel__body blt-card-body">
 							<!-- Uploader -->
 							<div class="bltgallery-uploader" id="bltgallery-uploader">
 								<input type="file" id="bltgallery-file-input" accept="image/*" multiple style="display:none">
@@ -694,11 +778,11 @@ class AdminMenu {
 
 				<aside class="bltgallery-editor-layout__sidebar">
 					<!-- Albums (taxonomy) metabox -->
-					<div class="bltgallery-panel">
-						<div class="bltgallery-panel__header">
+					<div class="bltgallery-panel blt-card">
+						<div class="bltgallery-panel__header blt-card-header">
 							<h2><?php esc_html_e( 'Albums', 'bltgallery' ); ?></h2>
 						</div>
-						<div class="bltgallery-panel__body" id="bltgallery-albums-metabox">
+						<div class="bltgallery-panel__body blt-card-body" id="bltgallery-albums-metabox">
 							<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 						</div>
 					</div>
@@ -750,53 +834,22 @@ class AdminMenu {
 	}
 
 	/**
-	 * The BLT Gallery mark, as a data URI for add_menu_page().
+	 * The BLT mark for a page header, from the shared brand class.
 	 *
-	 * WordPress paints an SVG icon_url as a CSS background image and never
-	 * recolours it, so the admin menu's own icon grey is baked in here rather
-	 * than left to currentColor (which would resolve to black against the
-	 * dark menu bar). print_menu_icon_style() handles the lit state.
+	 * Returns KSES-filtered SVG markup (or '' when the asset is missing), so
+	 * callers echo it unescaped.
 	 */
-	private function get_menu_icon(): string {
-		$svg = $this->mark_svg();
-
-		if ( '' === $svg ) {
-			return 'dashicons-format-gallery';
-		}
-
-		return 'data:image/svg+xml;base64,' . base64_encode( str_replace( 'currentColor', '#a7aaad', $svg ) );
-	}
-
-	/**
-	 * Read the bundled logo, once per request.
-	 */
-	private function mark_svg(): string {
-		static $svg = null;
-
-		if ( null === $svg ) {
-			$path = BLT_GALLERY_PLUGIN_DIR . 'assets/img/blt-gallery-mark.svg';
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			$svg = is_readable( $path ) ? (string) file_get_contents( $path ) : '';
-		}
-
-		return $svg;
+	private function brand_mark(): string {
+		return \BLT_Family_Brand::inline_mark( BLT_GALLERY_PLUGIN_DIR );
 	}
 
 	/**
 	 * Light the menu icon up on hover and while the section is open.
 	 *
-	 * Core's dashicon menu items switch from grey to white in those states;
-	 * a background-image icon can't, so brighten it with a filter to match.
+	 * The mark, the data URI, and this rule all come from the shared
+	 * BLT_Family_Brand class — see DESIGN.md §1.
 	 */
 	public function print_menu_icon_style(): void {
-		$id = 'toplevel_page_' . self::MENU_SLUG;
-		?>
-		<style id="bltgallery-menu-icon">
-			#adminmenu #<?php echo esc_attr( $id ); ?> div.wp-menu-image.svg { background-size: 20px auto; }
-			#adminmenu #<?php echo esc_attr( $id ); ?>:hover div.wp-menu-image.svg,
-			#adminmenu #<?php echo esc_attr( $id ); ?>.wp-has-current-submenu div.wp-menu-image.svg,
-			#adminmenu #<?php echo esc_attr( $id ); ?>.current div.wp-menu-image.svg { filter: brightness(1.6); }
-		</style>
-		<?php
+		\BLT_Family_Brand::print_menu_icon_style( self::MENU_SLUG );
 	}
 }

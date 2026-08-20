@@ -2521,11 +2521,11 @@
 		if ( ! root ) return;
 
 		root.innerHTML = SHORTCODE_DOCS.map( ( sc ) => `
-			<div class="bltgallery-panel bltgallery-shortcode-doc">
-				<div class="bltgallery-panel__header">
+			<div class="bltgallery-panel blt-card bltgallery-shortcode-doc">
+				<div class="bltgallery-panel__header blt-card-header">
 					<h2><code>[${ escHtml( sc.tag ) }]</code> — ${ escHtml( sc.title ) }</h2>
 				</div>
-				<div class="bltgallery-panel__body">
+				<div class="bltgallery-panel__body blt-card-body">
 					<p>${ escHtml( sc.intro ) }</p>
 
 					<h3>Examples</h3>
@@ -2642,7 +2642,7 @@
 				} catch ( err ) {
 					showNotice( err.message, 'error' );
 					btn.disabled = false;
-					btn.textContent = 'Check for Updates';
+					btn.textContent = 'Refresh update status';
 				}
 			} );
 		};
@@ -2670,7 +2670,7 @@
 				<p class="description">${ escHtml( checked ) }</p>
 			</div>
 			<div class="bltgallery-field">
-				<button class="button button-secondary" id="zyg-check-update">Check for Updates</button>
+				<button class="button button-secondary" id="zyg-check-update">Refresh update status</button>
 			</div>
 		`;
 	}

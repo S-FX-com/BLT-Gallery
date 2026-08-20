@@ -115,6 +115,21 @@ final class Plugin {
 			$admin->init();
 			add_action( 'admin_init', [ $this->db, 'maybe_upgrade' ] );
 			add_action( 'admin_init', [ Migration::class, 'run' ] );
+		}
+
+		/*
+		 * Update checks: admin requests, WP-Cron and WP-CLI — not the front end.
+		 *
+		 * WP-Cron matters here and is easy to miss. plugin-update-checker
+		 * attaches its cron callback inside its Scheduler constructor, so if
+		 * Updater::init() only ran under is_admin() the daily midnight event
+		 * would fire in wp-cron.php with nothing listening: the scheduled check
+		 * would silently never happen, and the only check that ever ran would be
+		 * the opportunistic one on the next admin page load. Front-end requests
+		 * are still excluded — no check can start there, and previously fetched
+		 * update data lives in the update_plugins transient regardless.
+		 */
+		if ( is_admin() || wp_doing_cron() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 			Updater::init();
 		}
 	}

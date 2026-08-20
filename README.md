@@ -37,16 +37,16 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 
 ### Updates
 
-Updates come from this repository's GitHub releases, and are **checked manually only**. Nothing phones home on a schedule or on admin page loads — the plugin contacts GitHub when you ask it to:
+Updates come from this repository's GitHub releases, on the shared BLT family
+policy (`includes/blt-family/class-blt-family-updates.php`): **at most one
+automatic check a day, anchored to 00:00 site time.** Nothing checks on ordinary
+admin page loads.
 
-- **Plugins → BLT Gallery → Check for updates**, or
-- the **Check again** button on **Dashboard → Updates**.
+A manual check always runs immediately, from any of:
 
-Whatever the last check found stays cached and keeps being offered until you check again. To restore periodic checks, filter the interval back to a positive number of hours:
-
-```php
-add_filter( 'bltgallery_update_check_period', fn() => 12 );
-```
+- **Plugins → BLT Gallery → Check for updates**,
+- the **Check again** button on **Dashboard → Updates**, or
+- **Check for Updates** on **BLT Gallery → Settings → Plugin Updates**.
 
 For a private repo or higher API rate limits, set a GitHub token in `wp-config.php`:
 
@@ -54,18 +54,27 @@ For a private repo or higher API rate limits, set a GitHub token in `wp-config.p
 define( 'BLT_GALLERY_GITHUB_TOKEN', 'ghp_…' );
 ```
 
+With no constant defined, the token is also read from the BLT family shared
+settings (**BLT → GitHub**) when a site owner has opted this plugin in to that
+group. The constant always wins, and nothing is ever written back into BLT
+Gallery's own options from a shared value.
+
 ## Brand assets
 
 The BLT mark lives in `assets/img/`:
 
 | File | Use |
 |------|-----|
-| `blt-gallery-mark.svg` | Master artwork — `fill="currentColor"`, so it takes the colour of wherever it's dropped |
+| `blt-mark.svg` | Master artwork, 100 × 100 — `fill="currentColor"`, so it takes the colour of wherever it's dropped |
+| `blt-mark-menu.svg` | Pixel-hinted 20 × 20 twin, used **only** for the admin menu icon |
 | `icon-128x128.png`, `icon-256x256.png` | Plugin card in **Dashboard → Updates** |
 | `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Favicons |
 | `site-icon-512x512.png` | Upload under **Settings → General → Site Icon** to use it as the site favicon |
 
-The admin menu icon is generated from the master SVG at runtime, so replacing that one file re-skins everything.
+Both SVGs are the shared family mark, and every reference to them goes through
+`BLT_Family_Brand` (menu icon, page-header mark, plugin-card icons) — see
+`DESIGN.md` §1. They are canonical across the BLT plugins: change them in one
+repo and port the same change to the others rather than forking one here.
 
 ## Shortcode reference
 
