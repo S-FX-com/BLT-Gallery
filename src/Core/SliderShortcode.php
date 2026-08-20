@@ -11,7 +11,7 @@ use BltGallery\Models\Slider;
 /**
  * [blt_slider] – render an image slider.
  *
- * The primary path renders a slider built in the admin (Blt Gallery →
+ * The primary path renders a slider built in the admin (BLT Gallery →
  * Sliders), referenced by id or slug:
  *
  *   [blt_slider id="3"]
@@ -33,7 +33,7 @@ use BltGallery\Models\Slider;
  *   galleries    – comma-separated gallery IDs (ad-hoc)
  *   gallery      – alias for `galleries`
  *   slugs        – comma-separated gallery slugs (ad-hoc)
- *   images       – comma-separated Blt image IDs (ad-hoc)
+ *   images       – comma-separated BLT image IDs (ad-hoc)
  *   attachments  – comma-separated WP media attachment IDs (ad-hoc)
  *   title        – accessible label for the carousel (ad-hoc)
  *   captions     – "on" | "off"
@@ -136,7 +136,7 @@ class SliderShortcode {
 
 	/**
 	 * Build slide descriptors from the ad-hoc source attributes, preserving
-	 * source order: galleries first, then explicit Blt image IDs, then media
+	 * source order: galleries first, then explicit BLT image IDs, then media
 	 * attachments.
 	 *
 	 * @return array<int, array<string, mixed>>

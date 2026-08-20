@@ -17,7 +17,7 @@ use BltGallery\Models\Gallery;
  * Namespace : bltgallery/v1
  * Base route: /galleries
  *
- * GET    /galleries           – paginated list
+ * GET    /galleries           – paginated list, each row with its image count
  * POST   /galleries           – create
  * GET    /galleries/{id}      – single gallery + image count
  * PUT    /galleries/{id}      – update
@@ -100,8 +100,16 @@ class GalleryEndpoint {
 		$total    = GalleryRepository::count();
 		$galleries = GalleryRepository::all( $per_page, $page );
 
+		// One grouped query for the whole page rather than a count per row.
+		$counts = ImageRepository::count_by_galleries(
+			array_map( fn( Gallery $g ) => $g->id, $galleries )
+		);
+
 		$response = new WP_REST_Response(
-			array_map( fn( Gallery $g ) => $g->to_array(), $galleries )
+			array_map(
+				fn( Gallery $g ) => $g->to_array() + [ 'image_count' => (int) ( $counts[ $g->id ] ?? 0 ) ],
+				$galleries
+			)
 		);
 
 		$response->header( 'X-WP-Total', (string) $total );

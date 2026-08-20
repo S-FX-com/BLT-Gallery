@@ -12,7 +12,7 @@ use BltGallery\Models\Image;
  * rows for the admin builder.
  *
  * Supported item sources:
- *   - "image"      → a Blt gallery image (resolved via ImageRepository)
+ *   - "image"      → a BLT gallery image (resolved via ImageRepository)
  *   - "attachment" → a WordPress media library attachment (wrapped in an Image)
  *   - "gallery"    → every image in a gallery, expanded in order (used by the
  *                    [blt_slider galleries="…"] ad-hoc shortcode path)

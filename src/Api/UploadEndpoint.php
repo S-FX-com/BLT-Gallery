@@ -92,14 +92,14 @@ class UploadEndpoint {
 					$image = $cf->apply_to_image( $image );
 				}
 			} catch ( \Throwable $e ) {
-				error_log( 'BltGallery S3 upload failed: ' . $e->getMessage() );
+				error_log( 'BLT Gallery S3 upload failed: ' . $e->getMessage() );
 			}
 		} elseif ( 'r2' === $driver && R2Storage::is_configured() ) {
 			try {
 				$r2    = new R2Storage();
 				$image = $r2->upload_image( $image );
 			} catch ( \Throwable $e ) {
-				error_log( 'BltGallery R2 upload failed: ' . $e->getMessage() );
+				error_log( 'BLT Gallery R2 upload failed: ' . $e->getMessage() );
 			}
 		}
 		// 'local' driver: image already saved locally by ImageProcessor, nothing else to do.

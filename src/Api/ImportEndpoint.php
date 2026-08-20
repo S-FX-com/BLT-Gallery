@@ -9,6 +9,8 @@ use WP_REST_Response;
 use WP_Error;
 use BltGallery\Import\NextGenImporter;
 use BltGallery\Import\ModulaImporter;
+use BltGallery\Import\ImportJob;
+use BltGallery\Import\ImportRunner;
 
 /**
  * REST API endpoints for the gallery importer tool.
@@ -20,6 +22,17 @@ use BltGallery\Import\ModulaImporter;
  * GET  /bltgallery/v1/import/modula/status    – detect if Modula galleries exist
  * GET  /bltgallery/v1/import/modula/preview   – list Modula galleries with image counts
  * POST /bltgallery/v1/import/modula/run       – run the import (optionally limit to gallery IDs)
+ *
+ * Background migrations (both sources, {source} = nextgen|modula):
+ *
+ * POST /bltgallery/v1/import/{source}/start   – queue a background migration
+ * GET  /bltgallery/v1/import/{source}/job     – poll progress for the current job
+ * POST /bltgallery/v1/import/{source}/cancel  – stop the current job
+ * POST /bltgallery/v1/import/{source}/tick    – run one pass in the foreground
+ *
+ * The /run routes stay for backwards compatibility, but the admin UI drives
+ * the /start + /job pair so large collections can finish with the browser
+ * closed.
  */
 class ImportEndpoint {
 
@@ -138,6 +151,84 @@ class ImportEndpoint {
 						'items'       => [ 'type' => 'integer' ],
 						'description' => __( 'Specific Modula gallery IDs to migrate. Omit to migrate all.', 'bltgallery' ),
 						'required'    => false,
+					],
+				],
+			]
+		);
+
+		// ------------------------------------------------------------------
+		// Background jobs (shared by every source)
+		// ------------------------------------------------------------------
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/(?P<source>nextgen|modula)/start',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'job_start' ],
+				'permission_callback' => [ $this, 'permission' ],
+				'args'                => [
+					'source'      => [
+						'type'     => 'string',
+						'enum'     => ImportRunner::SOURCES,
+						'required' => true,
+					],
+					'gallery_ids' => [
+						'type'        => 'array',
+						'items'       => [ 'type' => 'integer' ],
+						'description' => __( 'Specific source gallery IDs to migrate. Omit to migrate all.', 'bltgallery' ),
+						'required'    => false,
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/(?P<source>nextgen|modula)/job',
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'job_status' ],
+				'permission_callback' => [ $this, 'permission' ],
+				'args'                => [
+					'source' => [
+						'type'     => 'string',
+						'enum'     => ImportRunner::SOURCES,
+						'required' => true,
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/(?P<source>nextgen|modula)/cancel',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'job_cancel' ],
+				'permission_callback' => [ $this, 'permission' ],
+				'args'                => [
+					'source' => [
+						'type'     => 'string',
+						'enum'     => ImportRunner::SOURCES,
+						'required' => true,
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/import/(?P<source>nextgen|modula)/tick',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'job_tick' ],
+				'permission_callback' => [ $this, 'permission' ],
+				'args'                => [
+					'source' => [
+						'type'     => 'string',
+						'enum'     => ImportRunner::SOURCES,
+						'required' => true,
 					],
 				],
 			]
@@ -344,6 +435,107 @@ class ImportEndpoint {
 		$results = $importer->import( $gallery_ids );
 
 		return new WP_REST_Response( $results, 200 );
+	}
+
+	// ------------------------------------------------------------------
+	// Background job handlers
+	// ------------------------------------------------------------------
+
+	/**
+	 * Queue a background migration and return the freshly created job.
+	 *
+	 * Returns immediately: the copying happens in ImportRunner passes, so the
+	 * admin can close the page while it runs.
+	 */
+	public function job_start( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$source      = (string) $request->get_param( 'source' );
+		$gallery_ids = $this->sanitize_gallery_ids( $request->get_param( 'gallery_ids' ) );
+
+		try {
+			$job = ImportRunner::start( $source, $gallery_ids );
+		} catch ( \Throwable $e ) {
+			return new WP_Error( 'import_start_failed', $e->getMessage(), [ 'status' => 409 ] );
+		}
+
+		return new WP_REST_Response( ImportJob::to_response( $job ), 201 );
+	}
+
+	/**
+	 * Current progress for a source.
+	 *
+	 * Doubles as the stall watchdog: if the worker died, polling revives it,
+	 * and the `stalled` flag tells the admin page it may need to drive the
+	 * job in the foreground (hosts with WP-Cron and loopback both blocked).
+	 */
+	public function job_status( WP_REST_Request $request ): WP_REST_Response {
+		$source = (string) $request->get_param( 'source' );
+		$job    = ImportJob::get( $source, true );
+
+		if ( ! $job ) {
+			return new WP_REST_Response( ImportJob::idle_response( $source ) );
+		}
+
+		$stalled = ImportRunner::is_stalled( $job );
+
+		if ( $stalled ) {
+			$job = ImportRunner::revive( $source ) ?: $job;
+		}
+
+		return new WP_REST_Response( ImportJob::to_response( $job, $stalled ) );
+	}
+
+	/**
+	 * Stop a running migration. Galleries already copied stay put.
+	 */
+	public function job_cancel( WP_REST_Request $request ): WP_REST_Response {
+		$source = (string) $request->get_param( 'source' );
+		$job    = ImportRunner::cancel( $source );
+
+		if ( ! $job ) {
+			return new WP_REST_Response( ImportJob::idle_response( $source ) );
+		}
+
+		return new WP_REST_Response( ImportJob::to_response( $job ) );
+	}
+
+	/**
+	 * Run one migration pass inside this request.
+	 *
+	 * The admin page falls back to this when a job stalls, which happens on
+	 * hosts where WP-Cron is disabled and loopback HTTP requests are blocked.
+	 * The budget is deliberately short so the browser request still returns
+	 * promptly; progress simply continues on the next tick.
+	 */
+	public function job_tick( WP_REST_Request $request ): WP_REST_Response {
+		$source = (string) $request->get_param( 'source' );
+
+		$job = ImportRunner::process( $source, 20.0 );
+
+		if ( ! $job ) {
+			return new WP_REST_Response( ImportJob::idle_response( $source ) );
+		}
+
+		return new WP_REST_Response( ImportJob::to_response( $job ) );
+	}
+
+	/**
+	 * Normalise a gallery_ids parameter to positive ints, or null for "all".
+	 *
+	 * @return int[]|null
+	 */
+	private function sanitize_gallery_ids( $gallery_ids ): ?array {
+		if ( empty( $gallery_ids ) ) {
+			return null;
+		}
+
+		$ids = array_values(
+			array_filter(
+				array_map( 'intval', (array) $gallery_ids ),
+				static fn( $id ) => $id > 0
+			)
+		);
+
+		return $ids ?: null;
 	}
 
 	// ------------------------------------------------------------------
