@@ -167,10 +167,14 @@
 				? g.settings.albums
 				: ( g.settings && g.settings.category ? [ g.settings.category ] : [] );
 			const date   = ( g.settings && g.settings.gallery_date ) || g.created_at;
+			const count  = parseInt( g.image_count, 10 ) || 0;
 			const shortcode = `[blt_gallery id="${ g.id }"]`;
 			return `
 				<tr>
 					<td><strong><a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
+					<td>${ count > 0
+						? escHtml( fmtInt( count ) )
+						: '<span class="bltgallery-muted">0</span>' }</td>
 					<td>${ escHtml( g.display_type ) }</td>
 					<td>${ albums.length
 						? albums.map( ( a ) => `<span class="bltgallery-cat-pill">${ escHtml( a ) }</span>` ).join( ' ' )
@@ -194,6 +198,7 @@
 				<thead>
 					<tr>
 						<th>Title</th>
+						<th style="width:6em">Images</th>
 						<th>Display Type</th>
 						<th>Album</th>
 						<th>Shortcode</th>

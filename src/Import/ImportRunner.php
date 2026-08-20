@@ -61,6 +61,16 @@ class ImportRunner {
 	const STALL_SECONDS = 120;
 
 	/**
+	 * A job that has not started at all gets a much shorter window. Both
+	 * kick-off routes (WP-Cron's own loopback and ours) are requests the site
+	 * makes to its own public hostname, which some setups — a proxy that
+	 * won't hairpin, a firewall rule, a WAF challenge — refuse. Nothing
+	 * should take this long to get going, so failing over to the foreground
+	 * fallback quickly beats leaving the admin watching "Queued".
+	 */
+	const QUEUED_STALL_SECONDS = 15;
+
+	/**
 	 * How many times one position may be attempted before the image sitting
 	 * there is written off. See note_attempt() for why this exists.
 	 */
@@ -181,7 +191,11 @@ class ImportRunner {
 			return false;
 		}
 
-		return ( time() - (int) ( $job['updated_at'] ?? 0 ) ) > self::STALL_SECONDS;
+		$window = ( 0 === (int) ( $job['started_at'] ?? 0 ) )
+			? self::QUEUED_STALL_SECONDS
+			: self::STALL_SECONDS;
+
+		return ( time() - (int) ( $job['updated_at'] ?? 0 ) ) > $window;
 	}
 
 	/**
