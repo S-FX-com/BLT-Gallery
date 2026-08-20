@@ -33,12 +33,42 @@ class ImageFiles {
 	private static array $clients = [];
 
 	/**
-	 * Delete everything belonging to one image.
+	 * Delete everything belonging to one image, right now.
+	 *
+	 * Fine for a single image — four requests at worst. Removing a whole
+	 * gallery goes the other way: local files inline, remote keys handed to
+	 * StoragePurgeQueue.
 	 *
 	 * @return int How many files were removed.
 	 */
 	public static function purge( Image $image ): int {
 		return self::purge_remote( $image ) + self::purge_local( $image );
+	}
+
+	/**
+	 * The remote object keys belonging to an image — the original plus every
+	 * thumbnail — or an empty array when it was never offloaded.
+	 *
+	 * @return string[]
+	 */
+	public static function remote_keys( Image $image ): array {
+		if ( ! in_array( $image->storage_driver, [ 's3', 'r2' ], true ) ) {
+			return [];
+		}
+
+		$keys = [];
+
+		if ( $image->s3_key ) {
+			$keys[] = (string) $image->s3_key;
+		}
+
+		foreach ( (array) ( $image->meta['thumbs'] ?? [] ) as $thumb ) {
+			if ( ! empty( $thumb['s3_key'] ) ) {
+				$keys[] = (string) $thumb['s3_key'];
+			}
+		}
+
+		return $keys;
 	}
 
 	/**
@@ -75,7 +105,7 @@ class ImageFiles {
 		return $removed;
 	}
 
-	private static function purge_local( Image $image ): int {
+	public static function purge_local( Image $image ): int {
 		$removed = 0;
 
 		$paths = [];

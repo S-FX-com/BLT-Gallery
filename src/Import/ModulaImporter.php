@@ -7,6 +7,7 @@ namespace BltGallery\Import;
 use BltGallery\Core\GalleryRepository;
 use BltGallery\Core\ImageProcessor;
 use BltGallery\Core\ImageRepository;
+use BltGallery\Core\StorageOffloader;
 use BltGallery\Models\Gallery;
 
 /**
@@ -300,6 +301,11 @@ class ModulaImporter implements SourceImporter {
 				if ( '' !== $title ) {
 					$image->meta['title'] = $title;
 				}
+
+				// Push it out to R2/S3 when offloading is on. Without this a
+				// migration fills the database and the local disk while the
+				// bucket stays empty.
+				$image = StorageOffloader::offload( $image );
 
 				ImageRepository::save( $image );
 				$result['imported']++;

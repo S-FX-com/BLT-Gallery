@@ -261,6 +261,7 @@ class GalleryEndpoint {
 				'deleted'   => $result['deleted'],
 				'images'    => $result['images'],
 				'files'     => $result['files'],
+				'queued'    => $result['queued'],
 				'remaining' => $result['remaining'],
 			]
 		);
@@ -302,6 +303,7 @@ class GalleryEndpoint {
 			'remaining' => [],
 			'images'    => 0,
 			'files'     => 0,
+			'queued'    => 0,
 		];
 
 		foreach ( $ids as $index => $id ) {
@@ -316,6 +318,7 @@ class GalleryEndpoint {
 
 			$result['images'] += $one['images'];
 			$result['files']  += $one['files'];
+			$result['queued'] += $one['queued'];
 
 			if ( $one['missing'] ) {
 				$result['missing'][] = $id;

@@ -482,7 +482,10 @@
 			state.selected.clear();
 			showNotice(
 				`Deleted ${ fmtInt( done.galleries ) } galler${ 1 === done.galleries ? 'y' : 'ies' }` +
-				( done.images ? ` and ${ fmtInt( done.images ) } image${ 1 === done.images ? '' : 's' }.` : '.' )
+				( done.images ? ` and ${ fmtInt( done.images ) } image${ 1 === done.images ? '' : 's' }.` : '.' ) +
+				// Offloaded files are cleared on a scheduled run rather than
+				// making the browser wait on a few thousand bucket requests.
+				( done.queued ? ` ${ fmtInt( done.queued ) } offloaded file${ 1 === done.queued ? '' : 's' } will be removed from your bucket in the background.` : '' )
 			);
 		} catch ( e ) {
 			showNotice( e.message, 'error' );
@@ -501,7 +504,7 @@
 	 */
 	async function deleteGalleries( ids, galleries, onProgress ) {
 		let queue = ids.slice();
-		const tally = { galleries: 0, images: 0, files: 0 };
+		const tally = { galleries: 0, images: 0, files: 0, queued: 0 };
 
 		while ( queue.length ) {
 			const res = await api( '/galleries', { method: 'DELETE', body: { ids: queue } } );
@@ -516,6 +519,7 @@
 			tally.galleries += ( res.deleted || [] ).length;
 			tally.images    += res.images || 0;
 			tally.files     += res.files || 0;
+			tally.queued    += res.queued || 0;
 
 			const next = Array.isArray( res.remaining ) ? res.remaining : [];
 

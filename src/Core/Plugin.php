@@ -54,6 +54,7 @@ final class Plugin {
 	}
 
 	public static function deactivate(): void {
+		wp_unschedule_hook( StoragePurgeQueue::HOOK );
 		// Stop any queued background migration passes; the job state itself
 		// is left alone so a reactivated plugin can resume from where it got
 		// to rather than re-copying everything.
@@ -76,6 +77,9 @@ final class Plugin {
 				delete_option( ImportJob::option_name( $source ) );
 				delete_option( ImportRunner::LOCK_PREFIX . $source );
 			}
+
+			delete_option( StoragePurgeQueue::OPTION );
+			delete_option( StoragePurgeQueue::LOCK );
 		}
 	}
 
@@ -94,6 +98,9 @@ final class Plugin {
 		// branch below because the worker runs on WP-Cron and admin-ajax
 		// requests that carry no admin screen.
 		ImportRunner::init();
+
+		// Deletes remote objects for galleries that have already gone.
+		StoragePurgeQueue::init();
 
 		if ( is_admin() ) {
 			$admin = new AdminMenu();

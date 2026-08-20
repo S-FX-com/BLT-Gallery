@@ -10,9 +10,7 @@ use WP_Error;
 use BltGallery\Core\GalleryRepository;
 use BltGallery\Core\ImageProcessor;
 use BltGallery\Core\ImageRepository;
-use BltGallery\Aws\CloudFrontCDN;
-use BltGallery\Aws\S3Storage;
-use BltGallery\Storage\R2Storage;
+use BltGallery\Core\StorageOffloader;
 
 /**
  * Handles multipart image uploads.
@@ -20,8 +18,10 @@ use BltGallery\Storage\R2Storage;
  * POST /bltgallery/v1/galleries/{gallery_id}/upload
  *
  * Accepts:
- *   - file   : the uploaded file (multipart/form-data)
- *   - storage: 'local' | 's3' | 'r2' – override the default storage driver for this upload
+ *   - file : the uploaded file (multipart/form-data)
+ *
+ * Where the file ends up is decided by StorageOffloader from the plugin's
+ * settings, the same way an imported image is.
  */
 class UploadEndpoint {
 
@@ -79,30 +79,9 @@ class UploadEndpoint {
 			return new WP_Error( 'processing_failed', $e->getMessage(), [ 'status' => 500 ] );
 		}
 
-		// Upload to the configured storage driver.
-		$driver = $this->resolve_storage_driver( $request );
-
-		if ( 's3' === $driver && S3Storage::is_configured() ) {
-			try {
-				$s3    = new S3Storage();
-				$image = $s3->upload_image( $image );
-
-				$cf = new CloudFrontCDN();
-				if ( $cf->is_configured() ) {
-					$image = $cf->apply_to_image( $image );
-				}
-			} catch ( \Throwable $e ) {
-				error_log( 'BLT Gallery S3 upload failed: ' . $e->getMessage() );
-			}
-		} elseif ( 'r2' === $driver && R2Storage::is_configured() ) {
-			try {
-				$r2    = new R2Storage();
-				$image = $r2->upload_image( $image );
-			} catch ( \Throwable $e ) {
-				error_log( 'BLT Gallery R2 upload failed: ' . $e->getMessage() );
-			}
-		}
-		// 'local' driver: image already saved locally by ImageProcessor, nothing else to do.
+		// Hand it to whichever remote store is configured. Local storage is a
+		// no-op — ImageProcessor has already written the files.
+		$image = StorageOffloader::offload( $image );
 
 		// Persist.
 		$image = ImageRepository::save( $image );
@@ -145,42 +124,6 @@ class UploadEndpoint {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Pick the storage driver for this upload.
-	 *
-	 * Priority:
-	 *   1. General Settings → "Integrations" checkbox enabled AND that
-	 *      backend's credentials are configured
-	 *   2. Legacy per-provider `auto_offload` flag (pre-3.1)
-	 *   3. Local
-	 *
-	 * When both S3 and R2 are enabled, S3 wins (it was supported first).
-	 */
-	private function resolve_storage_driver( WP_REST_Request $request ): string {
-		$general = get_option( 'bltgallery_settings', [] );
-		$general = is_array( $general ) ? $general : [];
-
-		if ( ! empty( $general['enable_s3'] ) && S3Storage::is_configured() ) {
-			return 's3';
-		}
-		if ( ! empty( $general['enable_r2'] ) && R2Storage::is_configured() ) {
-			return 'r2';
-		}
-
-		// Legacy: per-provider auto_offload flag (pre-3.1 installs).
-		$aws = get_option( 'bltgallery_aws_settings', [] );
-		if ( ! empty( $aws['auto_offload'] ) && S3Storage::is_configured() ) {
-			return 's3';
-		}
-
-		$r2 = get_option( 'bltgallery_r2_settings', [] );
-		if ( ! empty( $r2['auto_offload'] ) && R2Storage::is_configured() ) {
-			return 'r2';
-		}
-
-		return 'local';
 	}
 
 	public function permission(): bool {
