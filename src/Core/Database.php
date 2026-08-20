@@ -5,7 +5,7 @@ declare( strict_types=1 );
 namespace BltGallery\Core;
 
 /**
- * Manages custom database tables for BltGallery.
+ * Manages custom database tables for BLT Gallery.
  *
  * Tables:
  *   {prefix}blt_galleries  – gallery metadata

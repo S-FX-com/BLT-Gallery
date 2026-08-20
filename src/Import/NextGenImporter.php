@@ -150,6 +150,16 @@ class NextGenImporter implements SourceImporter {
 		return __( 'NextGEN Gallery tables not found.', 'bltgallery' );
 	}
 
+	public function id_key(): string {
+		return 'gid';
+	}
+
+	public function target_slug_base( int $source_id ): string {
+		$ngg = $this->get_gallery_row( $source_id );
+
+		return $ngg ? sanitize_title( (string) $ngg['name'] ) . '-from-nextgen' : '';
+	}
+
 	/**
 	 * Build the work queue: one entry per gallery with its image count.
 	 *
@@ -201,7 +211,7 @@ class NextGenImporter implements SourceImporter {
 
 		$gallery               = new Gallery();
 		$gallery->title        = sanitize_text_field( $ngg['title'] ?: $ngg['name'] );
-		$gallery->slug         = $this->unique_slug( sanitize_title( $ngg['name'] ) . '-from-nextgen' );
+		$gallery->slug         = $this->unique_slug( sanitize_title( (string) $ngg['name'] ) . '-from-nextgen' );
 		$gallery->description  = sanitize_textarea_field( $ngg['galdesc'] ?? '' );
 		$gallery->display_type = 'masonry';
 		$gallery->author_id    = get_current_user_id();
@@ -319,7 +329,7 @@ class NextGenImporter implements SourceImporter {
 	}
 
 	/**
-	 * Generate a slug that does not already exist in BltGallery.
+	 * Generate a slug that does not already exist in BLT Gallery.
 	 */
 	private function unique_slug( string $base ): string {
 		$slug  = $base;

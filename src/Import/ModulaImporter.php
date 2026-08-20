@@ -165,6 +165,20 @@ class ModulaImporter implements SourceImporter {
 		return __( 'No Modula galleries found.', 'bltgallery' );
 	}
 
+	public function id_key(): string {
+		return 'id';
+	}
+
+	public function target_slug_base( int $source_id ): string {
+		$post = get_post( $source_id );
+
+		if ( ! $post instanceof \WP_Post || self::POST_TYPE !== $post->post_type ) {
+			return '';
+		}
+
+		return $this->slug_base( $post );
+	}
+
 	/**
 	 * Build the work queue: one entry per gallery with its image count.
 	 *
@@ -216,7 +230,7 @@ class ModulaImporter implements SourceImporter {
 
 		$gallery               = new Gallery();
 		$gallery->title        = sanitize_text_field( $post->post_title ?: __( 'Untitled Modula Gallery', 'bltgallery' ) );
-		$gallery->slug         = $this->unique_slug( sanitize_title( $post->post_name ?: $post->post_title ) . '-from-modula' );
+		$gallery->slug         = $this->unique_slug( $this->slug_base( $post ) );
 		$gallery->description  = sanitize_textarea_field( $post->post_content ?: $post->post_excerpt );
 		$gallery->display_type = 'masonry';
 		$gallery->author_id    = get_current_user_id();
@@ -352,7 +366,14 @@ class ModulaImporter implements SourceImporter {
 	}
 
 	/**
-	 * Generate a slug that does not already exist in BltGallery.
+	 * The destination slug for a Modula gallery, before uniqueness.
+	 */
+	private function slug_base( \WP_Post $post ): string {
+		return sanitize_title( $post->post_name ?: $post->post_title ) . '-from-modula';
+	}
+
+	/**
+	 * Generate a slug that does not already exist in BLT Gallery.
 	 */
 	private function unique_slug( string $base ): string {
 		$base  = '' !== $base ? $base : 'modula-gallery';

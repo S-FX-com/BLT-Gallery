@@ -10,6 +10,9 @@ use WP_Error;
 use BltGallery\Import\NextGenImporter;
 use BltGallery\Import\ModulaImporter;
 use BltGallery\Import\ImportJob;
+use BltGallery\Import\ImportLedger;
+use BltGallery\Import\SourceImporter;
+use BltGallery\Admin\AdminMenu;
 use BltGallery\Import\ImportRunner;
 
 /**
@@ -258,19 +261,50 @@ class ImportEndpoint {
 	 * Return a list of NextGEN galleries with their image counts.
 	 */
 	public function preview(): WP_REST_Response {
-		$importer  = new NextGenImporter();
+		return new WP_REST_Response( $this->preview_for( new NextGenImporter() ) );
+	}
 
+	/**
+	 * Build a preview payload: the source's galleries, each carrying whether
+	 * it has already been migrated so the picker can tick it off rather than
+	 * queue it up for a duplicate copy.
+	 */
+	private function preview_for( SourceImporter $importer ): array {
 		if ( ! $importer->is_available() ) {
-			return new WP_REST_Response( [
+			return [
 				'available' => false,
 				'galleries' => [],
-			] );
+			];
 		}
 
-		return new WP_REST_Response( [
+		$galleries = $importer->get_galleries();
+		$status    = ImportLedger::status_for( $importer, $galleries );
+		$id_key    = $importer->id_key();
+		$edit_base = admin_url( 'admin.php?page=' . AdminMenu::MENU_SLUG . '&action=edit&gallery_id=' );
+
+		foreach ( $galleries as &$gallery ) {
+			$source_id = (int) ( $gallery[ $id_key ] ?? 0 );
+			$record    = $status[ $source_id ] ?? null;
+
+			$gallery['imported'] = $record
+				? [
+					'state'        => $record['state'],
+					'gallery_id'   => $record['gallery_id'],
+					'gallery_url'  => $edit_base . $record['gallery_id'],
+					'title'        => $record['title'],
+					'completed_at' => $record['completed_at'],
+					'images'       => $record['images'],
+					'skipped'      => $record['skipped'],
+					'matched_by'   => $record['matched_by'],
+				]
+				: null;
+		}
+		unset( $gallery );
+
+		return [
 			'available' => true,
-			'galleries' => $importer->get_galleries(),
-		] );
+			'galleries' => $galleries,
+		];
 	}
 
 	/**
@@ -384,19 +418,7 @@ class ImportEndpoint {
 	 * Return a list of Modula galleries with their image counts.
 	 */
 	public function modula_preview(): WP_REST_Response {
-		$importer = new ModulaImporter();
-
-		if ( ! $importer->is_available() ) {
-			return new WP_REST_Response( [
-				'available' => false,
-				'galleries' => [],
-			] );
-		}
-
-		return new WP_REST_Response( [
-			'available' => true,
-			'galleries' => $importer->get_galleries(),
-		] );
+		return new WP_REST_Response( $this->preview_for( new ModulaImporter() ) );
 	}
 
 	/**

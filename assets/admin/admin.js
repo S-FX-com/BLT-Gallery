@@ -146,31 +146,154 @@
 		} );
 	}
 
+	// The REST endpoint's per_page ceiling.
+	const GALLERY_PAGE_SIZE = 100;
+
+	/**
+	 * How each sortable column is read and ordered.
+	 *
+	 * `get` pulls out exactly what the column displays, so the order on screen
+	 * always matches the values on screen — the Date column in particular
+	 * shows the event date when one is set and falls back to the created date.
+	 */
+	const GALLERY_SORTS = {
+		id: {
+			label: 'ID',
+			first: 'asc',
+			get:   ( g ) => parseInt( g.id, 10 ) || 0,
+			cmp:   ( a, b ) => a - b,
+		},
+		title: {
+			label: 'Title',
+			first: 'asc',
+			get:   ( g ) => String( g.title || '' ),
+			// Natural ordering, so "Summit 10" lands after "Summit 9".
+			cmp:   ( a, b ) => a.localeCompare( b, undefined, { numeric: true, sensitivity: 'base' } ),
+		},
+		images: {
+			label: 'Images',
+			first: 'desc',
+			get:   ( g ) => parseInt( g.image_count, 10 ) || 0,
+			cmp:   ( a, b ) => a - b,
+		},
+		date: {
+			label: 'Date',
+			first: 'desc',
+			get:   galleryDate,
+			// "YYYY-MM-DD" and "YYYY-MM-DD HH:MM:SS" both sort chronologically
+			// as plain strings, so no Date parsing — and no timezone — needed.
+			cmp:   ( a, b ) => ( a < b ? -1 : a > b ? 1 : 0 ),
+		},
+	};
+
+	function galleryDate( g ) {
+		return String( ( g.settings && g.settings.gallery_date ) || g.created_at || '' );
+	}
+
+	function readGallerySort() {
+		const params  = new URLSearchParams( window.location.search );
+		const orderby = params.get( 'orderby' );
+		const order   = params.get( 'order' );
+
+		return {
+			orderby: GALLERY_SORTS[ orderby ] ? orderby : 'date',
+			order:   'asc' === order ? 'asc' : 'desc',
+		};
+	}
+
+	/**
+	 * Mirror the sort into the address bar so it survives a reload and can be
+	 * linked to, without navigating away and refetching.
+	 */
+	function writeGallerySort( state ) {
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'orderby', state.orderby );
+		url.searchParams.set( 'order', state.order );
+		window.history.replaceState( null, '', url );
+	}
+
+	function sortGalleries( galleries, state ) {
+		const spec = GALLERY_SORTS[ state.orderby ] || GALLERY_SORTS.date;
+		const dir  = 'asc' === state.order ? 1 : -1;
+
+		return galleries.slice().sort( ( a, b ) => {
+			const cmp = spec.cmp( spec.get( a ), spec.get( b ) );
+
+			// Ties fall back to id so equal values keep a settled order
+			// instead of shuffling between renders.
+			return cmp ? cmp * dir : ( parseInt( a.id, 10 ) || 0 ) - ( parseInt( b.id, 10 ) || 0 );
+		} );
+	}
+
+	/**
+	 * Fetch every gallery, not just the first page.
+	 *
+	 * Sorting a silently truncated list would put the wrong rows on screen —
+	 * "oldest first" would really mean "oldest of the newest hundred".
+	 */
+	async function fetchAllGalleries() {
+		const all = [];
+
+		// Bounded so a misbehaving endpoint can't spin forever.
+		for ( let page = 1; page <= 50; page++ ) {
+			const batch = await api( `/galleries?per_page=${ GALLERY_PAGE_SIZE }&page=${ page }` );
+
+			if ( ! Array.isArray( batch ) || batch.length === 0 ) break;
+
+			all.push( ...batch );
+
+			if ( batch.length < GALLERY_PAGE_SIZE ) break;
+		}
+
+		return all;
+	}
+
 	async function loadGalleryList( container, listUrl ) {
 		container.innerHTML = '<p class="bltgallery-loading">Loading…</p>';
 		try {
-			const galleries = await api( '/galleries?per_page=100' );
-			renderGalleryTable( container, galleries, listUrl );
+			renderGalleryTable( container, await fetchAllGalleries(), listUrl );
 		} catch ( e ) {
 			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
 		}
 	}
 
-	function renderGalleryTable( container, galleries, listUrl ) {
+	/**
+	 * One sortable column heading, carrying the direction its next click
+	 * should apply.
+	 */
+	function sortHeader( key, state, attrs = '' ) {
+		const spec   = GALLERY_SORTS[ key ];
+		const active = state.orderby === key;
+		const dir    = active ? state.order : spec.first;
+		const next   = active ? ( 'asc' === state.order ? 'desc' : 'asc' ) : spec.first;
+
+		return `<th${ attrs } class="manage-column bltgallery-sortable${ active ? ' is-sorted is-' + dir : '' }"
+			aria-sort="${ active ? ( 'asc' === dir ? 'ascending' : 'descending' ) : 'none' }">
+			<button type="button" class="bltgallery-sort" data-sort="${ escAttr( key ) }" data-next="${ escAttr( next ) }">
+				<span>${ escHtml( spec.label ) }</span>
+				<span class="bltgallery-sort__arrow" aria-hidden="true"></span>
+			</button>
+		</th>`;
+	}
+
+	function renderGalleryTable( container, galleries, listUrl, state ) {
+		state = state || readGallerySort();
+
 		if ( galleries.length === 0 ) {
 			container.innerHTML = '<div class="bltgallery-empty"><p>No galleries yet. Create your first one!</p></div>';
 			return;
 		}
 
-		const rows = galleries.map( ( g ) => {
+		const rows = sortGalleries( galleries, state ).map( ( g ) => {
 			const albums = Array.isArray( g.settings && g.settings.albums )
 				? g.settings.albums
 				: ( g.settings && g.settings.category ? [ g.settings.category ] : [] );
-			const date   = ( g.settings && g.settings.gallery_date ) || g.created_at;
+			const date   = galleryDate( g );
 			const count  = parseInt( g.image_count, 10 ) || 0;
 			const shortcode = `[blt_gallery id="${ g.id }"]`;
 			return `
 				<tr>
+					<td class="bltgallery-col-id">${ escHtml( String( g.id ) ) }</td>
 					<td><strong><a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
 					<td>${ count > 0
 						? escHtml( fmtInt( count ) )
@@ -194,34 +317,46 @@
 		} ).join( '' );
 
 		container.innerHTML = `
-			<table class="wp-list-table widefat fixed striped bltgallery-table">
+			<table class="wp-list-table widefat striped bltgallery-table">
 				<thead>
 					<tr>
-						<th>Title</th>
-						<th style="width:6em">Images</th>
+						${ sortHeader( 'id', state, ' style="width:5em"' ) }
+						${ sortHeader( 'title', state ) }
+						${ sortHeader( 'images', state, ' style="width:7em"' ) }
 						<th>Display Type</th>
 						<th>Album</th>
 						<th>Shortcode</th>
-						<th>Date</th>
-						<th>Actions</th>
+						${ sortHeader( 'date', state, ' style="width:9em"' ) }
+						<th style="width:11em">Actions</th>
 					</tr>
 				</thead>
 				<tbody>${ rows }</tbody>
 			</table>
 		`;
 
+		container.querySelectorAll( '.bltgallery-sort' ).forEach( ( btn ) => {
+			btn.addEventListener( 'click', () => {
+				const next = { orderby: btn.dataset.sort, order: btn.dataset.next };
+				writeGallerySort( next );
+				renderGalleryTable( container, galleries, listUrl, next );
+			} );
+		} );
+
 		container.querySelectorAll( '.bltgallery-delete-btn' ).forEach( ( btn ) => {
 			btn.addEventListener( 'click', async () => {
-				const id    = btn.dataset.id;
+				const id    = parseInt( btn.dataset.id, 10 );
 				const title = btn.dataset.title;
 				if ( ! window.confirm( `Delete gallery "${ title }"? This cannot be undone.` ) ) return;
 				btn.disabled = true;
 				try {
 					await api( `/galleries/${ id }`, { method: 'DELETE' } );
-					btn.closest( 'tr' ).remove();
-					if ( container.querySelectorAll( 'tbody tr' ).length === 0 ) {
-						renderGalleryTable( container, [], listUrl );
-					}
+
+					// Drop it from the working set as well as the DOM, so a
+					// re-sort doesn't bring the row back.
+					const at = galleries.findIndex( ( g ) => parseInt( g.id, 10 ) === id );
+					if ( at > -1 ) galleries.splice( at, 1 );
+
+					renderGalleryTable( container, galleries, listUrl, state );
 				} catch ( e ) {
 					showNotice( e.message, 'error' );
 					btn.disabled = false;
@@ -1489,27 +1624,40 @@
 			return;
 		}
 
+		// Already-migrated galleries start unticked: importing one again does
+		// not update the previous copy, it makes a second one.
+		const fresh = galleries.filter( ( g ) => ! g.imported );
+		const done  = galleries.length - fresh.length;
+
 		const rows = galleries.map( ( g ) => `
-			<tr>
-				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }" checked></td>
+			<tr${ g.imported ? ' class="bltgallery-import-row--done"' : '' }>
+				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }"${ g.imported ? '' : ' checked' }></td>
 				<td><strong>${ escHtml( opts.titleFor( g ) || '' ) }</strong></td>
 				<td>${ escHtml( opts.descFor( g ) || '—' ) }</td>
 				<td>${ escHtml( fmtInt( g.image_count ) ) }</td>
+				<td>${ importedCell( g.imported ) }</td>
 			</tr>
 		` ).join( '' );
 
-		const totalImages = galleries.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+		const totalImages = fresh.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+
+		const doneNote = done > 0
+			? `<p class="bltgallery-muted"><strong>${ escHtml( fmtInt( done ) ) }</strong> of these ${ 1 === done ? 'has' : 'have' } already been migrated and ${ 1 === done ? 'is' : 'are' } unticked.
+				Importing one again creates a second copy rather than updating the first.</p>`
+			: '';
 
 		container.innerHTML = `
 			<div class="notice notice-success inline"><p>${ escHtml( opts.detectedMsg ) }</p></div>
 			<p><strong>Note:</strong> ${ escHtml( opts.note ) }</p>
-			<table class="wp-list-table widefat fixed striped bltgallery-table" style="margin-bottom:1rem">
+			${ doneNote }
+			<table class="wp-list-table widefat striped bltgallery-table" style="margin-bottom:1rem">
 				<thead>
 					<tr>
-						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all" checked></th>
+						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all"${ fresh.length === galleries.length ? ' checked' : '' }></th>
 						<th>Gallery Title</th>
 						<th>Description</th>
-						<th>Images</th>
+						<th style="width:6em">Images</th>
+						<th style="width:18em">Status</th>
 					</tr>
 				</thead>
 				<tbody>${ rows }</tbody>
@@ -1836,6 +1984,35 @@
 	// ------------------------------------------------------------------
 	// Progress helpers
 	// ------------------------------------------------------------------
+
+	/**
+	 * The Status cell in the picker: how — and whether — this source gallery
+	 * has already been brought across.
+	 */
+	function importedCell( imported ) {
+		if ( ! imported ) return '<span class="bltgallery-muted">Not imported</span>';
+
+		const link = `<a href="${ escAttr( imported.gallery_url ) }">${ escHtml( imported.title ) }</a>`;
+
+		if ( 'partial' === imported.state ) {
+			return `<span class="bltgallery-import-flag bltgallery-import-flag--partial">Partly imported</span>
+				<span class="bltgallery-muted"> — ${ link } was left unfinished</span>`;
+		}
+
+		// Matched by slug rather than a stored record: migrated before the
+		// plugin started keeping track, so say so rather than overstate it.
+		if ( 'slug' === imported.matched_by ) {
+			return `<span class="bltgallery-import-flag bltgallery-import-flag--done">Imported</span>
+				<span class="bltgallery-muted" title="Matched by name — this gallery predates import tracking."> — ${ link }</span>`;
+		}
+
+		const when = imported.completed_at
+			? new Date( imported.completed_at ).toLocaleDateString()
+			: '';
+
+		return `<span class="bltgallery-import-flag bltgallery-import-flag--done">Imported</span>
+			<span class="bltgallery-muted"> — ${ link }${ when ? `, ${ escHtml( when ) }` : '' }</span>`;
+	}
 
 	function isJobActive( job ) {
 		return 'queued' === job.status || 'running' === job.status;

@@ -1169,3 +1169,77 @@
 	flex-wrap: wrap;
 	margin-top: 1rem;
 }
+
+/* ── Migration status flags ─────────────────────────────────────────── */
+
+.bltgallery-import-flag {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 3px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+
+.bltgallery-import-flag--done {
+	background: #edfaef;
+	color: #135e26;
+	border: 1px solid #b8e6c1;
+}
+
+.bltgallery-import-flag--partial {
+	background: #fcf3e4;
+	color: #8a5700;
+	border: 1px solid #f0d090;
+}
+
+/* Already migrated: still selectable, just visibly settled. */
+.bltgallery-import-row--done > td { opacity: 0.72; }
+.bltgallery-import-row--done > td:first-child,
+.bltgallery-import-row--done > td:last-child { opacity: 1; }
+
+/* ── Sortable gallery table ─────────────────────────────────────────── */
+
+.bltgallery-sortable { padding: 0 !important; }
+
+.bltgallery-sort {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	width: 100%;
+	padding: 8px 10px;
+	background: none;
+	border: 0;
+	font: inherit;
+	font-weight: 600;
+	color: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.bltgallery-sort:hover { color: var(--blt-accent); }
+.bltgallery-sort:focus-visible { outline: 2px solid var(--blt-accent); outline-offset: -2px; }
+
+/* Arrow shows the direction the column is currently sorted in, and appears
+   faintly on hover for the columns that could be. */
+.bltgallery-sort__arrow {
+	width: 0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid currentColor;
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.bltgallery-sortable:hover .bltgallery-sort__arrow { opacity: 0.4; }
+.bltgallery-sortable.is-sorted .bltgallery-sort { color: var(--blt-accent); }
+.bltgallery-sortable.is-sorted .bltgallery-sort__arrow { opacity: 1; }
+
+.bltgallery-sortable.is-asc .bltgallery-sort__arrow {
+	border-top: 0;
+	border-bottom: 5px solid currentColor;
+}
+
+.bltgallery-col-id { color: #646970; font-variant-numeric: tabular-nums; }
