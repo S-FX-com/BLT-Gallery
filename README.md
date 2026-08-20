@@ -1,4 +1,4 @@
-# Blt Gallery
+# BLT Gallery
 
 A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS S3 offloading, Cloudflare Images URL-based optimisation, and easy `[blt_gallery]` / `[blt_album]` shortcodes.
 
@@ -8,7 +8,7 @@ A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS
 
 - **Six display types**: Masonry, Tile Grid, Slideshow, Lightbox, Album, Image Slider
 - **Three shortcodes**: `[blt_gallery]` (single gallery), `[blt_album]` (collection of galleries), and `[blt_slider]` (image slider)
-- **Visual slider builder**: assemble a slider from your galleries + the media library under **Blt Gallery → Sliders**, then copy its shortcode
+- **Visual slider builder**: assemble a slider from your galleries + the media library under **BLT Gallery → Sliders**, then copy its shortcode
 - **Rich shortcode attributes** for inline styling — `cols`, `gap`, `radius`, `captions`, `autoplay`, etc.
 - **No external dependencies**: standalone plugin — no NextGEN Gallery required
 - **Background migrations**: import from NextGEN Gallery or Modula with a live progress bar — the copy runs on the server, so you can close the tab
@@ -102,7 +102,7 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 
 ### `[blt_slider]` — image slider
 
-Build a slider visually under **Blt Gallery → Sliders**: create one, add images from the **media library** and/or your **galleries**, drag to reorder, add an optional caption (description / photo credit) per slide, tweak the options, and copy the generated shortcode. A subtle caption, hover-reveal arrows, and a dot counter are built in, and every image is delivered through the plugin's Cloudflare optimisation pipeline.
+Build a slider visually under **BLT Gallery → Sliders**: create one, add images from the **media library** and/or your **galleries**, drag to reorder, add an optional caption (description / photo credit) per slide, tweak the options, and copy the generated shortcode. A subtle caption, hover-reveal arrows, and a dot counter are built in, and every image is delivered through the plugin's Cloudflare optimisation pipeline.
 
 ```
 [blt_slider id="3"]
@@ -141,12 +141,12 @@ For code-only sliders you can skip the builder and source images inline instead 
 |---------------|---------------------------------|----------------------------------------------------|
 | `galleries`   | comma-separated ints            | Gallery IDs whose images feed the slider           |
 | `slugs`       | comma-separated slugs           | Galleries by slug                                  |
-| `images`      | comma-separated ints            | Specific Blt gallery image IDs                      |
+| `images`      | comma-separated ints            | Specific BLT gallery image IDs                      |
 | `attachments` | comma-separated ints            | WordPress media attachment IDs                      |
 
 ## Migrating from another gallery plugin
 
-**Blt Gallery → Migrate** imports galleries from **Imagely NextGEN Gallery** and **Modula**. Pick the galleries you want and press *Import Selected Galleries*; your originals are only ever read from — every image is copied into Blt Gallery's own upload directory.
+**BLT Gallery → Migrate** imports galleries from **Imagely NextGEN Gallery** and **Modula**. Pick the galleries you want and press *Import Selected Galleries*; your originals are only ever read from — every image is copied into BLT Gallery's own upload directory.
 
 Migrations run as a background job, so a library of several thousand photos is no longer bound by how long a single HTTP request may run:
 
@@ -165,7 +165,7 @@ Any class implementing `BltGallery\Import\SourceImporter` can be driven by the s
 
 ## Cloudflare optimisation
 
-Blt Gallery is built to run hot on Cloudflare:
+BLT Gallery is built to run hot on Cloudflare:
 
 1. **Cloudflare R2** — *Settings → Cloudflare R2*. Auto-offload new uploads, optionally remove the local copy.
 2. **Cloudflare Image Resizing** — *Settings → Cloudflare Images*. Once enabled, the plugin rewrites every `<img>` `src` and `srcset` through `/cdn-cgi/image/` so each image is delivered in the optimal format (AVIF/WebP), size, and quality — without pre-generating extra thumbnails.

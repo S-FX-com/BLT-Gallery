@@ -5,7 +5,7 @@ declare( strict_types=1 );
 namespace BltGallery\Admin;
 
 /**
- * Registers the BltGallery admin menu and renders pure-PHP views.
+ * Registers the BLT Gallery admin menu and renders pure-PHP views.
  * No build step required.
  */
 class AdminMenu {
@@ -19,8 +19,8 @@ class AdminMenu {
 
 	public function register_pages(): void {
 		add_menu_page(
-			__( 'Blt Gallery', 'bltgallery' ),
-			__( 'Blt Gallery', 'bltgallery' ),
+			__( 'BLT Gallery', 'bltgallery' ),
+			__( 'BLT Gallery', 'bltgallery' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this, 'render_galleries_page' ],
@@ -397,7 +397,7 @@ class AdminMenu {
 			[
 				'tag'      => 'blt_slider',
 				'title'    => __( 'Image slider', 'bltgallery' ),
-				'intro'    => __( 'Renders an image slider built in Blt Gallery → Sliders. Build it visually — adding images from the media library and/or your galleries — then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path is also supported for code-only sliders.', 'bltgallery' ),
+				'intro'    => __( 'Renders an image slider built in BLT Gallery → Sliders. Build it visually — adding images from the media library and/or your galleries — then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path is also supported for code-only sliders.', 'bltgallery' ),
 				'examples' => [
 					'[blt_slider id="3"]',
 					'[blt_slider slug="homepage-hero"]',
@@ -406,11 +406,11 @@ class AdminMenu {
 					'[blt_slider attachments="123,456" arrows="0" captions="off"]',
 				],
 				'attrs'    => [
-					[ 'id',          'int',                                             __( 'Saved slider ID (primary — built in Blt Gallery → Sliders).', 'bltgallery' ) ],
+					[ 'id',          'int',                                             __( 'Saved slider ID (primary — built in BLT Gallery → Sliders).', 'bltgallery' ) ],
 					[ 'slug',        'string',                                          __( 'Saved slider slug (alternative to id).', 'bltgallery' ) ],
 					[ 'galleries',   'comma-separated ints',                            __( 'Ad-hoc: gallery IDs whose images feed the slider.', 'bltgallery' ) ],
 					[ 'slugs',       'comma-separated slugs',                           __( 'Ad-hoc: galleries by slug.', 'bltgallery' ) ],
-					[ 'images',      'comma-separated ints',                            __( 'Ad-hoc: specific Blt gallery image IDs.', 'bltgallery' ) ],
+					[ 'images',      'comma-separated ints',                            __( 'Ad-hoc: specific BLT gallery image IDs.', 'bltgallery' ) ],
 					[ 'attachments', 'comma-separated ints',                            __( 'Ad-hoc: WordPress media library attachment IDs.', 'bltgallery' ) ],
 					[ 'title',       'string',                                          __( 'Accessible label for the carousel.', 'bltgallery' ) ],
 					[ 'captions',    'on · off',                                        __( 'Show the subtle image caption / photo credit.', 'bltgallery' ) ],
@@ -502,7 +502,7 @@ class AdminMenu {
 	public function render_settings_page(): void {
 		?>
 		<div class="wrap bltgallery-wrap">
-			<h1><?php esc_html_e( 'Blt Gallery Settings', 'bltgallery' ); ?></h1>
+			<h1><?php esc_html_e( 'BLT Gallery Settings', 'bltgallery' ); ?></h1>
 			<div id="bltgallery-notice"></div>
 
 			<!-- General Settings -->

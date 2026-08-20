@@ -19,7 +19,7 @@ use BltGallery\Models\Gallery;
  *     per-image `title`, `caption`, `description`, and `alt` fields.
  *
  * Because Modula's images are ordinary attachments, this importer reads each
- * attachment's file via get_attached_file() and copies it into BltGallery's own
+ * attachment's file via get_attached_file() and copies it into BLT Gallery's own
  * upload directory through ImageProcessor. The original Modula posts, meta, and
  * media-library files are never modified or removed — unlike the NextGEN
  * importer, there is no on-disk cleanup step because the files belong to the
@@ -91,7 +91,7 @@ class ModulaImporter implements SourceImporter {
 	// ------------------------------------------------------------------
 
 	/**
-	 * Import Modula galleries into BltGallery in a single pass.
+	 * Import Modula galleries into BLT Gallery in a single pass.
 	 *
 	 * Kept for the legacy synchronous REST route and WP-CLI style callers;
 	 * the admin UI drives ImportRunner instead so large collections can run
@@ -197,7 +197,7 @@ class ModulaImporter implements SourceImporter {
 	}
 
 	/**
-	 * Create the destination BltGallery gallery for one Modula gallery post.
+	 * Create the destination BLT Gallery gallery for one Modula gallery post.
 	 *
 	 * @throws \RuntimeException When the Modula post has vanished.
 	 */

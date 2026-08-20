@@ -1,5 +1,5 @@
 /**
- * BltGallery Admin – vanilla JS, no build step required.
+ * BLT Gallery Admin – vanilla JS, no build step required.
  */
 ( function () {
 	'use strict';
@@ -1372,7 +1372,7 @@
 			sourceName:  'NextGEN Gallery',
 			setupHint:   'Install and activate <strong>Imagely NextGEN Gallery</strong> and create at least one gallery, then return to this page.',
 			detectedMsg: 'NextGEN Gallery detected. Select galleries to import below.',
-			note:        'Your original NextGEN Gallery data and files will not be modified. BltGallery copies files into its own upload directory.',
+			note:        'Your original NextGEN Gallery data and files will not be modified. BLT Gallery copies files into its own upload directory.',
 			idKey:       'gid',
 			titleFor:    ( g ) => g.title || g.name,
 			descFor:     ( g ) => g.galdesc,
@@ -1382,7 +1382,7 @@
 			},
 		} );
 
-		// If any BltGallery galleries already exist, surface the cleanup
+		// If any BLT Gallery galleries already exist, surface the cleanup
 		// panel right away so the user can revisit the page later to back
 		// up / remove the legacy NextGEN files without re-migrating.
 		try {
@@ -1399,7 +1399,7 @@
 			sourceName:  'Modula',
 			setupHint:   'Install and activate <strong>Modula</strong> and create at least one gallery, then return to this page.',
 			detectedMsg: 'Modula galleries detected. Select galleries to import below.',
-			note:        'Your original Modula galleries and media-library files are left untouched. BltGallery copies each image into its own upload directory.',
+			note:        'Your original Modula galleries and media-library files are left untouched. BLT Gallery copies each image into its own upload directory.',
 			idKey:       'id',
 			titleFor:    ( g ) => g.title,
 			descFor:     ( g ) => g.description,
@@ -1916,7 +1916,7 @@
 			<div class="notice notice-warning inline" style="margin:0 0 1rem">
 				<p>
 					<strong>⚠️ This permanently deletes the original NextGEN Gallery files from this server.</strong>
-					Your migrated copies live in BltGallery's own storage and are unaffected, but
+					Your migrated copies live in BLT Gallery's own storage and are unaffected, but
 					reinstalling NextGEN won't bring these files back. <strong>Take a backup first.</strong>
 				</p>
 			</div>
@@ -2110,7 +2110,7 @@
 		{
 			tag: 'blt_slider',
 			title: 'Image slider',
-			intro: 'Renders an image slider built in Blt Gallery → Sliders. Build it visually, then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path (galleries / attachments) is also supported for code-only sliders.',
+			intro: 'Renders an image slider built in BLT Gallery → Sliders. Build it visually, then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path (galleries / attachments) is also supported for code-only sliders.',
 			examples: [
 				`[blt_slider id="3"]`,
 				`[blt_slider slug="homepage-hero"]`,
@@ -2122,7 +2122,7 @@
 				[ 'id',          'int',                      'Saved slider ID (primary).' ],
 				[ 'slug',        'string',                   'Saved slider slug (alternative to id).' ],
 				[ 'galleries',   'comma-separated ints',     'Ad-hoc: gallery IDs whose images feed the slider.' ],
-				[ 'images',      'comma-separated ints',     'Ad-hoc: specific Blt gallery image IDs.' ],
+				[ 'images',      'comma-separated ints',     'Ad-hoc: specific BLT gallery image IDs.' ],
 				[ 'attachments', 'comma-separated ints',     'Ad-hoc: WordPress media attachment IDs.' ],
 				[ 'captions',    'on · off',                 'Show the subtle caption / photo credit.' ],
 				[ 'arrows',      '1 · 0',                    'Show the hover-reveal nav arrows.' ],
@@ -2298,7 +2298,7 @@
 	}
 
 	// ------------------------------------------------------------------
-	// Albums admin page (top-level submenu under Blt Gallery)
+	// Albums admin page (top-level submenu under BLT Gallery)
 	// ------------------------------------------------------------------
 
 	async function initAlbumsPage() {

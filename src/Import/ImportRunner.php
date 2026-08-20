@@ -495,7 +495,7 @@ class ImportRunner {
 	}
 
 	/**
-	 * Return the BltGallery gallery a queue entry copies into, creating it on
+	 * Return the BLT Gallery gallery a queue entry copies into, creating it on
 	 * first touch. Returns null when the entry can't proceed, having already
 	 * marked it done and recorded why on $job (passed by reference).
 	 */

@@ -17,7 +17,7 @@ use BltGallery\Models\Gallery;
  *   {prefix}ngg_pictures – per-image records (pid, galleryid, filename, alttext, description, …)
  *
  * Images live on disk at ABSPATH . $gallery->path . '/' . $picture->filename.
- * This importer copies files into BltGallery's own upload directory so that the
+ * This importer copies files into BLT Gallery's own upload directory so that the
  * original NextGEN files are never modified or removed.
  */
 class NextGenImporter implements SourceImporter {
@@ -76,7 +76,7 @@ class NextGenImporter implements SourceImporter {
 	// ------------------------------------------------------------------
 
 	/**
-	 * Import NextGEN galleries into BltGallery in a single pass.
+	 * Import NextGEN galleries into BLT Gallery in a single pass.
 	 *
 	 * Kept for the legacy synchronous REST route and WP-CLI style callers;
 	 * the admin UI drives ImportRunner instead so large collections can run
@@ -182,7 +182,7 @@ class NextGenImporter implements SourceImporter {
 	}
 
 	/**
-	 * Create the destination BltGallery gallery for one NextGEN gallery.
+	 * Create the destination BLT Gallery gallery for one NextGEN gallery.
 	 *
 	 * @throws \RuntimeException When the NextGEN gallery row has vanished.
 	 */

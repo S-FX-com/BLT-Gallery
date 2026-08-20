@@ -57,7 +57,7 @@ interface SourceImporter {
 	public function plan_galleries( ?array $gallery_ids = null ): array;
 
 	/**
-	 * Create the BltGallery gallery that a source gallery's images land in.
+	 * Create the BLT Gallery gallery that a source gallery's images land in.
 	 *
 	 * @throws \RuntimeException When the source gallery no longer exists.
 	 */

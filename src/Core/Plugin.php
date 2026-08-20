@@ -105,7 +105,7 @@ final class Plugin {
 	}
 
 	/**
-	 * Register Blt Gallery's thumbnail dimensions through WordPress's
+	 * Register BLT Gallery's thumbnail dimensions through WordPress's
 	 * standard image-size API so themes, REST consumers, and other plugins
 	 * can address them with `wp_get_attachment_image_src(..., 'bltgallery-medium')`.
 	 *

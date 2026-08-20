@@ -5,7 +5,7 @@ declare( strict_types=1 );
 namespace BltGallery\Core;
 
 /**
- * One-shot rebrand migration: ZymGallery (≤ 2.x) → Blt Gallery (3.x).
+ * One-shot rebrand migration: ZymGallery (≤ 2.x) → BLT Gallery (3.x).
  *
  * Renames legacy `{prefix}zym_*` tables and copies legacy `zymgallery_*`
  * options into their new `bltgallery_*` keys.

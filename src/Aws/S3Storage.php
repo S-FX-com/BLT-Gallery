@@ -115,7 +115,7 @@ class S3Storage {
 			$this->client->delete_object( $this->settings['bucket'], $s3_key );
 		} catch ( \RuntimeException $e ) {
 			// Log but do not throw – deletion failure should not block UI.
-			error_log( "BltGallery S3 delete failed for {$s3_key}: " . $e->getMessage() );
+			error_log( "BLT Gallery S3 delete failed for {$s3_key}: " . $e->getMessage() );
 		}
 	}
 

@@ -1,5 +1,5 @@
 /**
- * BltGallery – Frontend JS (no build required, vanilla ES2020).
+ * BLT Gallery – Frontend JS (no build required, vanilla ES2020).
  * Combines: masonry, slideshow, lightbox.
  */
 ( function () {
