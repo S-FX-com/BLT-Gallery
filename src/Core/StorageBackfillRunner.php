@@ -282,22 +282,58 @@ class StorageBackfillRunner {
 				$job['attempt'] = [ 'id' => $image->id, 'count' => $attempt_count ];
 				$job            = StorageBackfillJob::save( $job );
 
+				// Refresh the lease *before* the risky call, not just after.
+				// An image can cost up to four sequential PUTs (original +
+				// up to three thumbnails), each with its own timeout in
+				// S3HttpClient — comfortably longer, in the worst case, than
+				// LOCK_TTL. Without this, a slow-but-alive upload could look
+				// abandoned to the stall watchdog, which would then dispatch
+				// a second worker to run concurrently with this one.
+				self::touch_lock();
+
 				$offloaded = StorageOffloader::offload_to( $image, $driver );
+
+				// The job may have been cancelled by a separate request
+				// while that upload was in flight. This process has been
+				// sitting on a stale in-memory copy since before the call, so
+				// check the real, current status before writing anything —
+				// otherwise saving our now-outdated "running" copy back would
+				// silently resurrect a run the admin just told to stop.
+				$job = StorageBackfillJob::get( true );
+				if ( ! $job || ! StorageBackfillJob::is_active( $job ) ) {
+					return $job;
+				}
 
 				// Alive past the risky call: the crash marker no longer
 				// applies, whichever way this attempt went.
 				$job['attempt'] = null;
 				$job['progress']['processed']++;
 
-				if ( $offloaded->storage_driver === $driver ) {
+				// storage_driver flips to the target driver as soon as the
+				// original file lands, before any thumbnail is attempted, so
+				// on its own it can't distinguish a full success from the
+				// original succeeding and a thumbnail failing partway
+				// through. Every thumbnail carrying its own key is the real
+				// signal that nothing was left behind on this attempt.
+				if ( $offloaded->storage_driver === $driver && self::all_thumbs_offloaded( $offloaded ) ) {
 					ImageRepository::save( $offloaded );
 					$job['progress']['offloaded']++;
 				} else {
+					// Deliberately not saved: $offloaded may already carry a
+					// mutated storage_driver from a partial attempt (the
+					// original landed, a thumbnail didn't), and persisting
+					// that would flip the row out of future find_local_batch()
+					// results for good — the opposite of what give_up_on()
+					// promises below. Leaving the row untouched keeps it
+					// exactly as it was: still 'local', so a fresh run later
+					// sees it again.
+					//
 					// A caught failure — bad credentials, a file the bucket
-					// rejects, a quota — is not transient in any way another
-					// attempt one second later would fix, so this image is
-					// given up on now rather than being fetched again on the
-					// very next batch and looping forever. Pressing the
+					// rejects, a quota, a thumbnail that didn't make it — is
+					// not transient in any way another attempt one second
+					// later would fix, so this image is given up on for the
+					// rest of *this* run rather than being fetched again on
+					// the very next batch and looping forever. Pressing the
 					// backfill button again later starts a fresh run with an
 					// empty skip list, so it does get retried eventually.
 					$job = self::give_up_on( $job, $image, false );
@@ -341,6 +377,26 @@ class StorageBackfillRunner {
 			);
 
 		return StorageBackfillJob::add_errors( $job, [ $message ] );
+	}
+
+	/**
+	 * True when every thumbnail this image has actually carries a key on the
+	 * driver it was just sent to.
+	 *
+	 * R2Storage/S3Storage set storage_driver the moment the *original* file
+	 * lands, before looping over thumbnails — so on a partial failure
+	 * (original succeeds, a thumbnail throws) the image comes back already
+	 * flagged as offloaded even though something was left on local disk.
+	 * This is the check that actually reflects "nothing left behind".
+	 */
+	private static function all_thumbs_offloaded( \BltGallery\Models\Image $image ): bool {
+		foreach ( (array) ( $image->meta['thumbs'] ?? [] ) as $thumb ) {
+			if ( empty( $thumb['s3_key'] ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	// ------------------------------------------------------------------

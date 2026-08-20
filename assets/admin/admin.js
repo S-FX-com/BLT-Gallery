@@ -1341,7 +1341,21 @@
 					r2:        !! next.enable_r2,
 					cf_images: !! next.enable_cf_images,
 				} );
+
+				// initSettings() only starts the backfill card when a remote
+				// backend is already enabled at page load, so enabling one
+				// here and saving — with no full reload in between — would
+				// otherwise leave the now-visible card stuck at "Loading…"
+				// forever. Only (re)initialise on the hidden → visible
+				// transition; re-running it while already visible would
+				// start a second, independent polling loop alongside the
+				// first.
+				const backfillCard   = document.getElementById( 'bltgallery-backfill-card' );
+				const backfillWasOff = ! backfillCard || backfillCard.hidden;
 				applyBackfillVisibility( !! next.enable_s3 || !! next.enable_r2 );
+				if ( backfillWasOff && ( next.enable_s3 || next.enable_r2 ) ) {
+					initStorageBackfill( document.getElementById( 'bltgallery-backfill-body' ) );
+				}
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
@@ -2874,7 +2888,28 @@
 
 		if ( actions.dataset.mode === 'done' ) return;
 		actions.dataset.mode = 'done';
-		actions.innerHTML = '';
+
+		// A finished job is still what /job returns for a while (so the
+		// admin can see the outcome without racing a reload), which would
+		// otherwise leave a completed, cancelled, or failed run with no way
+		// to start another one — including the documented way to retry
+		// images this run skipped — until that retention window lapses.
+		// start() already allows queuing a fresh run over a merely-finished
+		// one, so this can go straight there rather than needing its own
+		// "how many are left" check first.
+		actions.innerHTML = '<button type="button" class="button button-primary js-backfill-again">Check for more images</button>';
+		actions.querySelector( '.js-backfill-again' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Checking…';
+			try {
+				const started = await api( '/storage/backfill/start', { method: 'POST', body: {} } );
+				showBackfillJob( panel, started );
+			} catch ( err ) {
+				e.target.disabled = false;
+				e.target.textContent = 'Check for more images';
+				showNotice( err.message, 'error' );
+			}
+		} );
 	}
 
 	function startBackfillPolling( panel ) {
