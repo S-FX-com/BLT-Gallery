@@ -279,12 +279,27 @@
 	function renderGalleryTable( container, galleries, listUrl, state ) {
 		state = state || readGallerySort();
 
+		// Selection survives re-sorting and re-rendering, so ticking rows,
+		// changing the order, then deleting does what it looks like it does.
+		if ( ! ( state.selected instanceof Set ) ) {
+			state.selected = new Set();
+		}
+
 		if ( galleries.length === 0 ) {
 			container.innerHTML = '<div class="bltgallery-empty"><p>No galleries yet. Create your first one!</p></div>';
 			return;
 		}
 
-		const rows = sortGalleries( galleries, state ).map( ( g ) => {
+		// Drop selections for rows that no longer exist.
+		const present = new Set( galleries.map( ( g ) => parseInt( g.id, 10 ) ) );
+		[ ...state.selected ].forEach( ( id ) => {
+			if ( ! present.has( id ) ) state.selected.delete( id );
+		} );
+
+		const ordered = sortGalleries( galleries, state );
+
+		const rows = ordered.map( ( g ) => {
+			const id     = parseInt( g.id, 10 );
 			const albums = Array.isArray( g.settings && g.settings.albums )
 				? g.settings.albums
 				: ( g.settings && g.settings.category ? [ g.settings.category ] : [] );
@@ -293,6 +308,10 @@
 			const shortcode = `[blt_gallery id="${ g.id }"]`;
 			return `
 				<tr>
+					<td class="check-column">
+						<input type="checkbox" class="bltgallery-row-check" value="${ id }"
+							aria-label="${ escAttr( 'Select ' + g.title ) }"${ state.selected.has( id ) ? ' checked' : '' }>
+					</td>
 					<td class="bltgallery-col-id">${ escHtml( String( g.id ) ) }</td>
 					<td><strong><a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
 					<td>${ count > 0
@@ -316,10 +335,19 @@
 			`;
 		} ).join( '' );
 
+		const allChecked = ordered.length > 0 && ordered.every( ( g ) => state.selected.has( parseInt( g.id, 10 ) ) );
+
 		container.innerHTML = `
+			<div class="bltgallery-bulkbar">
+				<button type="button" class="button bltgallery-bulk-delete" disabled>Delete selected</button>
+				<span class="bltgallery-bulkbar__status bltgallery-muted"></span>
+			</div>
 			<table class="wp-list-table widefat striped bltgallery-table">
 				<thead>
 					<tr>
+						<td class="check-column manage-column">
+							<input type="checkbox" class="bltgallery-check-all" aria-label="Select all galleries"${ allChecked ? ' checked' : '' }>
+						</td>
 						${ sortHeader( 'id', state, ' style="width:5em"' ) }
 						${ sortHeader( 'title', state ) }
 						${ sortHeader( 'images', state, ' style="width:7em"' ) }
@@ -334,9 +362,11 @@
 			</table>
 		`;
 
+		wireGallerySelection( container, ordered, galleries, listUrl, state );
+
 		container.querySelectorAll( '.bltgallery-sort' ).forEach( ( btn ) => {
 			btn.addEventListener( 'click', () => {
-				const next = { orderby: btn.dataset.sort, order: btn.dataset.next };
+				const next = { orderby: btn.dataset.sort, order: btn.dataset.next, selected: state.selected };
 				writeGallerySort( next );
 				renderGalleryTable( container, galleries, listUrl, next );
 			} );
@@ -349,13 +379,7 @@
 				if ( ! window.confirm( `Delete gallery "${ title }"? This cannot be undone.` ) ) return;
 				btn.disabled = true;
 				try {
-					await api( `/galleries/${ id }`, { method: 'DELETE' } );
-
-					// Drop it from the working set as well as the DOM, so a
-					// re-sort doesn't bring the row back.
-					const at = galleries.findIndex( ( g ) => parseInt( g.id, 10 ) === id );
-					if ( at > -1 ) galleries.splice( at, 1 );
-
+					await deleteGalleries( [ id ], galleries );
 					renderGalleryTable( container, galleries, listUrl, state );
 				} catch ( e ) {
 					showNotice( e.message, 'error' );
@@ -367,6 +391,146 @@
 		container.querySelectorAll( '.bltgallery-shortcode-copy' ).forEach( ( btn ) => {
 			btn.addEventListener( 'click', () => copyToClipboard( btn.dataset.copy, btn ) );
 		} );
+	}
+
+	/**
+	 * Checkbox behaviour for the gallery table: individual ticks, the header
+	 * select-all, shift-click ranges, and the Delete selected button.
+	 */
+	function wireGallerySelection( container, ordered, galleries, listUrl, state ) {
+		const boxes   = [ ...container.querySelectorAll( '.bltgallery-row-check' ) ];
+		const all     = container.querySelector( '.bltgallery-check-all' );
+		const button  = container.querySelector( '.bltgallery-bulk-delete' );
+		const status  = container.querySelector( '.bltgallery-bulkbar__status' );
+		let lastIndex = -1;
+
+		function refresh() {
+			const n = state.selected.size;
+
+			button.disabled    = n === 0;
+			button.textContent = n > 0 ? `Delete selected (${ fmtInt( n ) })` : 'Delete selected';
+
+			const images = galleries
+				.filter( ( g ) => state.selected.has( parseInt( g.id, 10 ) ) )
+				.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+
+			status.textContent = n === 0
+				? 'Tick galleries to delete them together. Shift-click to select a range.'
+				: `${ fmtInt( n ) } galler${ 1 === n ? 'y' : 'ies' } selected, holding ${ fmtInt( images ) } image${ 1 === images ? '' : 's' }.`;
+
+			all.checked = boxes.length > 0 && boxes.every( ( b ) => b.checked );
+		}
+
+		boxes.forEach( ( box, index ) => {
+			box.addEventListener( 'click', ( e ) => {
+				// Shift-click paints the whole range with the state of the
+				// box just clicked, the way file managers and Gmail behave.
+				if ( e.shiftKey && lastIndex > -1 ) {
+					const [ from, to ] = index < lastIndex ? [ index, lastIndex ] : [ lastIndex, index ];
+					for ( let i = from; i <= to; i++ ) {
+						boxes[ i ].checked = box.checked;
+						state.selected[ box.checked ? 'add' : 'delete' ]( parseInt( boxes[ i ].value, 10 ) );
+					}
+				} else {
+					state.selected[ box.checked ? 'add' : 'delete' ]( parseInt( box.value, 10 ) );
+				}
+
+				lastIndex = index;
+				refresh();
+			} );
+		} );
+
+		all.addEventListener( 'change', () => {
+			boxes.forEach( ( box ) => {
+				box.checked = all.checked;
+				state.selected[ all.checked ? 'add' : 'delete' ]( parseInt( box.value, 10 ) );
+			} );
+			lastIndex = -1;
+			refresh();
+		} );
+
+		button.addEventListener( 'click', () => bulkDeleteGalleries( container, galleries, listUrl, state, status, button ) );
+
+		refresh();
+	}
+
+	async function bulkDeleteGalleries( container, galleries, listUrl, state, status, button ) {
+		const ids = [ ...state.selected ];
+		if ( ! ids.length ) return;
+
+		const images = galleries
+			.filter( ( g ) => state.selected.has( parseInt( g.id, 10 ) ) )
+			.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+
+		const confirmed = window.confirm(
+			`Delete ${ fmtInt( ids.length ) } galler${ 1 === ids.length ? 'y' : 'ies' }` +
+			( images ? ` and ${ fmtInt( images ) } image${ 1 === images ? '' : 's' }` : '' ) +
+			'?\n\nThe images and every file behind them are removed for good. This cannot be undone.'
+		);
+
+		if ( ! confirmed ) return;
+
+		button.disabled = true;
+		container.querySelectorAll( '.bltgallery-row-check, .bltgallery-check-all, .bltgallery-delete-btn' )
+			.forEach( ( el ) => { el.disabled = true; } );
+
+		try {
+			const done = await deleteGalleries( ids, galleries, ( gone ) => {
+				status.textContent = `Deleting… ${ fmtInt( gone ) } of ${ fmtInt( ids.length ) } done.`;
+			} );
+
+			state.selected.clear();
+			showNotice(
+				`Deleted ${ fmtInt( done.galleries ) } galler${ 1 === done.galleries ? 'y' : 'ies' }` +
+				( done.images ? ` and ${ fmtInt( done.images ) } image${ 1 === done.images ? '' : 's' }.` : '.' )
+			);
+		} catch ( e ) {
+			showNotice( e.message, 'error' );
+		}
+
+		renderGalleryTable( container, galleries, listUrl, state );
+	}
+
+	/**
+	 * Delete galleries, splicing each one out of the working list as the
+	 * server confirms it.
+	 *
+	 * The endpoint is time-boxed — a gallery whose images live in S3 or R2
+	 * costs several HTTP round trips each — so it hands back whatever it did
+	 * not reach and we send that on again until the queue empties.
+	 */
+	async function deleteGalleries( ids, galleries, onProgress ) {
+		let queue = ids.slice();
+		const tally = { galleries: 0, images: 0, files: 0 };
+
+		while ( queue.length ) {
+			const res = await api( '/galleries', { method: 'DELETE', body: { ids: queue } } );
+
+			const gone = [ ...( res.deleted || [] ), ...( res.missing || [] ) ];
+
+			gone.forEach( ( id ) => {
+				const at = galleries.findIndex( ( g ) => parseInt( g.id, 10 ) === parseInt( id, 10 ) );
+				if ( at > -1 ) galleries.splice( at, 1 );
+			} );
+
+			tally.galleries += ( res.deleted || [] ).length;
+			tally.images    += res.images || 0;
+			tally.files     += res.files || 0;
+
+			const next = Array.isArray( res.remaining ) ? res.remaining : [];
+
+			// A round that removed no gallery and no image is going nowhere;
+			// stop rather than hammer the endpoint forever.
+			if ( ! gone.length && ! res.images ) {
+				throw new Error( 'The server stopped making progress deleting the selected galleries.' );
+			}
+
+			queue = next;
+
+			if ( onProgress ) onProgress( tally.galleries );
+		}
+
+		return tally;
 	}
 
 	/**

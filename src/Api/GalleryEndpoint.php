@@ -7,6 +7,7 @@ namespace BltGallery\Api;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
+use BltGallery\Core\GalleryDeleter;
 use BltGallery\Core\GalleryRepository;
 use BltGallery\Core\ImageRepository;
 use BltGallery\Models\Gallery;
@@ -21,7 +22,8 @@ use BltGallery\Models\Gallery;
  * POST   /galleries           – create
  * GET    /galleries/{id}      – single gallery + image count
  * PUT    /galleries/{id}      – update
- * DELETE /galleries/{id}      – delete
+ * DELETE /galleries/{id}      – delete one, with its images and their files
+ * DELETE /galleries           – bulk delete, time-boxed and resumable
  */
 class GalleryEndpoint {
 
@@ -47,6 +49,19 @@ class GalleryEndpoint {
 					'callback'            => [ $this, 'create' ],
 					'permission_callback' => [ $this, 'manage_permission' ],
 					'args'                => $this->schema_args(),
+				],
+				[
+					'methods'             => \WP_REST_Server::DELETABLE,
+					'callback'            => [ $this, 'bulk_delete' ],
+					'permission_callback' => [ $this, 'manage_permission' ],
+					'args'                => [
+						'ids' => [
+							'type'        => 'array',
+							'items'       => [ 'type' => 'integer' ],
+							'required'    => true,
+							'description' => __( 'Gallery IDs to delete.', 'bltgallery' ),
+						],
+					],
 				],
 			]
 		);
@@ -235,13 +250,104 @@ class GalleryEndpoint {
 	}
 
 	public function delete( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$deleted = GalleryRepository::delete( (int) $request->get_param( 'id' ) );
+		$result = GalleryDeleter::delete( (int) $request->get_param( 'id' ), self::deadline() );
 
-		if ( ! $deleted ) {
+		if ( $result['missing'] ) {
 			return new WP_Error( 'not_found', __( 'Gallery not found.', 'bltgallery' ), [ 'status' => 404 ] );
 		}
 
-		return new WP_REST_Response( [ 'deleted' => true ] );
+		return new WP_REST_Response(
+			[
+				'deleted'   => $result['deleted'],
+				'images'    => $result['images'],
+				'files'     => $result['files'],
+				'remaining' => $result['remaining'],
+			]
+		);
+	}
+
+	/**
+	 * Delete several galleries in one request.
+	 *
+	 * Time-boxed rather than unbounded: removing a gallery means deleting
+	 * every image's files, and for an S3/R2-offloaded library that is several
+	 * HTTP round trips per image — thousands of them would outrun any request
+	 * limit. Whatever is left over comes back in `remaining` for the caller to
+	 * send again, so a long clean-up finishes across several requests instead
+	 * of timing out halfway through one.
+	 */
+	public function bulk_delete( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$ids = array_values(
+			array_unique(
+				array_filter(
+					array_map( 'intval', (array) $request->get_param( 'ids' ) ),
+					static fn( int $id ): bool => $id > 0
+				)
+			)
+		);
+
+		if ( ! $ids ) {
+			return new WP_Error(
+				'no_galleries',
+				__( 'No galleries were selected.', 'bltgallery' ),
+				[ 'status' => 422 ]
+			);
+		}
+
+		$has_time = self::deadline();
+
+		$result = [
+			'deleted'   => [],
+			'missing'   => [],
+			'remaining' => [],
+			'images'    => 0,
+			'files'     => 0,
+		];
+
+		foreach ( $ids as $index => $id ) {
+			// Always let the first gallery start, so a single very large one
+			// still makes progress instead of bouncing back untouched.
+			if ( $index > 0 && ! $has_time() ) {
+				$result['remaining'] = array_values( array_slice( $ids, $index ) );
+				break;
+			}
+
+			$one = GalleryDeleter::delete( $id, $has_time );
+
+			$result['images'] += $one['images'];
+			$result['files']  += $one['files'];
+
+			if ( $one['missing'] ) {
+				$result['missing'][] = $id;
+			} elseif ( $one['deleted'] ) {
+				$result['deleted'][] = $id;
+			} else {
+				// Ran out of time inside this gallery — it keeps its place at
+				// the front of the queue and resumes on the next request.
+				$result['remaining'] = array_values( array_slice( $ids, $index ) );
+				break;
+			}
+		}
+
+		return new WP_REST_Response( $result );
+	}
+
+	/**
+	 * A "still have time?" test sized from whatever execution cap is in
+	 * force, leaving room for the response itself.
+	 */
+	private static function deadline(): callable {
+		if ( function_exists( 'set_time_limit' ) && ! str_contains( (string) ini_get( 'disable_functions' ), 'set_time_limit' ) ) {
+			@set_time_limit( 0 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+
+		$max     = (int) ini_get( 'max_execution_time' );
+		$budget  = $max > 0 ? (int) floor( $max * 0.6 ) : 20;
+		$budget  = max( 5, min( 20, $budget ) );
+		$budget  = (float) apply_filters( 'bltgallery_delete_time_budget', $budget );
+		$expires = microtime( true ) + $budget;
+
+		return static fn(): bool => microtime( true ) < $expires;
 	}
 
 	// ------------------------------------------------------------------

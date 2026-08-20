@@ -8,8 +8,8 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
 use BltGallery\Core\GalleryRepository;
+use BltGallery\Core\ImageFiles;
 use BltGallery\Core\ImageRepository;
-use BltGallery\Aws\S3Storage;
 use BltGallery\Models\Image;
 
 /**
@@ -161,27 +161,9 @@ class ImageEndpoint {
 			return $error;
 		}
 
-		// Remove from S3 if applicable.
-		if ( 's3' === $image->storage_driver && $image->s3_key && S3Storage::is_configured() ) {
-			$s3 = new S3Storage();
-			$s3->delete( $image->s3_key );
-
-			foreach ( ( $image->meta['thumbs'] ?? [] ) as $thumb ) {
-				if ( ! empty( $thumb['s3_key'] ) ) {
-					$s3->delete( $thumb['s3_key'] );
-				}
-			}
-		}
-
-		// Remove local files.
-		if ( $image->local_path && file_exists( $image->local_path ) ) {
-			@unlink( $image->local_path );
-			foreach ( ( $image->meta['thumbs'] ?? [] ) as $thumb ) {
-				if ( ! empty( $thumb['path'] ) && file_exists( $thumb['path'] ) ) {
-					@unlink( $thumb['path'] );
-				}
-			}
-		}
+		// Original, thumbnails, and any S3/R2 objects. This used to only
+		// handle the 's3' driver, which left R2-offloaded objects stranded.
+		ImageFiles::purge( $image );
 
 		ImageRepository::delete( $image->id );
 
