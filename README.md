@@ -35,6 +35,38 @@ composer install --no-dev --optimize-autoloader
 
 Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 
+### Updates
+
+Updates come from this repository's GitHub releases, and are **checked manually only**. Nothing phones home on a schedule or on admin page loads — the plugin contacts GitHub when you ask it to:
+
+- **Plugins → BLT Gallery → Check for updates**, or
+- the **Check again** button on **Dashboard → Updates**.
+
+Whatever the last check found stays cached and keeps being offered until you check again. To restore periodic checks, filter the interval back to a positive number of hours:
+
+```php
+add_filter( 'bltgallery_update_check_period', fn() => 12 );
+```
+
+For a private repo or higher API rate limits, set a GitHub token in `wp-config.php`:
+
+```php
+define( 'BLT_GALLERY_GITHUB_TOKEN', 'ghp_…' );
+```
+
+## Brand assets
+
+The BLT mark lives in `assets/img/`:
+
+| File | Use |
+|------|-----|
+| `blt-gallery-mark.svg` | Master artwork — `fill="currentColor"`, so it takes the colour of wherever it's dropped |
+| `icon-128x128.png`, `icon-256x256.png` | Plugin card in **Dashboard → Updates** |
+| `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Favicons |
+| `site-icon-512x512.png` | Upload under **Settings → General → Site Icon** to use it as the site favicon |
+
+The admin menu icon is generated from the master SVG at runtime, so replacing that one file re-skins everything.
+
 ## Shortcode reference
 
 ### `[blt_gallery]` — single gallery

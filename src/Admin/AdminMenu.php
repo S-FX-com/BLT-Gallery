@@ -15,6 +15,7 @@ class AdminMenu {
 	public function init(): void {
 		add_action( 'admin_menu', [ $this, 'register_pages' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_head', [ $this, 'print_menu_icon_style' ] );
 	}
 
 	public function register_pages(): void {
@@ -748,8 +749,54 @@ class AdminMenu {
 		<?php
 	}
 
+	/**
+	 * The BLT Gallery mark, as a data URI for add_menu_page().
+	 *
+	 * WordPress paints an SVG icon_url as a CSS background image and never
+	 * recolours it, so the admin menu's own icon grey is baked in here rather
+	 * than left to currentColor (which would resolve to black against the
+	 * dark menu bar). print_menu_icon_style() handles the lit state.
+	 */
 	private function get_menu_icon(): string {
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>';
-		return 'data:image/svg+xml;base64,' . base64_encode( $svg );
+		$svg = $this->mark_svg();
+
+		if ( '' === $svg ) {
+			return 'dashicons-format-gallery';
+		}
+
+		return 'data:image/svg+xml;base64,' . base64_encode( str_replace( 'currentColor', '#a7aaad', $svg ) );
+	}
+
+	/**
+	 * Read the bundled logo, once per request.
+	 */
+	private function mark_svg(): string {
+		static $svg = null;
+
+		if ( null === $svg ) {
+			$path = BLT_GALLERY_PLUGIN_DIR . 'assets/img/blt-gallery-mark.svg';
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$svg = is_readable( $path ) ? (string) file_get_contents( $path ) : '';
+		}
+
+		return $svg;
+	}
+
+	/**
+	 * Light the menu icon up on hover and while the section is open.
+	 *
+	 * Core's dashicon menu items switch from grey to white in those states;
+	 * a background-image icon can't, so brighten it with a filter to match.
+	 */
+	public function print_menu_icon_style(): void {
+		$id = 'toplevel_page_' . self::MENU_SLUG;
+		?>
+		<style id="bltgallery-menu-icon">
+			#adminmenu #<?php echo esc_attr( $id ); ?> div.wp-menu-image.svg { background-size: 20px auto; }
+			#adminmenu #<?php echo esc_attr( $id ); ?>:hover div.wp-menu-image.svg,
+			#adminmenu #<?php echo esc_attr( $id ); ?>.wp-has-current-submenu div.wp-menu-image.svg,
+			#adminmenu #<?php echo esc_attr( $id ); ?>.current div.wp-menu-image.svg { filter: brightness(1.6); }
+		</style>
+		<?php
 	}
 }
