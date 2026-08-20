@@ -11,6 +11,7 @@ use BltGallery\Api\ImageEndpoint;
 use BltGallery\Api\SettingsEndpoint;
 use BltGallery\Api\ImportEndpoint;
 use BltGallery\Api\SliderEndpoint;
+use BltGallery\Api\StorageBackfillEndpoint;
 use BltGallery\Api\UploadEndpoint;
 use BltGallery\Display\LightboxDisplay;
 use BltGallery\Display\MasonryDisplay;
@@ -55,6 +56,7 @@ final class Plugin {
 
 	public static function deactivate(): void {
 		wp_unschedule_hook( StoragePurgeQueue::HOOK );
+		wp_unschedule_hook( StorageBackfillRunner::HOOK );
 		// Stop any queued background migration passes; the job state itself
 		// is left alone so a reactivated plugin can resume from where it got
 		// to rather than re-copying everything.
@@ -80,6 +82,8 @@ final class Plugin {
 
 			delete_option( StoragePurgeQueue::OPTION );
 			delete_option( StoragePurgeQueue::LOCK );
+			delete_option( StorageBackfillJob::OPTION );
+			delete_option( StorageBackfillRunner::LOCK );
 		}
 	}
 
@@ -101,6 +105,10 @@ final class Plugin {
 
 		// Deletes remote objects for galleries that have already gone.
 		StoragePurgeQueue::init();
+
+		// Pushes existing local images out to R2/S3 when asked to from the
+		// Settings page.
+		StorageBackfillRunner::init();
 
 		if ( is_admin() ) {
 			$admin = new AdminMenu();
@@ -152,6 +160,7 @@ final class Plugin {
 		( new ImageEndpoint() )->register();
 		( new SettingsEndpoint() )->register();
 		( new UploadEndpoint() )->register();
+		( new StorageBackfillEndpoint() )->register();
 		( new ImportEndpoint() )->register();
 		( new AlbumEndpoint() )->register();
 		( new SliderEndpoint() )->register();

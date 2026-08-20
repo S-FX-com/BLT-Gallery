@@ -1189,6 +1189,11 @@
 			r2:        !! general.enable_r2,
 			cf_images: !! general.enable_cf_images,
 		} );
+		applyBackfillVisibility( !! general.enable_s3 || !! general.enable_r2 );
+
+		if ( general.enable_s3 || general.enable_r2 ) {
+			initStorageBackfill( document.getElementById( 'bltgallery-backfill-body' ) );
+		}
 	}
 
 	function renderIntegrationCard( id, title, descHtml, enabled ) {
@@ -1247,6 +1252,11 @@
 		} );
 	}
 
+	function applyBackfillVisibility( enabled ) {
+		const card = document.getElementById( 'bltgallery-backfill-card' );
+		if ( card ) card.hidden = ! enabled;
+	}
+
 	function renderGeneralSettings( container, general ) {
 		const g = general || {};
 
@@ -1266,6 +1276,11 @@
 					${ renderIntegrationCard( 'zyg-enable-r2', 'Cloudflare R2', 'S3-compatible storage with no egress fees.', !! g.enable_r2 ) }
 					${ renderIntegrationCard( 'zyg-enable-cf-images', 'Cloudflare Image Resizing', 'Serve every image through <code>/cdn-cgi/image/</code> for on-the-fly resize + AVIF/WebP.', !! g.enable_cf_images ) }
 				</div>
+			</div>
+
+			<div class="bltgallery-field" id="bltgallery-backfill-card" hidden>
+				<span class="bltgallery-field__label">Existing images</span>
+				<div id="bltgallery-backfill-body"><p class="bltgallery-loading">Loading…</p></div>
 			</div>
 
 			<div class="bltgallery-field bltgallery-field--toggle">
@@ -1297,11 +1312,14 @@
 			r2:        container.querySelector( '#zyg-enable-r2' ),
 			cf_images: container.querySelector( '#zyg-enable-cf-images' ),
 		};
-		const reflectVisibility = () => applyIntegrationVisibility( {
-			s3:        toggles.s3.checked,
-			r2:        toggles.r2.checked,
-			cf_images: toggles.cf_images.checked,
-		} );
+		const reflectVisibility = () => {
+			applyIntegrationVisibility( {
+				s3:        toggles.s3.checked,
+				r2:        toggles.r2.checked,
+				cf_images: toggles.cf_images.checked,
+			} );
+			applyBackfillVisibility( toggles.s3.checked || toggles.r2.checked );
+		};
 		Object.values( toggles ).forEach( ( cb ) => cb.addEventListener( 'change', reflectVisibility ) );
 
 		container.querySelector( '#zyg-save-general' ).addEventListener( 'click', async ( e ) => {
@@ -1323,6 +1341,7 @@
 					r2:        !! next.enable_r2,
 					cf_images: !! next.enable_cf_images,
 				} );
+				applyBackfillVisibility( !! next.enable_s3 || !! next.enable_r2 );
 			} catch ( err ) {
 				showNotice( err.message, 'error' );
 			} finally {
@@ -2642,6 +2661,284 @@
 		`;
 	}
 
+	// ------------------------------------------------------------------
+	// Storage backfill — push existing local images to R2/S3
+	// ------------------------------------------------------------------
+
+	const BACKFILL_POLL_MS = 2000;
+
+	const BACKFILL_DRIVER_LABEL = { s3: 'Amazon S3', r2: 'Cloudflare R2' };
+
+	function driverLabel( driver ) {
+		return BACKFILL_DRIVER_LABEL[ driver ] || 'remote storage';
+	}
+
+	/**
+	 * Drives the "existing images" card in Settings → General. Unlike the
+	 * Migrate page's per-source panels, there is only ever one of these — a
+	 * single background job that pushes whatever is still local out to
+	 * whichever backend is currently active.
+	 */
+	async function initStorageBackfill( container ) {
+		if ( ! container ) return;
+
+		const panel = { container, timer: null, ticking: false };
+
+		let job;
+		try {
+			job = await api( '/storage/backfill/job' );
+		} catch ( e ) {
+			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		if ( 'idle' === job.status ) {
+			renderBackfillIdle( panel, job );
+		} else {
+			showBackfillJob( panel, job );
+		}
+	}
+
+	function renderBackfillIdle( panel, job ) {
+		const { container } = panel;
+		const pending = parseInt( job.totals?.images, 10 ) || 0;
+		const label   = driverLabel( job.driver );
+
+		if ( pending < 1 ) {
+			container.innerHTML = `<p class="bltgallery-muted">Every image is already on ${ escHtml( label ) }. Nothing to push.</p>`;
+			return;
+		}
+
+		container.innerHTML = `
+			<p>${ escHtml( fmtInt( pending ) ) } image${ 1 === pending ? '' : 's' } ${ 1 === pending ? 'is' : 'are' } still stored locally on this server rather than on ${ escHtml( label ) }.</p>
+			<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+				<button type="button" class="button button-primary js-backfill-start">Push ${ escHtml( fmtInt( pending ) ) } image${ 1 === pending ? '' : 's' } to ${ escHtml( label ) }</button>
+				<span class="bltgallery-muted">Runs in the background — you can leave this page once it starts.</span>
+			</div>
+		`;
+
+		container.querySelector( '.js-backfill-start' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Starting…';
+			try {
+				const started = await api( '/storage/backfill/start', { method: 'POST', body: {} } );
+				showBackfillJob( panel, started );
+			} catch ( err ) {
+				e.target.disabled = false;
+				e.target.textContent = `Push ${ fmtInt( pending ) } image${ 1 === pending ? '' : 's' } to ${ label }`;
+				showNotice( err.message, 'error' );
+			}
+		} );
+	}
+
+	function showBackfillJob( panel, job ) {
+		renderBackfillShell( panel );
+		paintBackfillJob( panel, job );
+
+		if ( isBackfillActive( job ) ) {
+			startBackfillPolling( panel );
+		}
+	}
+
+	function renderBackfillShell( panel ) {
+		panel.container.innerHTML = `
+			<div class="bltgallery-import-job">
+				<div class="bltgallery-import-job__bar-row">
+					<div class="bltgallery-import-job__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+						<span class="bltgallery-import-job__fill" style="width:0%"></span>
+					</div>
+					<span class="bltgallery-import-job__pct">0%</span>
+				</div>
+				<p class="bltgallery-import-job__current js-current"></p>
+				<p class="bltgallery-import-job__meta js-meta"></p>
+				<div class="js-notice"></div>
+				<div class="js-errors"></div>
+				<div class="bltgallery-import-job__actions js-actions"></div>
+			</div>
+		`;
+	}
+
+	function paintBackfillJob( panel, job ) {
+		const root = panel.container.querySelector( '.bltgallery-import-job' );
+		if ( ! root ) return;
+
+		const finished = ! isBackfillActive( job );
+		const pct      = Math.max( 0, Math.min( 100, parseInt( job.percent, 10 ) || 0 ) );
+		const totals   = job.totals || { images: 0 };
+		const progress = job.progress || {};
+		const label    = driverLabel( job.driver );
+
+		root.dataset.status = job.status;
+
+		const track = root.querySelector( '.bltgallery-import-job__track' );
+		track.setAttribute( 'aria-valuenow', String( pct ) );
+		track.setAttribute( 'aria-label', `${ label } backfill progress` );
+		root.querySelector( '.bltgallery-import-job__fill' ).style.width = pct + '%';
+		root.querySelector( '.bltgallery-import-job__pct' ).textContent  = pct + '%';
+
+		const currentEl = root.querySelector( '.js-current' );
+		if ( 'complete' === job.status ) {
+			currentEl.innerHTML = `<strong>Backfill complete.</strong>`;
+		} else if ( 'cancelled' === job.status ) {
+			currentEl.innerHTML = `<strong>Backfill cancelled.</strong> Images already pushed were kept.`;
+		} else if ( 'failed' === job.status ) {
+			currentEl.innerHTML = `<strong>Backfill failed.</strong> ${ escHtml( job.message || '' ) }`;
+		} else if ( 'queued' === job.status ) {
+			currentEl.innerHTML = 'Queued — the background worker will pick this up in a moment.';
+		} else {
+			currentEl.innerHTML = `Pushing images to <strong>${ escHtml( label ) }</strong>…`;
+		}
+
+		const bits = [
+			`${ fmtInt( progress.processed || 0 ) } of ${ fmtInt( totals.images || 0 ) } images`,
+			`elapsed ${ fmtDuration( job.elapsed || 0 ) }`,
+		];
+		const remaining = estimateBackfillRemaining( job );
+		if ( ! finished && null !== remaining ) {
+			bits.push( `about ${ fmtDuration( remaining ) } left` );
+		}
+		if ( progress.skipped > 0 ) {
+			bits.push( `${ fmtInt( progress.skipped ) } skipped` );
+		}
+		root.querySelector( '.js-meta' ).textContent = bits.join( ' · ' );
+
+		const noticeEl = root.querySelector( '.js-notice' );
+		if ( 'complete' === job.status ) {
+			noticeEl.innerHTML = `
+				<div class="notice notice-success inline">
+					<p>Pushed <strong>${ escHtml( fmtInt( progress.offloaded || 0 ) ) }</strong> image${ 1 === progress.offloaded ? '' : 's' } to ${ escHtml( label ) }
+					in ${ escHtml( fmtDuration( job.elapsed || 0 ) ) }${ progress.skipped > 0 ? `, ${ escHtml( fmtInt( progress.skipped ) ) } skipped` : '' }.</p>
+				</div>
+			`;
+		} else if ( 'failed' === job.status ) {
+			noticeEl.innerHTML = `<div class="notice notice-error inline"><p>${ escHtml( job.message || 'The backfill stopped unexpectedly.' ) }</p></div>`;
+		} else if ( 'cancelled' === job.status ) {
+			noticeEl.innerHTML = '';
+		} else if ( job.stalled ) {
+			noticeEl.innerHTML = `
+				<div class="notice notice-warning inline">
+					<p>This site's background scheduler isn't picking the backfill up, so this page is driving it instead.
+					Please leave the tab open until it finishes.</p>
+				</div>
+			`;
+		} else {
+			noticeEl.innerHTML = `
+				<div class="notice notice-info inline">
+					<p>Running in the background on the server — you can close this page or carry on working.</p>
+				</div>
+			`;
+		}
+
+		const errorsEl = root.querySelector( '.js-errors' );
+		if ( job.error_count > 0 ) {
+			const hidden = job.error_count - job.errors.length;
+			errorsEl.innerHTML = `
+				<details class="bltgallery-import-job__detail">
+					<summary>${ escHtml( fmtInt( job.error_count ) ) } warning${ 1 === job.error_count ? '' : 's' }</summary>
+					<ul class="bltgallery-import-job__errors">
+						${ job.errors.map( ( msg ) => `<li>${ escHtml( msg ) }</li>` ).join( '' ) }
+					</ul>
+					${ hidden > 0 ? `<p class="bltgallery-muted">…and ${ escHtml( fmtInt( hidden ) ) } earlier warning${ 1 === hidden ? '' : 's' } not shown.</p>` : '' }
+				</details>
+			`;
+		} else {
+			errorsEl.innerHTML = '';
+		}
+
+		renderBackfillActions( panel, job );
+	}
+
+	function renderBackfillActions( panel, job ) {
+		const actions = panel.container.querySelector( '.js-actions' );
+		if ( ! actions ) return;
+
+		if ( isBackfillActive( job ) ) {
+			if ( actions.dataset.mode === 'active' ) return;
+			actions.dataset.mode = 'active';
+			actions.innerHTML = '<button type="button" class="button js-cancel">Cancel</button>';
+			actions.querySelector( '.js-cancel' ).addEventListener( 'click', async ( e ) => {
+				e.target.disabled = true;
+				e.target.textContent = 'Cancelling…';
+				try {
+					const updated = await api( '/storage/backfill/cancel', { method: 'POST', body: {} } );
+					stopBackfillPolling( panel );
+					paintBackfillJob( panel, updated );
+				} catch ( err ) {
+					e.target.disabled = false;
+					e.target.textContent = 'Cancel';
+					showNotice( err.message, 'error' );
+				}
+			} );
+			return;
+		}
+
+		if ( actions.dataset.mode === 'done' ) return;
+		actions.dataset.mode = 'done';
+		actions.innerHTML = '';
+	}
+
+	function startBackfillPolling( panel ) {
+		stopBackfillPolling( panel );
+		panel.timer = window.setTimeout( () => pollBackfillJob( panel ), BACKFILL_POLL_MS );
+	}
+
+	function stopBackfillPolling( panel ) {
+		if ( panel.timer ) {
+			window.clearTimeout( panel.timer );
+			panel.timer = null;
+		}
+	}
+
+	async function pollBackfillJob( panel ) {
+		panel.timer = null;
+
+		if ( ! panel.container.isConnected || ! panel.container.querySelector( '.bltgallery-import-job' ) ) {
+			return;
+		}
+
+		let job;
+		try {
+			job = await api( '/storage/backfill/job' );
+		} catch {
+			startBackfillPolling( panel );
+			return;
+		}
+
+		if ( 'idle' === job.status ) {
+			renderBackfillIdle( panel, job );
+			return;
+		}
+
+		paintBackfillJob( panel, job );
+
+		if ( ! isBackfillActive( job ) ) return;
+
+		if ( job.stalled && ! panel.ticking ) {
+			panel.ticking = true;
+			api( '/storage/backfill/tick', { method: 'POST', body: {} } )
+				.then( ( ticked ) => {
+					if ( ticked && 'idle' !== ticked.status ) paintBackfillJob( panel, ticked );
+				} )
+				.catch( () => {} )
+				.finally( () => { panel.ticking = false; } );
+		}
+
+		startBackfillPolling( panel );
+	}
+
+	function isBackfillActive( job ) {
+		return 'queued' === job.status || 'running' === job.status;
+	}
+
+	function estimateBackfillRemaining( job ) {
+		const done    = parseInt( job.progress?.processed, 10 ) || 0;
+		const total   = parseInt( job.totals?.images, 10 ) || 0;
+		const elapsed = parseInt( job.elapsed, 10 ) || 0;
+
+		if ( done < 5 || elapsed < 5 || total <= done ) return null;
+
+		return Math.round( ( elapsed / done ) * ( total - done ) );
+	}
 	// ------------------------------------------------------------------
 	// Albums admin page (top-level submenu under BLT Gallery)
 	// ------------------------------------------------------------------

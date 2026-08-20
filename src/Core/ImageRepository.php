@@ -63,6 +63,67 @@ class ImageRepository {
 	 * @param int[] $gallery_ids
 	 * @return array<int,int> gallery id => image count
 	 */
+	/**
+	 * How many images are still on local storage and have a file to offload.
+	 *
+	 * Scoped to `local_path IS NOT NULL` so a row left over from some data
+	 * anomaly (local driver, no path) can never keep a backfill run from
+	 * ever reporting itself finished — there is nothing offload_batch() could
+	 * do with such a row anyway.
+	 *
+	 * @param int[] $exclude_ids Image ids to leave out (e.g. ones that
+	 *                           already brought a pass down and were given up
+	 *                           on).
+	 */
+	public static function count_local( array $exclude_ids = [] ): int {
+		global $wpdb;
+		$table = Database::images_table();
+
+		$where  = "storage_driver = 'local' AND local_path IS NOT NULL AND local_path != ''";
+		$params = [];
+
+		if ( $exclude_ids ) {
+			$placeholders = implode( ',', array_fill( 0, count( $exclude_ids ), '%d' ) );
+			$where       .= " AND id NOT IN ({$placeholders})";
+			$params       = array_map( 'intval', $exclude_ids );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
+
+		return (int) ( $params ? $wpdb->get_var( $wpdb->prepare( $sql, ...$params ) ) : $wpdb->get_var( $sql ) );
+	}
+
+	/**
+	 * The next batch of local images to offload, oldest id first so a run
+	 * makes steady, visible progress rather than jumping around.
+	 *
+	 * @param int[] $exclude_ids Same meaning as in count_local().
+	 * @return Image[]
+	 */
+	public static function find_local_batch( int $limit, array $exclude_ids = [] ): array {
+		global $wpdb;
+		$table = Database::images_table();
+
+		$where  = "storage_driver = 'local' AND local_path IS NOT NULL AND local_path != ''";
+		$params = [];
+
+		if ( $exclude_ids ) {
+			$placeholders = implode( ',', array_fill( 0, count( $exclude_ids ), '%d' ) );
+			$where       .= " AND id NOT IN ({$placeholders})";
+			$params       = array_map( 'intval', $exclude_ids );
+		}
+
+		$params[] = max( 1, $limit );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$sql = "SELECT * FROM {$table} WHERE {$where} ORDER BY id ASC LIMIT %d";
+
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
+
+		return array_map( [ Image::class, 'from_row' ], $rows ?: [] );
+	}
+
 	public static function count_by_galleries( array $gallery_ids ): array {
 		global $wpdb;
 
