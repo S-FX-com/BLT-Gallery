@@ -7,6 +7,7 @@ namespace BltGallery\Import;
 use BltGallery\Core\GalleryRepository;
 use BltGallery\Core\ImageProcessor;
 use BltGallery\Core\ImageRepository;
+use BltGallery\Core\StorageOffloader;
 use BltGallery\Models\Gallery;
 
 /**
@@ -284,6 +285,12 @@ class NextGenImporter implements SourceImporter {
 				$image->alt_text    = sanitize_text_field( $pic['alttext'] ?? '' );
 				$image->description = sanitize_textarea_field( $pic['description'] ?? '' );
 				$image->sort_order  = $offset + $index;
+
+				// Push it out to R2/S3 when offloading is on. Without this a
+				// migration fills the database and the local disk while the
+				// bucket stays empty.
+				$image = StorageOffloader::offload( $image );
+
 				ImageRepository::save( $image );
 				$result['imported']++;
 			} catch ( \Throwable $e ) {

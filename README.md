@@ -176,6 +176,25 @@ For code-only sliders you can skip the builder and source images inline instead 
 | `images`      | comma-separated ints            | Specific BLT gallery image IDs                      |
 | `attachments` | comma-separated ints            | WordPress media attachment IDs                      |
 
+## Storage and offloading
+
+With **Settings → Integrations → Cloudflare R2** (or Amazon S3) switched on, every image is pushed to the bucket as it is created — uploads through the admin and images pulled in by a migration alike. Each gallery gets its own folder, mirroring the local layout:
+
+```
+[path prefix/]galleries/12-annual-symposium/photo.jpg
+[path prefix/]galleries/12-annual-symposium/thumbs/thumb/photo-thumb.webp
+[path prefix/]galleries/12-annual-symposium/thumbs/medium/photo-medium.webp
+[path prefix/]galleries/12-annual-symposium/thumbs/large/photo-large.webp
+```
+
+Offloading is best effort: an unreachable or misconfigured bucket leaves the image local and working rather than failing the upload.
+
+### Deleting
+
+Deleting a gallery removes its images and the files behind them. Local files go immediately; objects in R2 or S3 are handed to a background queue and cleared on WP-Cron, because a thousand-image gallery is several thousand bucket requests and no admin screen should wait on that. The queue holds off briefly first so bulk-deleting a dozen galleries drains in one pass rather than a dozen.
+
+Two filters tune it: `bltgallery_storage_purge_delay` (seconds before a drain starts, default 60) and `bltgallery_storage_purge_budget` (seconds of deleting per pass).
+
 ## Migrating from another gallery plugin
 
 **BLT Gallery → Migrate** imports galleries from **Imagely NextGEN Gallery** and **Modula**. Pick the galleries you want and press *Import Selected Galleries*; your originals are only ever read from — every image is copied into BLT Gallery's own upload directory.

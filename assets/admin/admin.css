@@ -1243,3 +1243,34 @@
 }
 
 .bltgallery-col-id { color: #646970; font-variant-numeric: tabular-nums; }
+
+/* ── Bulk actions on the gallery list ───────────────────────────────── */
+
+.bltgallery-bulkbar {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	margin-bottom: 0.75rem;
+}
+
+.bltgallery-bulkbar__status { font-size: 0.85rem; }
+
+.bltgallery-bulk-delete:not(:disabled) {
+	border-color: #b32d2e;
+	color: #b32d2e;
+}
+
+.bltgallery-bulk-delete:not(:disabled):hover {
+	background: #b32d2e;
+	border-color: #b32d2e;
+	color: #fff;
+}
+
+.bltgallery-table .check-column {
+	width: 2.5rem;
+	padding: 8px 0 8px 10px;
+	vertical-align: middle;
+}
+
+.bltgallery-table .check-column input[type="checkbox"] { margin: 0; }
