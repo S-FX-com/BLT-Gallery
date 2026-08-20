@@ -11,6 +11,7 @@ A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS
 - **Visual slider builder**: assemble a slider from your galleries + the media library under **Blt Gallery → Sliders**, then copy its shortcode
 - **Rich shortcode attributes** for inline styling — `cols`, `gap`, `radius`, `captions`, `autoplay`, etc.
 - **No external dependencies**: standalone plugin — no NextGEN Gallery required
+- **Background migrations**: import from NextGEN Gallery or Modula with a live progress bar — the copy runs on the server, so you can close the tab
 - **REST API**: full CRUD via the WordPress REST API (`/bltgallery/v1/`)
 - **Image optimisation**: WebP/AVIF thumbnails generated on upload; EXIF stripped
 - **Cloudflare R2 offloading** (S3 SigV4, no SDK dependency)
@@ -142,6 +143,25 @@ For code-only sliders you can skip the builder and source images inline instead 
 | `slugs`       | comma-separated slugs           | Galleries by slug                                  |
 | `images`      | comma-separated ints            | Specific Blt gallery image IDs                      |
 | `attachments` | comma-separated ints            | WordPress media attachment IDs                      |
+
+## Migrating from another gallery plugin
+
+**Blt Gallery → Migrate** imports galleries from **Imagely NextGEN Gallery** and **Modula**. Pick the galleries you want and press *Import Selected Galleries*; your originals are only ever read from — every image is copied into Blt Gallery's own upload directory.
+
+Migrations run as a background job, so a library of several thousand photos is no longer bound by how long a single HTTP request may run:
+
+- **Progress is live.** The page shows a progress bar, the gallery being copied, images done vs. total, elapsed time, and an estimate of what's left — plus a per-gallery breakdown and any warnings.
+- **You can close the page.** The copy continues on the server. Reopen *Migrate* at any time and the panel picks the run back up where it is.
+- **It resumes, it doesn't restart.** Work is saved after every few images, so a PHP timeout, a memory ceiling, or a restarted worker costs seconds rather than the whole run.
+- **You can stop it.** *Cancel migration* halts the run; galleries copied up to that point are kept.
+
+Passes are triggered by WP-Cron plus an immediate loopback request. If a host blocks both, the page notices the job has stalled and drives it in the foreground instead — leave the tab open in that case.
+
+Once a NextGEN migration finishes, a **Clean up NextGEN Gallery files** panel appears so you can ZIP and then remove the legacy files on disk.
+
+### Extending
+
+Any class implementing `BltGallery\Import\SourceImporter` can be driven by the same background worker — register it with the `bltgallery_import_source` filter. Two other filters tune the worker: `bltgallery_import_time_budget` (seconds of work per pass) and `bltgallery_import_slice_size` (images between progress saves).
 
 ## Cloudflare optimisation
 

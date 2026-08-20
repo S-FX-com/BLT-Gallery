@@ -25,7 +25,7 @@ use BltGallery\Models\Gallery;
  * importer, there is no on-disk cleanup step because the files belong to the
  * WordPress media library, not to Modula.
  */
-class ModulaImporter {
+class ModulaImporter implements SourceImporter {
 
 	/**
 	 * Modula's custom post type for galleries.
@@ -91,7 +91,11 @@ class ModulaImporter {
 	// ------------------------------------------------------------------
 
 	/**
-	 * Import Modula galleries into BltGallery.
+	 * Import Modula galleries into BltGallery in a single pass.
+	 *
+	 * Kept for the legacy synchronous REST route and WP-CLI style callers;
+	 * the admin UI drives ImportRunner instead so large collections can run
+	 * in the background with progress reporting.
 	 *
 	 * @param int[]|null $gallery_ids Specific Modula post IDs to import,
 	 *                                or null to import everything.
@@ -111,78 +115,148 @@ class ModulaImporter {
 		];
 
 		if ( ! $this->is_available() ) {
-			$results['errors'][] = __( 'No Modula galleries found.', 'bltgallery' );
+			$results['errors'][] = $this->unavailable_message();
 			return $results;
-		}
-
-		$wanted = null;
-		if ( ! empty( $gallery_ids ) ) {
-			$wanted = array_map( 'intval', $gallery_ids );
 		}
 
 		$processor = new ImageProcessor();
 
-		foreach ( $this->get_gallery_posts() as $post ) {
-			if ( null !== $wanted && ! in_array( (int) $post->ID, $wanted, true ) ) {
+		foreach ( $this->plan_galleries( $gallery_ids ) as $planned ) {
+			try {
+				$target = $this->create_target_gallery( $planned['source_id'] );
+			} catch ( \Throwable $e ) {
+				$results['errors'][] = $e->getMessage();
 				continue;
 			}
 
-			$gallery_result = $this->import_gallery( $post, $processor );
+			$results['galleries_imported']++;
 
-			$results['galleries_imported'] += $gallery_result['gallery_imported'];
-			$results['images_imported']    += $gallery_result['images_imported'];
-			$results['images_skipped']     += $gallery_result['images_skipped'];
-			$results['errors']              = array_merge( $results['errors'], $gallery_result['errors'] );
+			$offset = 0;
+			while ( $offset < $planned['total'] ) {
+				$slice = $this->import_slice( $planned['source_id'], $target, $offset, 25, $processor );
+
+				$results['images_imported'] += $slice['imported'];
+				$results['images_skipped']  += $slice['skipped'];
+				$results['errors']           = array_merge( $results['errors'], $slice['errors'] );
+
+				if ( $slice['processed'] < 1 ) {
+					break; // Defensive: never spin when a slice yields nothing.
+				}
+				$offset += $slice['processed'];
+			}
 		}
 
 		return $results;
 	}
 
 	// ------------------------------------------------------------------
-	// Private helpers
+	// SourceImporter implementation
 	// ------------------------------------------------------------------
 
-	/**
-	 * Import a single Modula gallery post and its images.
-	 *
-	 * @param \WP_Post       $post      A modula-gallery post.
-	 * @param ImageProcessor $processor Shared processor instance.
-	 */
-	private function import_gallery( \WP_Post $post, ImageProcessor $processor ): array {
-		$result = [
-			'gallery_imported' => 0,
-			'images_imported'  => 0,
-			'images_skipped'   => 0,
-			'errors'           => [],
-		];
+	public function source_key(): string {
+		return 'modula';
+	}
 
-		// Create the BltGallery gallery record.
+	public function source_label(): string {
+		return __( 'Modula', 'bltgallery' );
+	}
+
+	public function unavailable_message(): string {
+		return __( 'No Modula galleries found.', 'bltgallery' );
+	}
+
+	/**
+	 * Build the work queue: one entry per gallery with its image count.
+	 *
+	 * @param int[]|null $gallery_ids
+	 * @return array<int, array{source_id:int,title:string,total:int}>
+	 */
+	public function plan_galleries( ?array $gallery_ids = null ): array {
+		$wanted = null;
+		if ( ! empty( $gallery_ids ) ) {
+			$wanted = array_map( 'intval', $gallery_ids );
+		}
+
+		$plan = [];
+
+		foreach ( $this->get_gallery_posts() as $post ) {
+			$id = (int) $post->ID;
+
+			if ( null !== $wanted && ! in_array( $id, $wanted, true ) ) {
+				continue;
+			}
+
+			$plan[] = [
+				'source_id' => $id,
+				'title'     => (string) ( $post->post_title ?: __( '(untitled gallery)', 'bltgallery' ) ),
+				'total'     => count( $this->get_gallery_images( $id ) ),
+			];
+		}
+
+		return $plan;
+	}
+
+	/**
+	 * Create the destination BltGallery gallery for one Modula gallery post.
+	 *
+	 * @throws \RuntimeException When the Modula post has vanished.
+	 */
+	public function create_target_gallery( int $source_id ): Gallery {
+		$post = get_post( $source_id );
+
+		if ( ! $post instanceof \WP_Post || self::POST_TYPE !== $post->post_type ) {
+			throw new \RuntimeException(
+				sprintf(
+					/* translators: %d: Modula gallery post ID */
+					__( 'Modula gallery #%d no longer exists.', 'bltgallery' ),
+					$source_id
+				)
+			);
+		}
+
 		$gallery               = new Gallery();
 		$gallery->title        = sanitize_text_field( $post->post_title ?: __( 'Untitled Modula Gallery', 'bltgallery' ) );
 		$gallery->slug         = $this->unique_slug( sanitize_title( $post->post_name ?: $post->post_title ) . '-from-modula' );
 		$gallery->description  = sanitize_textarea_field( $post->post_content ?: $post->post_excerpt );
 		$gallery->display_type = 'masonry';
 		$gallery->author_id    = get_current_user_id();
-		$gallery               = GalleryRepository::save( $gallery );
 
-		$result['gallery_imported'] = 1;
+		return GalleryRepository::save( $gallery );
+	}
 
-		$images = $this->get_gallery_images( (int) $post->ID );
+	/**
+	 * Copy one slice of a Modula gallery's images into $target.
+	 *
+	 * The slice is taken from the same normalised meta list plan_galleries()
+	 * counted, so consecutive slices tile the gallery exactly once.
+	 *
+	 * @return array{processed:int,imported:int,skipped:int,errors:string[]}
+	 */
+	public function import_slice( int $source_id, Gallery $target, int $offset, int $limit, ImageProcessor $processor ): array {
+		$result = [
+			'processed' => 0,
+			'imported'  => 0,
+			'skipped'   => 0,
+			'errors'    => [],
+		];
+
+		$images = array_slice( $this->get_gallery_images( $source_id ), max( 0, $offset ), max( 1, $limit ) );
+
 		if ( ! $images ) {
 			return $result;
 		}
 
-		$sort_order = 0;
+		foreach ( $images as $index => $item ) {
+			$result['processed']++;
 
-		foreach ( $images as $item ) {
 			$attachment_id = (int) ( $item['id'] ?? 0 );
 
 			if ( $attachment_id <= 0 ) {
-				$result['images_skipped']++;
+				$result['skipped']++;
 				$result['errors'][] = sprintf(
 					/* translators: %s: gallery title */
 					__( 'Skipped an image with no attachment ID (gallery: %s).', 'bltgallery' ),
-					$gallery->title
+					$target->title
 				);
 				continue;
 			}
@@ -190,23 +264,23 @@ class ModulaImporter {
 			$file_path = get_attached_file( $attachment_id );
 
 			if ( ! $file_path || ! file_exists( $file_path ) ) {
-				$result['images_skipped']++;
+				$result['skipped']++;
 				$result['errors'][] = sprintf(
 					/* translators: 1: attachment ID, 2: gallery title */
 					__( 'File not found for attachment #%1$d (gallery: %2$s).', 'bltgallery' ),
 					$attachment_id,
-					$gallery->title
+					$target->title
 				);
 				continue;
 			}
 
 			try {
 				// process_upload() copies the file – Modula's originals are untouched.
-				$image              = $processor->process_upload( $file_path, $gallery );
+				$image              = $processor->process_upload( $file_path, $target );
 				$image->alt_text    = sanitize_text_field( $item['alt'] ?? '' );
 				$image->caption     = sanitize_textarea_field( $item['caption'] ?? '' );
 				$image->description = sanitize_textarea_field( $item['description'] ?? '' );
-				$image->sort_order  = $sort_order++;
+				$image->sort_order  = $offset + $index;
 
 				$title = sanitize_text_field( $item['title'] ?? '' );
 				if ( '' !== $title ) {
@@ -214,9 +288,9 @@ class ModulaImporter {
 				}
 
 				ImageRepository::save( $image );
-				$result['images_imported']++;
+				$result['imported']++;
 			} catch ( \Throwable $e ) {
-				$result['images_skipped']++;
+				$result['skipped']++;
 				$result['errors'][] = sprintf(
 					/* translators: 1: attachment ID, 2: error message */
 					__( 'Failed to import attachment #%1$d: %2$s', 'bltgallery' ),
@@ -228,6 +302,10 @@ class ModulaImporter {
 
 		return $result;
 	}
+
+	// ------------------------------------------------------------------
+	// Private helpers
+	// ------------------------------------------------------------------
 
 	/**
 	 * Fetch every Modula gallery post, oldest first.
