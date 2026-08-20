@@ -115,7 +115,7 @@ class R2Storage {
 			$this->client->delete_object( $this->settings['bucket'], $r2_key );
 		} catch ( \RuntimeException $e ) {
 			// Log but do not throw – deletion failure should not block UI.
-			error_log( "BltGallery R2 delete failed for {$r2_key}: " . $e->getMessage() );
+			error_log( "BLT Gallery R2 delete failed for {$r2_key}: " . $e->getMessage() );
 		}
 	}
 

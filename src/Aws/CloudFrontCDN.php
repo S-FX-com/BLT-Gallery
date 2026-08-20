@@ -98,7 +98,7 @@ class CloudFrontCDN {
 				],
 			] );
 		} catch ( \Exception $e ) {
-			error_log( 'BltGallery CloudFront invalidation failed: ' . $e->getMessage() );
+			error_log( 'BLT Gallery CloudFront invalidation failed: ' . $e->getMessage() );
 		}
 	}
 

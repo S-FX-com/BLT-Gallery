@@ -1,4 +1,4 @@
-# Blt Gallery
+# BLT Gallery
 
 A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS S3 offloading, Cloudflare Images URL-based optimisation, and easy `[blt_gallery]` / `[blt_album]` shortcodes.
 
@@ -8,9 +8,10 @@ A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS
 
 - **Six display types**: Masonry, Tile Grid, Slideshow, Lightbox, Album, Image Slider
 - **Three shortcodes**: `[blt_gallery]` (single gallery), `[blt_album]` (collection of galleries), and `[blt_slider]` (image slider)
-- **Visual slider builder**: assemble a slider from your galleries + the media library under **Blt Gallery → Sliders**, then copy its shortcode
+- **Visual slider builder**: assemble a slider from your galleries + the media library under **BLT Gallery → Sliders**, then copy its shortcode
 - **Rich shortcode attributes** for inline styling — `cols`, `gap`, `radius`, `captions`, `autoplay`, etc.
 - **No external dependencies**: standalone plugin — no NextGEN Gallery required
+- **Background migrations**: import from NextGEN Gallery or Modula with a live progress bar — the copy runs on the server, so you can close the tab
 - **REST API**: full CRUD via the WordPress REST API (`/bltgallery/v1/`)
 - **Image optimisation**: WebP/AVIF thumbnails generated on upload; EXIF stripped
 - **Cloudflare R2 offloading** (S3 SigV4, no SDK dependency)
@@ -33,6 +34,38 @@ composer install --no-dev --optimize-autoloader
 ```
 
 Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
+
+### Updates
+
+Updates come from this repository's GitHub releases, and are **checked manually only**. Nothing phones home on a schedule or on admin page loads — the plugin contacts GitHub when you ask it to:
+
+- **Plugins → BLT Gallery → Check for updates**, or
+- the **Check again** button on **Dashboard → Updates**.
+
+Whatever the last check found stays cached and keeps being offered until you check again. To restore periodic checks, filter the interval back to a positive number of hours:
+
+```php
+add_filter( 'bltgallery_update_check_period', fn() => 12 );
+```
+
+For a private repo or higher API rate limits, set a GitHub token in `wp-config.php`:
+
+```php
+define( 'BLT_GALLERY_GITHUB_TOKEN', 'ghp_…' );
+```
+
+## Brand assets
+
+The BLT mark lives in `assets/img/`:
+
+| File | Use |
+|------|-----|
+| `blt-gallery-mark.svg` | Master artwork — `fill="currentColor"`, so it takes the colour of wherever it's dropped |
+| `icon-128x128.png`, `icon-256x256.png` | Plugin card in **Dashboard → Updates** |
+| `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Favicons |
+| `site-icon-512x512.png` | Upload under **Settings → General → Site Icon** to use it as the site favicon |
+
+The admin menu icon is generated from the master SVG at runtime, so replacing that one file re-skins everything.
 
 ## Shortcode reference
 
@@ -101,7 +134,7 @@ Upload to `/wp-content/plugins/blt-gallery/` and activate via **Plugins**.
 
 ### `[blt_slider]` — image slider
 
-Build a slider visually under **Blt Gallery → Sliders**: create one, add images from the **media library** and/or your **galleries**, drag to reorder, add an optional caption (description / photo credit) per slide, tweak the options, and copy the generated shortcode. A subtle caption, hover-reveal arrows, and a dot counter are built in, and every image is delivered through the plugin's Cloudflare optimisation pipeline.
+Build a slider visually under **BLT Gallery → Sliders**: create one, add images from the **media library** and/or your **galleries**, drag to reorder, add an optional caption (description / photo credit) per slide, tweak the options, and copy the generated shortcode. A subtle caption, hover-reveal arrows, and a dot counter are built in, and every image is delivered through the plugin's Cloudflare optimisation pipeline.
 
 ```
 [blt_slider id="3"]
@@ -140,12 +173,32 @@ For code-only sliders you can skip the builder and source images inline instead 
 |---------------|---------------------------------|----------------------------------------------------|
 | `galleries`   | comma-separated ints            | Gallery IDs whose images feed the slider           |
 | `slugs`       | comma-separated slugs           | Galleries by slug                                  |
-| `images`      | comma-separated ints            | Specific Blt gallery image IDs                      |
+| `images`      | comma-separated ints            | Specific BLT gallery image IDs                      |
 | `attachments` | comma-separated ints            | WordPress media attachment IDs                      |
+
+## Migrating from another gallery plugin
+
+**BLT Gallery → Migrate** imports galleries from **Imagely NextGEN Gallery** and **Modula**. Pick the galleries you want and press *Import Selected Galleries*; your originals are only ever read from — every image is copied into BLT Gallery's own upload directory.
+
+Migrations run as a background job, so a library of several thousand photos is no longer bound by how long a single HTTP request may run:
+
+- **Progress is live.** The page shows a progress bar, the gallery being copied, images done vs. total, elapsed time, and an estimate of what's left — plus a per-gallery breakdown and any warnings.
+- **You can close the page.** The copy continues on the server. Reopen *Migrate* at any time and the panel picks the run back up where it is.
+- **It resumes, it doesn't restart.** Work is saved after every few images, so a PHP timeout, a memory ceiling, or a restarted worker costs seconds rather than the whole run.
+- **You can stop it.** *Cancel migration* halts the run; galleries copied up to that point are kept.
+- **Migrated galleries are ticked off.** Each imported gallery records where it came from, and the picker shows that source gallery as *Imported* — unticked, with a link to its copy — so a second run doesn't quietly duplicate it. A run that was interrupted shows as *Partly imported* instead. Galleries brought across before the plugin tracked this are recognised by their slug and labelled as a name match.
+
+Passes are triggered by WP-Cron plus an immediate loopback request. If a host blocks both, the page notices the job has stalled and drives it in the foreground instead — leave the tab open in that case.
+
+Once a NextGEN migration finishes, a **Clean up NextGEN Gallery files** panel appears so you can ZIP and then remove the legacy files on disk.
+
+### Extending
+
+Any class implementing `BltGallery\Import\SourceImporter` can be driven by the same background worker — register it with the `bltgallery_import_source` filter. Two other filters tune the worker: `bltgallery_import_time_budget` (seconds of work per pass) and `bltgallery_import_slice_size` (images between progress saves).
 
 ## Cloudflare optimisation
 
-Blt Gallery is built to run hot on Cloudflare:
+BLT Gallery is built to run hot on Cloudflare:
 
 1. **Cloudflare R2** — *Settings → Cloudflare R2*. Auto-offload new uploads, optionally remove the local copy.
 2. **Cloudflare Image Resizing** — *Settings → Cloudflare Images*. Once enabled, the plugin rewrites every `<img>` `src` and `srcset` through `/cdn-cgi/image/` so each image is delivered in the optimal format (AVIF/WebP), size, and quality — without pre-generating extra thumbnails.

@@ -49,7 +49,10 @@ class GalleryRepository {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$table} ORDER BY created_at DESC LIMIT %d OFFSET %d",
+				// id breaks ties: a migration can create a dozen galleries
+				// inside the same second, and without a deterministic order
+				// LIMIT/OFFSET paging can repeat or drop rows between pages.
+				"SELECT * FROM {$table} ORDER BY created_at DESC, id DESC LIMIT %d OFFSET %d",
 				$per_page,
 				$offset
 			),

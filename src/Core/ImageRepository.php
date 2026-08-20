@@ -53,6 +53,46 @@ class ImageRepository {
 		);
 	}
 
+	/**
+	 * Count images for several galleries at once.
+	 *
+	 * One grouped query rather than a count per row, so listing a hundred
+	 * galleries costs the same as listing one. Galleries with no images are
+	 * present in the result with a count of 0.
+	 *
+	 * @param int[] $gallery_ids
+	 * @return array<int,int> gallery id => image count
+	 */
+	public static function count_by_galleries( array $gallery_ids ): array {
+		global $wpdb;
+
+		$ids = array_values( array_unique( array_filter( array_map( 'intval', $gallery_ids ) ) ) );
+
+		if ( ! $ids ) {
+			return [];
+		}
+
+		$counts = array_fill_keys( $ids, 0 );
+
+		$table        = Database::images_table();
+		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT gallery_id, COUNT(*) AS total FROM {$table} WHERE gallery_id IN ({$placeholders}) GROUP BY gallery_id",
+				...$ids
+			),
+			ARRAY_A
+		);
+
+		foreach ( $rows ?: [] as $row ) {
+			$counts[ (int) $row['gallery_id'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
 	// ------------------------------------------------------------------
 	// Write
 	// ------------------------------------------------------------------

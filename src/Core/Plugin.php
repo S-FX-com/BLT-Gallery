@@ -17,6 +17,8 @@ use BltGallery\Display\MasonryDisplay;
 use BltGallery\Display\SlideshowDisplay;
 use BltGallery\Display\SliderDisplay;
 use BltGallery\Display\TileGridDisplay;
+use BltGallery\Import\ImportJob;
+use BltGallery\Import\ImportRunner;
 use BltGallery\Display\AlbumDisplay;
 
 /**
@@ -52,6 +54,10 @@ final class Plugin {
 	}
 
 	public static function deactivate(): void {
+		// Stop any queued background migration passes; the job state itself
+		// is left alone so a reactivated plugin can resume from where it got
+		// to rather than re-copying everything.
+		wp_unschedule_hook( ImportRunner::HOOK );
 		flush_rewrite_rules();
 	}
 
@@ -65,6 +71,11 @@ final class Plugin {
 			delete_option( 'bltgallery_cf_images_settings' );
 			delete_option( 'bltgallery_delete_data_on_uninstall' );
 			delete_option( 'bltgallery_db_version' );
+
+			foreach ( ImportRunner::SOURCES as $source ) {
+				delete_option( ImportJob::option_name( $source ) );
+				delete_option( ImportRunner::LOCK_PREFIX . $source );
+			}
 		}
 	}
 
@@ -79,6 +90,11 @@ final class Plugin {
 		add_action( 'rest_api_init', [ $this, 'register_api_endpoints' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
 
+		// Background gallery migrations. Registered outside the is_admin()
+		// branch below because the worker runs on WP-Cron and admin-ajax
+		// requests that carry no admin screen.
+		ImportRunner::init();
+
 		if ( is_admin() ) {
 			$admin = new AdminMenu();
 			$admin->init();
@@ -89,7 +105,7 @@ final class Plugin {
 	}
 
 	/**
-	 * Register Blt Gallery's thumbnail dimensions through WordPress's
+	 * Register BLT Gallery's thumbnail dimensions through WordPress's
 	 * standard image-size API so themes, REST consumers, and other plugins
 	 * can address them with `wp_get_attachment_image_src(..., 'bltgallery-medium')`.
 	 *

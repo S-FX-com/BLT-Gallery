@@ -1,5 +1,5 @@
 /**
- * BltGallery Admin – vanilla JS, no build step required.
+ * BLT Gallery Admin – vanilla JS, no build step required.
  */
 ( function () {
 	'use strict';
@@ -146,31 +146,158 @@
 		} );
 	}
 
+	// The REST endpoint's per_page ceiling.
+	const GALLERY_PAGE_SIZE = 100;
+
+	/**
+	 * How each sortable column is read and ordered.
+	 *
+	 * `get` pulls out exactly what the column displays, so the order on screen
+	 * always matches the values on screen — the Date column in particular
+	 * shows the event date when one is set and falls back to the created date.
+	 */
+	const GALLERY_SORTS = {
+		id: {
+			label: 'ID',
+			first: 'asc',
+			get:   ( g ) => parseInt( g.id, 10 ) || 0,
+			cmp:   ( a, b ) => a - b,
+		},
+		title: {
+			label: 'Title',
+			first: 'asc',
+			get:   ( g ) => String( g.title || '' ),
+			// Natural ordering, so "Summit 10" lands after "Summit 9".
+			cmp:   ( a, b ) => a.localeCompare( b, undefined, { numeric: true, sensitivity: 'base' } ),
+		},
+		images: {
+			label: 'Images',
+			first: 'desc',
+			get:   ( g ) => parseInt( g.image_count, 10 ) || 0,
+			cmp:   ( a, b ) => a - b,
+		},
+		date: {
+			label: 'Date',
+			first: 'desc',
+			get:   galleryDate,
+			// "YYYY-MM-DD" and "YYYY-MM-DD HH:MM:SS" both sort chronologically
+			// as plain strings, so no Date parsing — and no timezone — needed.
+			cmp:   ( a, b ) => ( a < b ? -1 : a > b ? 1 : 0 ),
+		},
+	};
+
+	function galleryDate( g ) {
+		return String( ( g.settings && g.settings.gallery_date ) || g.created_at || '' );
+	}
+
+	function readGallerySort() {
+		const params  = new URLSearchParams( window.location.search );
+		const orderby = params.get( 'orderby' );
+		const order   = params.get( 'order' );
+
+		return {
+			orderby: GALLERY_SORTS[ orderby ] ? orderby : 'date',
+			order:   'asc' === order ? 'asc' : 'desc',
+		};
+	}
+
+	/**
+	 * Mirror the sort into the address bar so it survives a reload and can be
+	 * linked to, without navigating away and refetching.
+	 */
+	function writeGallerySort( state ) {
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'orderby', state.orderby );
+		url.searchParams.set( 'order', state.order );
+		window.history.replaceState( null, '', url );
+	}
+
+	function sortGalleries( galleries, state ) {
+		const spec = GALLERY_SORTS[ state.orderby ] || GALLERY_SORTS.date;
+		const dir  = 'asc' === state.order ? 1 : -1;
+
+		return galleries.slice().sort( ( a, b ) => {
+			const cmp = spec.cmp( spec.get( a ), spec.get( b ) );
+
+			// Ties fall back to id so equal values keep a settled order
+			// instead of shuffling between renders.
+			return cmp ? cmp * dir : ( parseInt( a.id, 10 ) || 0 ) - ( parseInt( b.id, 10 ) || 0 );
+		} );
+	}
+
+	/**
+	 * Fetch every gallery, not just the first page.
+	 *
+	 * Sorting a silently truncated list would put the wrong rows on screen —
+	 * "oldest first" would really mean "oldest of the newest hundred".
+	 */
+	async function fetchAllGalleries() {
+		const all = [];
+
+		// Bounded so a misbehaving endpoint can't spin forever.
+		for ( let page = 1; page <= 50; page++ ) {
+			const batch = await api( `/galleries?per_page=${ GALLERY_PAGE_SIZE }&page=${ page }` );
+
+			if ( ! Array.isArray( batch ) || batch.length === 0 ) break;
+
+			all.push( ...batch );
+
+			if ( batch.length < GALLERY_PAGE_SIZE ) break;
+		}
+
+		return all;
+	}
+
 	async function loadGalleryList( container, listUrl ) {
 		container.innerHTML = '<p class="bltgallery-loading">Loading…</p>';
 		try {
-			const galleries = await api( '/galleries?per_page=100' );
-			renderGalleryTable( container, galleries, listUrl );
+			renderGalleryTable( container, await fetchAllGalleries(), listUrl );
 		} catch ( e ) {
 			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
 		}
 	}
 
-	function renderGalleryTable( container, galleries, listUrl ) {
+	/**
+	 * One sortable column heading, carrying the direction its next click
+	 * should apply.
+	 */
+	function sortHeader( key, state, attrs = '' ) {
+		const spec   = GALLERY_SORTS[ key ];
+		const active = state.orderby === key;
+		const dir    = active ? state.order : spec.first;
+		const next   = active ? ( 'asc' === state.order ? 'desc' : 'asc' ) : spec.first;
+
+		return `<th${ attrs } class="manage-column bltgallery-sortable${ active ? ' is-sorted is-' + dir : '' }"
+			aria-sort="${ active ? ( 'asc' === dir ? 'ascending' : 'descending' ) : 'none' }">
+			<button type="button" class="bltgallery-sort" data-sort="${ escAttr( key ) }" data-next="${ escAttr( next ) }">
+				<span>${ escHtml( spec.label ) }</span>
+				<span class="bltgallery-sort__arrow" aria-hidden="true"></span>
+			</button>
+		</th>`;
+	}
+
+	function renderGalleryTable( container, galleries, listUrl, state ) {
+		state = state || readGallerySort();
+
 		if ( galleries.length === 0 ) {
 			container.innerHTML = '<div class="bltgallery-empty"><p>No galleries yet. Create your first one!</p></div>';
 			return;
 		}
 
-		const rows = galleries.map( ( g ) => {
+		const rows = sortGalleries( galleries, state ).map( ( g ) => {
 			const albums = Array.isArray( g.settings && g.settings.albums )
 				? g.settings.albums
 				: ( g.settings && g.settings.category ? [ g.settings.category ] : [] );
-			const date   = ( g.settings && g.settings.gallery_date ) || g.created_at;
+			const date   = galleryDate( g );
+			const count  = parseInt( g.image_count, 10 ) || 0;
 			const shortcode = `[blt_gallery id="${ g.id }"]`;
 			return `
 				<tr>
+					<td class="bltgallery-col-id">${ escHtml( String( g.id ) ) }</td>
 					<td><strong><a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
+					<td>${ count > 0
+						? escHtml( fmtInt( count ) )
+						: '<span class="bltgallery-muted">0</span>' }</td>
 					<td>${ escHtml( g.display_type ) }</td>
 					<td>${ albums.length
 						? albums.map( ( a ) => `<span class="bltgallery-cat-pill">${ escHtml( a ) }</span>` ).join( ' ' )
@@ -190,33 +317,46 @@
 		} ).join( '' );
 
 		container.innerHTML = `
-			<table class="wp-list-table widefat fixed striped bltgallery-table">
+			<table class="wp-list-table widefat striped bltgallery-table">
 				<thead>
 					<tr>
-						<th>Title</th>
+						${ sortHeader( 'id', state, ' style="width:5em"' ) }
+						${ sortHeader( 'title', state ) }
+						${ sortHeader( 'images', state, ' style="width:7em"' ) }
 						<th>Display Type</th>
 						<th>Album</th>
 						<th>Shortcode</th>
-						<th>Date</th>
-						<th>Actions</th>
+						${ sortHeader( 'date', state, ' style="width:9em"' ) }
+						<th style="width:11em">Actions</th>
 					</tr>
 				</thead>
 				<tbody>${ rows }</tbody>
 			</table>
 		`;
 
+		container.querySelectorAll( '.bltgallery-sort' ).forEach( ( btn ) => {
+			btn.addEventListener( 'click', () => {
+				const next = { orderby: btn.dataset.sort, order: btn.dataset.next };
+				writeGallerySort( next );
+				renderGalleryTable( container, galleries, listUrl, next );
+			} );
+		} );
+
 		container.querySelectorAll( '.bltgallery-delete-btn' ).forEach( ( btn ) => {
 			btn.addEventListener( 'click', async () => {
-				const id    = btn.dataset.id;
+				const id    = parseInt( btn.dataset.id, 10 );
 				const title = btn.dataset.title;
 				if ( ! window.confirm( `Delete gallery "${ title }"? This cannot be undone.` ) ) return;
 				btn.disabled = true;
 				try {
 					await api( `/galleries/${ id }`, { method: 'DELETE' } );
-					btn.closest( 'tr' ).remove();
-					if ( container.querySelectorAll( 'tbody tr' ).length === 0 ) {
-						renderGalleryTable( container, [], listUrl );
-					}
+
+					// Drop it from the working set as well as the DOM, so a
+					// re-sort doesn't bring the row back.
+					const at = galleries.findIndex( ( g ) => parseInt( g.id, 10 ) === id );
+					if ( at > -1 ) galleries.splice( at, 1 );
+
+					renderGalleryTable( container, galleries, listUrl, state );
 				} catch ( e ) {
 					showNotice( e.message, 'error' );
 					btn.disabled = false;
@@ -1356,6 +1496,9 @@
 	// Gallery Importers (NextGEN, Modula)
 	// ------------------------------------------------------------------
 
+	// How often the progress view asks the server where the migration is up to.
+	const IMPORT_POLL_MS = 2000;
+
 	async function initImporter() {
 		// Imagely NextGEN Gallery.
 		await initSourceImporter( {
@@ -1364,17 +1507,17 @@
 			sourceName:  'NextGEN Gallery',
 			setupHint:   'Install and activate <strong>Imagely NextGEN Gallery</strong> and create at least one gallery, then return to this page.',
 			detectedMsg: 'NextGEN Gallery detected. Select galleries to import below.',
-			note:        'Your original NextGEN Gallery data and files will not be modified. BltGallery copies files into its own upload directory.',
+			note:        'Your original NextGEN Gallery data and files will not be modified. BLT Gallery copies files into its own upload directory.',
 			idKey:       'gid',
 			titleFor:    ( g ) => g.title || g.name,
 			descFor:     ( g ) => g.galdesc,
-			onImported:  ( result ) => {
+			onImported:  ( job ) => {
 				// Reveal the cleanup panel if anything was actually migrated.
-				if ( result.images_imported > 0 ) initCleanup();
+				if ( job.progress.images_imported > 0 ) initCleanup();
 			},
 		} );
 
-		// If any BltGallery galleries already exist, surface the cleanup
+		// If any BLT Gallery galleries already exist, surface the cleanup
 		// panel right away so the user can revisit the page later to back
 		// up / remove the legacy NextGEN files without re-migrating.
 		try {
@@ -1391,7 +1534,7 @@
 			sourceName:  'Modula',
 			setupHint:   'Install and activate <strong>Modula</strong> and create at least one gallery, then return to this page.',
 			detectedMsg: 'Modula galleries detected. Select galleries to import below.',
-			note:        'Your original Modula galleries and media-library files are left untouched. BltGallery copies each image into its own upload directory.',
+			note:        'Your original Modula galleries and media-library files are left untouched. BLT Gallery copies each image into its own upload directory.',
 			idKey:       'id',
 			titleFor:    ( g ) => g.title,
 			descFor:     ( g ) => g.description,
@@ -1399,19 +1542,45 @@
 	}
 
 	/**
-	 * Drive a single migration source (status → preview → run) inside its
-	 * own panel. `opts` describes the source-specific endpoint, labels, and
-	 * the shape of each preview row.
+	 * Drive a single migration source inside its own panel.
+	 *
+	 * Migrations run as a background job on the server, so the panel opens on
+	 * whatever that job is already doing: a run started ten minutes ago in a
+	 * since-closed tab picks straight back up on its progress bar, and only a
+	 * source with no job to show falls through to the gallery picker.
 	 */
 	async function initSourceImporter( opts ) {
 		const container = document.getElementById( opts.containerId );
 		if ( ! container ) return;
+
+		const panel = {
+			opts,
+			container,
+			timer:      null,
+			ticking:    false,
+			announced:  false,
+		};
 
 		let status;
 		try {
 			status = await api( `/import/${ opts.endpoint }/status` );
 		} catch ( e ) {
 			container.innerHTML = `<p class="bltgallery-error">${ escHtml( e.message ) }</p>`;
+			return;
+		}
+
+		// Look for an existing job first — a finished one is still worth
+		// showing even if the source plugin has since been removed.
+		let job = null;
+		try {
+			job = await api( `/import/${ opts.endpoint }/job` );
+		} catch {}
+
+		if ( job && 'idle' !== job.status ) {
+			// A run that finished before this page loaded is history, not
+			// news — adopt its result without re-announcing it.
+			panel.announced = ! isJobActive( job );
+			showJob( panel, job );
 			return;
 		}
 
@@ -1423,6 +1592,19 @@
 			return;
 		}
 
+		await showPicker( panel );
+	}
+
+	// ------------------------------------------------------------------
+	// Picker view
+	// ------------------------------------------------------------------
+
+	async function showPicker( panel ) {
+		const { container, opts } = panel;
+
+		stopImportPolling( panel );
+		container.innerHTML = '<p class="bltgallery-loading">Loading galleries…</p>';
+
 		let preview;
 		try {
 			preview = await api( `/import/${ opts.endpoint }/preview` );
@@ -1431,43 +1613,59 @@
 			return;
 		}
 
-		renderImporterGalleryList( container, preview.galleries, opts );
+		renderImporterGalleryList( panel, preview.galleries );
 	}
 
-	function renderImporterGalleryList( container, galleries, opts ) {
+	function renderImporterGalleryList( panel, galleries ) {
+		const { container, opts } = panel;
+
 		if ( ! galleries || galleries.length === 0 ) {
 			container.innerHTML = `<p>No galleries found in ${ escHtml( opts.sourceName ) }.</p>`;
 			return;
 		}
 
+		// Already-migrated galleries start unticked: importing one again does
+		// not update the previous copy, it makes a second one.
+		const fresh = galleries.filter( ( g ) => ! g.imported );
+		const done  = galleries.length - fresh.length;
+
 		const rows = galleries.map( ( g ) => `
-			<tr>
-				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }" checked></td>
+			<tr${ g.imported ? ' class="bltgallery-import-row--done"' : '' }>
+				<td><input type="checkbox" class="zyg-import-check" value="${ escHtml( String( g[ opts.idKey ] ) ) }"${ g.imported ? '' : ' checked' }></td>
 				<td><strong>${ escHtml( opts.titleFor( g ) || '' ) }</strong></td>
 				<td>${ escHtml( opts.descFor( g ) || '—' ) }</td>
-				<td>${ escHtml( String( g.image_count ) ) }</td>
+				<td>${ escHtml( fmtInt( g.image_count ) ) }</td>
+				<td>${ importedCell( g.imported ) }</td>
 			</tr>
 		` ).join( '' );
+
+		const totalImages = fresh.reduce( ( sum, g ) => sum + ( parseInt( g.image_count, 10 ) || 0 ), 0 );
+
+		const doneNote = done > 0
+			? `<p class="bltgallery-muted"><strong>${ escHtml( fmtInt( done ) ) }</strong> of these ${ 1 === done ? 'has' : 'have' } already been migrated and ${ 1 === done ? 'is' : 'are' } unticked.
+				Importing one again creates a second copy rather than updating the first.</p>`
+			: '';
 
 		container.innerHTML = `
 			<div class="notice notice-success inline"><p>${ escHtml( opts.detectedMsg ) }</p></div>
 			<p><strong>Note:</strong> ${ escHtml( opts.note ) }</p>
-			<table class="wp-list-table widefat fixed striped bltgallery-table" style="margin-bottom:1rem">
+			${ doneNote }
+			<table class="wp-list-table widefat striped bltgallery-table" style="margin-bottom:1rem">
 				<thead>
 					<tr>
-						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all" checked></th>
+						<th style="width:40px"><input type="checkbox" class="zyg-import-check-all"${ fresh.length === galleries.length ? ' checked' : '' }></th>
 						<th>Gallery Title</th>
 						<th>Description</th>
-						<th>Images</th>
+						<th style="width:6em">Images</th>
+						<th style="width:18em">Status</th>
 					</tr>
 				</thead>
 				<tbody>${ rows }</tbody>
 			</table>
-			<div style="display:flex;gap:12px;align-items:center">
+			<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
 				<button class="button button-primary zyg-run-import">Import Selected Galleries</button>
-				<span class="zyg-import-status"></span>
+				<span class="zyg-import-status bltgallery-muted">${ escHtml( fmtInt( totalImages ) ) } image${ 1 === totalImages ? '' : 's' } selected. Migrations run in the background — you can close this page once one starts.</span>
 			</div>
-			<div class="zyg-import-results"></div>
 		`;
 
 		// Select all toggle.
@@ -1487,45 +1685,366 @@
 			const gallery_ids = checked.map( ( cb ) => parseInt( cb.value, 10 ) );
 
 			e.target.disabled = true;
-			const statusEl  = container.querySelector( '.zyg-import-status' );
-			const resultsEl = container.querySelector( '.zyg-import-results' );
-			statusEl.textContent = 'Importing… this may take a while for large galleries.';
-			resultsEl.innerHTML  = '';
+			const statusEl = container.querySelector( '.zyg-import-status' );
+			statusEl.textContent = 'Queuing migration…';
 
 			try {
-				const result = await api( `/import/${ opts.endpoint }/run`, {
+				const job = await api( `/import/${ opts.endpoint }/start`, {
 					method: 'POST',
 					body:   { gallery_ids },
 				} );
-
-				statusEl.textContent = '';
-				const errorHtml = result.errors.length
-					? `<details style="margin-top:.5rem"><summary>${ result.errors.length } warning(s)</summary><ul>${ result.errors.map( ( e ) => `<li>${ escHtml( e ) }</li>` ).join( '' ) }</ul></details>`
-					: '';
-
-				resultsEl.innerHTML = `
-					<div class="notice notice-success inline" style="margin-top:1rem">
-						<p>
-							Migration complete: <strong>${ result.galleries_imported }</strong> ${ result.galleries_imported === 1 ? 'gallery' : 'galleries' } migrated,
-							<strong>${ result.images_imported }</strong> ${ result.images_imported === 1 ? 'image' : 'images' } migrated
-							${ result.images_skipped > 0 ? `, ${ result.images_skipped } skipped` : '' }.
-						</p>
-					</div>
-					${ errorHtml }
-				`;
-
-				showNotice( `Migration complete. ${ result.images_imported } image(s) migrated.` );
-
-				if ( typeof opts.onImported === 'function' ) {
-					opts.onImported( result );
-				}
+				showJob( panel, job );
 			} catch ( err ) {
+				e.target.disabled = false;
 				statusEl.textContent = '';
 				showNotice( err.message, 'error' );
-			} finally {
-				e.target.disabled = false;
 			}
 		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Progress view
+	// ------------------------------------------------------------------
+
+	/**
+	 * Swap the panel over to the progress view and keep it in step with the
+	 * server until the job finishes.
+	 */
+	function showJob( panel, job ) {
+		renderJobShell( panel );
+		paintJob( panel, job );
+
+		if ( isJobActive( job ) ) {
+			startImportPolling( panel );
+		}
+	}
+
+	function renderJobShell( panel ) {
+		panel.container.innerHTML = `
+			<div class="bltgallery-import-job">
+				<div class="bltgallery-import-job__bar-row">
+					<div class="bltgallery-import-job__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+						<span class="bltgallery-import-job__fill" style="width:0%"></span>
+					</div>
+					<span class="bltgallery-import-job__pct">0%</span>
+				</div>
+				<p class="bltgallery-import-job__current js-current"></p>
+				<p class="bltgallery-import-job__meta js-meta"></p>
+				<div class="js-notice"></div>
+				<details class="bltgallery-import-job__detail">
+					<summary>Per-gallery detail</summary>
+					<div class="js-galleries"></div>
+				</details>
+				<div class="js-errors"></div>
+				<div class="bltgallery-import-job__actions js-actions"></div>
+			</div>
+		`;
+	}
+
+	/**
+	 * Push one job snapshot into the already-rendered shell. Everything is
+	 * updated in place so the detail disclosure keeps its open/closed state
+	 * across polls.
+	 */
+	function paintJob( panel, job ) {
+		const { container, opts } = panel;
+		const root = container.querySelector( '.bltgallery-import-job' );
+		if ( ! root ) return;
+
+		panel.lastJob = job;
+
+		const finished = ! isJobActive( job );
+		const pct      = Math.max( 0, Math.min( 100, parseInt( job.percent, 10 ) || 0 ) );
+		const totals   = job.totals || { galleries: 0, images: 0 };
+		const progress = job.progress || {};
+
+		root.dataset.status = job.status;
+
+		const track = root.querySelector( '.bltgallery-import-job__track' );
+		track.setAttribute( 'aria-valuenow', String( pct ) );
+		track.setAttribute( 'aria-label', `${ opts.sourceName } migration progress` );
+		root.querySelector( '.bltgallery-import-job__fill' ).style.width = pct + '%';
+		root.querySelector( '.bltgallery-import-job__pct' ).textContent  = pct + '%';
+
+		// Current gallery / headline state.
+		const currentEl = root.querySelector( '.js-current' );
+		if ( 'complete' === job.status ) {
+			currentEl.innerHTML = `<strong>Migration complete.</strong>`;
+		} else if ( 'cancelled' === job.status ) {
+			currentEl.innerHTML = `<strong>Migration cancelled.</strong> Galleries copied before you stopped it were kept.`;
+		} else if ( 'failed' === job.status ) {
+			currentEl.innerHTML = `<strong>Migration failed.</strong> ${ escHtml( job.message || '' ) }`;
+		} else if ( 'queued' === job.status ) {
+			currentEl.innerHTML = 'Queued — the background worker will pick this up in a moment.';
+		} else if ( job.current ) {
+			const c = job.current;
+			currentEl.innerHTML = `Copying <strong>${ escHtml( c.title ) }</strong>` +
+				( c.total > 0 ? ` — image ${ escHtml( fmtInt( Math.min( c.offset + 1, c.total ) ) ) } of ${ escHtml( fmtInt( c.total ) ) }` : '' ) +
+				` <span class="bltgallery-muted">(gallery ${ escHtml( fmtInt( c.position ) ) } of ${ escHtml( fmtInt( totals.galleries ) ) })</span>`;
+		} else {
+			currentEl.innerHTML = 'Starting…';
+		}
+
+		// Counters, elapsed, and a rough estimate of what is left.
+		const bits = [
+			`${ fmtInt( progress.images_processed || 0 ) } of ${ fmtInt( totals.images || 0 ) } images`,
+			`${ fmtInt( progress.galleries_imported || 0 ) } of ${ fmtInt( totals.galleries || 0 ) } galleries`,
+			`elapsed ${ fmtDuration( job.elapsed || 0 ) }`,
+		];
+
+		const remaining = estimateRemaining( job );
+		if ( ! finished && null !== remaining ) {
+			bits.push( `about ${ fmtDuration( remaining ) } left` );
+		}
+		if ( progress.images_skipped > 0 ) {
+			bits.push( `${ fmtInt( progress.images_skipped ) } skipped` );
+		}
+
+		root.querySelector( '.js-meta' ).textContent = bits.join( ' · ' );
+
+		// Reassurance while running; outcome once it stops.
+		const noticeEl = root.querySelector( '.js-notice' );
+		if ( 'complete' === job.status ) {
+			noticeEl.innerHTML = `
+				<div class="notice notice-success inline">
+					<p>Migrated <strong>${ escHtml( fmtInt( progress.images_imported || 0 ) ) }</strong> image${ 1 === progress.images_imported ? '' : 's' }
+					across <strong>${ escHtml( fmtInt( progress.galleries_imported || 0 ) ) }</strong> galler${ 1 === progress.galleries_imported ? 'y' : 'ies' }
+					in ${ escHtml( fmtDuration( job.elapsed || 0 ) ) }${ progress.images_skipped > 0 ? `, ${ escHtml( fmtInt( progress.images_skipped ) ) } skipped` : '' }.</p>
+				</div>
+			`;
+		} else if ( 'failed' === job.status ) {
+			noticeEl.innerHTML = `<div class="notice notice-error inline"><p>${ escHtml( job.message || 'The migration stopped unexpectedly.' ) }</p></div>`;
+		} else if ( 'cancelled' === job.status ) {
+			noticeEl.innerHTML = '';
+		} else if ( job.stalled ) {
+			noticeEl.innerHTML = `
+				<div class="notice notice-warning inline">
+					<p>This site's background scheduler isn't picking the migration up, so this page is driving it instead.
+					Please leave the tab open until it finishes.</p>
+				</div>
+			`;
+		} else {
+			noticeEl.innerHTML = `
+				<div class="notice notice-info inline">
+					<p>Running in the background on the server — you can close this page or carry on working, and check back here any time.</p>
+				</div>
+			`;
+		}
+
+		// Per-gallery breakdown.
+		root.querySelector( '.js-galleries' ).innerHTML = renderJobGalleries( job );
+
+		// Warnings.
+		const errorsEl = root.querySelector( '.js-errors' );
+		if ( job.error_count > 0 ) {
+			const hidden = job.error_count - job.errors.length;
+			errorsEl.innerHTML = `
+				<details class="bltgallery-import-job__detail">
+					<summary>${ escHtml( fmtInt( job.error_count ) ) } warning${ 1 === job.error_count ? '' : 's' }</summary>
+					<ul class="bltgallery-import-job__errors">
+						${ job.errors.map( ( msg ) => `<li>${ escHtml( msg ) }</li>` ).join( '' ) }
+					</ul>
+					${ hidden > 0 ? `<p class="bltgallery-muted">…and ${ escHtml( fmtInt( hidden ) ) } earlier warning${ 1 === hidden ? '' : 's' } not shown.</p>` : '' }
+				</details>
+			`;
+		} else {
+			errorsEl.innerHTML = '';
+		}
+
+		renderJobActions( panel, job );
+
+		// Let the panel owner react once, the first time a run settles.
+		if ( finished && ! panel.announced ) {
+			panel.announced = true;
+			if ( 'complete' === job.status ) {
+				showNotice( `${ opts.sourceName } migration complete. ${ fmtInt( progress.images_imported || 0 ) } image(s) migrated.` );
+			}
+			if ( typeof opts.onImported === 'function' ) {
+				opts.onImported( job );
+			}
+		}
+	}
+
+	function renderJobGalleries( job ) {
+		const galleries = job.galleries || [];
+		if ( ! galleries.length ) return '<p class="bltgallery-muted">Nothing queued.</p>';
+
+		const rows = galleries.map( ( g, i ) => {
+			const active = job.current && job.current.position === i + 1 && isJobActive( job );
+			const state  = g.done ? 'Done' : ( active ? 'Copying…' : 'Waiting' );
+			return `
+				<tr>
+					<td><strong>${ escHtml( g.title ) }</strong></td>
+					<td>${ escHtml( fmtInt( g.imported ) ) } / ${ escHtml( fmtInt( g.total ) ) }</td>
+					<td>${ g.skipped > 0 ? escHtml( fmtInt( g.skipped ) ) : '—' }</td>
+					<td>${ escHtml( state ) }</td>
+				</tr>
+			`;
+		} ).join( '' );
+
+		return `
+			<table class="wp-list-table widefat striped bltgallery-table">
+				<thead><tr><th>Gallery</th><th>Imported</th><th>Skipped</th><th>Status</th></tr></thead>
+				<tbody>${ rows }</tbody>
+			</table>
+		`;
+	}
+
+	function renderJobActions( panel, job ) {
+		const actions = panel.container.querySelector( '.js-actions' );
+		if ( ! actions ) return;
+
+		if ( isJobActive( job ) ) {
+			if ( actions.dataset.mode === 'active' ) return;
+			actions.dataset.mode = 'active';
+			actions.innerHTML = '<button type="button" class="button js-cancel">Cancel migration</button>';
+			actions.querySelector( '.js-cancel' ).addEventListener( 'click', async ( e ) => {
+				e.target.disabled = true;
+				e.target.textContent = 'Cancelling…';
+				try {
+					const updated = await api( `/import/${ panel.opts.endpoint }/cancel`, { method: 'POST', body: {} } );
+					stopImportPolling( panel );
+					paintJob( panel, updated );
+				} catch ( err ) {
+					e.target.disabled = false;
+					e.target.textContent = 'Cancel migration';
+					showNotice( err.message, 'error' );
+				}
+			} );
+			return;
+		}
+
+		if ( actions.dataset.mode === 'done' ) return;
+		actions.dataset.mode = 'done';
+		actions.innerHTML = '<button type="button" class="button button-primary js-again">Migrate more galleries</button>';
+		actions.querySelector( '.js-again' ).addEventListener( 'click', () => {
+			panel.announced = false;
+			showPicker( panel );
+		} );
+	}
+
+	// ------------------------------------------------------------------
+	// Progress polling
+	// ------------------------------------------------------------------
+
+	function startImportPolling( panel ) {
+		stopImportPolling( panel );
+		panel.timer = window.setTimeout( () => pollImportJob( panel ), IMPORT_POLL_MS );
+	}
+
+	function stopImportPolling( panel ) {
+		if ( panel.timer ) {
+			window.clearTimeout( panel.timer );
+			panel.timer = null;
+		}
+	}
+
+	async function pollImportJob( panel ) {
+		panel.timer = null;
+
+		// The panel was replaced (picker reopened, page torn down) — stop.
+		if ( ! panel.container.isConnected || ! panel.container.querySelector( '.bltgallery-import-job' ) ) {
+			return;
+		}
+
+		let job;
+		try {
+			job = await api( `/import/${ panel.opts.endpoint }/job` );
+		} catch {
+			// A blip shouldn't kill the view; try again on the next tick.
+			startImportPolling( panel );
+			return;
+		}
+
+		if ( 'idle' === job.status ) {
+			await showPicker( panel );
+			return;
+		}
+
+		paintJob( panel, job );
+
+		if ( ! isJobActive( job ) ) return;
+
+		// WP-Cron disabled and loopback requests blocked: nothing on the
+		// server will advance the job, so drive a pass from here while the
+		// page is open.
+		if ( job.stalled && ! panel.ticking ) {
+			panel.ticking = true;
+			api( `/import/${ panel.opts.endpoint }/tick`, { method: 'POST', body: {} } )
+				.then( ( ticked ) => {
+					if ( ticked && 'idle' !== ticked.status ) paintJob( panel, ticked );
+				} )
+				.catch( () => {} )
+				.finally( () => { panel.ticking = false; } );
+		}
+
+		startImportPolling( panel );
+	}
+
+	// ------------------------------------------------------------------
+	// Progress helpers
+	// ------------------------------------------------------------------
+
+	/**
+	 * The Status cell in the picker: how — and whether — this source gallery
+	 * has already been brought across.
+	 */
+	function importedCell( imported ) {
+		if ( ! imported ) return '<span class="bltgallery-muted">Not imported</span>';
+
+		const link = `<a href="${ escAttr( imported.gallery_url ) }">${ escHtml( imported.title ) }</a>`;
+
+		if ( 'partial' === imported.state ) {
+			return `<span class="bltgallery-import-flag bltgallery-import-flag--partial">Partly imported</span>
+				<span class="bltgallery-muted"> — ${ link } was left unfinished</span>`;
+		}
+
+		// Matched by slug rather than a stored record: migrated before the
+		// plugin started keeping track, so say so rather than overstate it.
+		if ( 'slug' === imported.matched_by ) {
+			return `<span class="bltgallery-import-flag bltgallery-import-flag--done">Imported</span>
+				<span class="bltgallery-muted" title="Matched by name — this gallery predates import tracking."> — ${ link }</span>`;
+		}
+
+		const when = imported.completed_at
+			? new Date( imported.completed_at ).toLocaleDateString()
+			: '';
+
+		return `<span class="bltgallery-import-flag bltgallery-import-flag--done">Imported</span>
+			<span class="bltgallery-muted"> — ${ link }${ when ? `, ${ escHtml( when ) }` : '' }</span>`;
+	}
+
+	function isJobActive( job ) {
+		return 'queued' === job.status || 'running' === job.status;
+	}
+
+	/**
+	 * Seconds left, extrapolated from the rate so far. Held back until a few
+	 * images are in so the first estimate isn't wild.
+	 */
+	function estimateRemaining( job ) {
+		const done    = parseInt( job.progress?.images_processed, 10 ) || 0;
+		const total   = parseInt( job.totals?.images, 10 ) || 0;
+		const elapsed = parseInt( job.elapsed, 10 ) || 0;
+
+		if ( done < 5 || elapsed < 5 || total <= done ) return null;
+
+		return Math.round( ( elapsed / done ) * ( total - done ) );
+	}
+
+	function fmtInt( value ) {
+		const n = parseInt( value, 10 );
+		return Number.isFinite( n ) ? n.toLocaleString() : '0';
+	}
+
+	function fmtDuration( seconds ) {
+		const total = Math.max( 0, parseInt( seconds, 10 ) || 0 );
+		const h     = Math.floor( total / 3600 );
+		const m     = Math.floor( ( total % 3600 ) / 60 );
+		const s     = total % 60;
+		const pad   = ( n ) => String( n ).padStart( 2, '0' );
+
+		return h > 0 ? `${ h }:${ pad( m ) }:${ pad( s ) }` : `${ m }:${ pad( s ) }`;
 	}
 
 	// ------------------------------------------------------------------
@@ -1574,7 +2093,7 @@
 			<div class="notice notice-warning inline" style="margin:0 0 1rem">
 				<p>
 					<strong>⚠️ This permanently deletes the original NextGEN Gallery files from this server.</strong>
-					Your migrated copies live in BltGallery's own storage and are unaffected, but
+					Your migrated copies live in BLT Gallery's own storage and are unaffected, but
 					reinstalling NextGEN won't bring these files back. <strong>Take a backup first.</strong>
 				</p>
 			</div>
@@ -1768,7 +2287,7 @@
 		{
 			tag: 'blt_slider',
 			title: 'Image slider',
-			intro: 'Renders an image slider built in Blt Gallery → Sliders. Build it visually, then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path (galleries / attachments) is also supported for code-only sliders.',
+			intro: 'Renders an image slider built in BLT Gallery → Sliders. Build it visually, then paste its shortcode. Captions, hover arrows, and a dot counter are built in. An ad-hoc source path (galleries / attachments) is also supported for code-only sliders.',
 			examples: [
 				`[blt_slider id="3"]`,
 				`[blt_slider slug="homepage-hero"]`,
@@ -1780,7 +2299,7 @@
 				[ 'id',          'int',                      'Saved slider ID (primary).' ],
 				[ 'slug',        'string',                   'Saved slider slug (alternative to id).' ],
 				[ 'galleries',   'comma-separated ints',     'Ad-hoc: gallery IDs whose images feed the slider.' ],
-				[ 'images',      'comma-separated ints',     'Ad-hoc: specific Blt gallery image IDs.' ],
+				[ 'images',      'comma-separated ints',     'Ad-hoc: specific BLT gallery image IDs.' ],
 				[ 'attachments', 'comma-separated ints',     'Ad-hoc: WordPress media attachment IDs.' ],
 				[ 'captions',    'on · off',                 'Show the subtle caption / photo credit.' ],
 				[ 'arrows',      '1 · 0',                    'Show the hover-reveal nav arrows.' ],
@@ -1956,7 +2475,7 @@
 	}
 
 	// ------------------------------------------------------------------
-	// Albums admin page (top-level submenu under Blt Gallery)
+	// Albums admin page (top-level submenu under BLT Gallery)
 	// ------------------------------------------------------------------
 
 	async function initAlbumsPage() {

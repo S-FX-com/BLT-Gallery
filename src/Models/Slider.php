@@ -14,7 +14,7 @@ namespace BltGallery\Models;
  *   [ 'source' => 'image',      'ref' => 44,  'caption' => 'optional override' ]
  *   [ 'source' => 'attachment', 'ref' => 123, 'caption' => '' ]
  *
- *   - source "image"      → a Blt gallery image ({prefix}blt_images.id)
+ *   - source "image"      → a BLT gallery image ({prefix}blt_images.id)
  *   - source "attachment" → a WordPress media library attachment ID
  *
  * Resolution into renderable {@see Image} objects happens at display time via
