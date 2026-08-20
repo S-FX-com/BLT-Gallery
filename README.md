@@ -187,7 +187,13 @@ With **Settings → Integrations → Cloudflare R2** (or Amazon S3) switched on,
 [path prefix/]galleries/12-annual-symposium/thumbs/large/photo-large.webp
 ```
 
-Offloading is best effort: an unreachable or misconfigured bucket leaves the image local and working rather than failing the upload.
+Offloading is best effort: an unreachable or misconfigured bucket leaves the image local and working rather than failing the upload. It only runs going forward, at the moment an image is created — turning R2 or S3 on doesn't retroactively touch anything already sitting on local disk.
+
+### Pushing existing images to remote storage
+
+Once a backend is enabled, **Settings → General → Existing images** shows how many images are still local and a button to push them across. This is the same kind of background job as a migration: time-boxed passes dispatched by WP-Cron plus an immediate loopback ping, so the run continues after you close the page, and resumes on its own if the site's scheduler stalls. Reopening Settings shows the live progress bar for whichever run is already in flight.
+
+The backend is pinned the moment the run starts, so flipping the Settings toggle mid-run can't send half the images to one bucket and the rest to another. An image that fails to upload — bad credentials, a file the bucket rejects, a quota — is skipped with a warning rather than retried forever; press the button again later to give it another pass. Cancelling keeps whatever was already pushed.
 
 ### Deleting
 

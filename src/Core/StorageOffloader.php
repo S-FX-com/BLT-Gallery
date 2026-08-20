@@ -60,7 +60,8 @@ class StorageOffloader {
 	}
 
 	/**
-	 * Send an image and its thumbnails to the configured store.
+	 * Send an image and its thumbnails to whichever store is configured
+	 * right now.
 	 *
 	 * Returns the image either way — mutated with its remote keys and public
 	 * URL on success, untouched on failure or when storage is local.
@@ -68,10 +69,20 @@ class StorageOffloader {
 	public static function offload( Image $image ): Image {
 		$driver = self::driver();
 
-		if ( 'local' === $driver ) {
-			return $image;
-		}
+		return 'local' === $driver ? $image : self::offload_to( $image, $driver );
+	}
 
+	/**
+	 * Send an image to a specific backend, bypassing whatever driver()
+	 * currently resolves to.
+	 *
+	 * Used by StorageBackfillRunner: a backfill run pins its target driver
+	 * once at start, so an admin flipping Settings mid-run can't send half a
+	 * run's images to R2 and the other half to S3.
+	 *
+	 * @param string $driver 's3' or 'r2'. Anything else is a no-op.
+	 */
+	public static function offload_to( Image $image, string $driver ): Image {
 		try {
 			if ( 's3' === $driver ) {
 				$image = ( new S3Storage() )->upload_image( $image );
@@ -84,7 +95,11 @@ class StorageOffloader {
 				return $image;
 			}
 
-			return ( new R2Storage() )->upload_image( $image );
+			if ( 'r2' === $driver ) {
+				return ( new R2Storage() )->upload_image( $image );
+			}
+
+			return $image;
 		} catch ( \Throwable $e ) {
 			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				sprintf( 'BLT Gallery %s upload failed: %s', strtoupper( $driver ), $e->getMessage() )
