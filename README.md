@@ -166,6 +166,9 @@ Per-placement attributes (any saved option can be overridden inline):
 | `loop`        | `1` / `0`                       | Wrap from the last slide back to the first         |
 | `height`      | `px` `vh` `%`                   | Max height of each slide, e.g. `70vh`              |
 | `radius`      | px                              | Slider border radius                               |
+| `arrow_position` | `sides` `below`              | Hover-reveal at the edges, or a static row below the slider |
+| `image_size`  | `medium` `large`                | Which pre-generated thumbnail size to use          |
+| `image_fit`   | `contain` `cover`               | Letterbox to fit (no cropping), or crop to fill the height |
 | `order`       | `menu` `random` `reverse`       | Slide order                                        |
 | `limit`       | int                             | Cap the number of slides rendered                  |
 | `class`       | string                          | Extra CSS class on the wrapper                     |

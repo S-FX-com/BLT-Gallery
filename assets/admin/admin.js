@@ -3465,19 +3465,26 @@
 		} );
 	}
 
+	// Type only prefills Height as a starting point — nothing else reads it.
+	const SLIDER_TYPE_HEIGHTS = { hero: '70vh', banner: '320px' };
+
 	function renderSliderSettings( container, slider, state, onSave ) {
 		if ( ! container ) return;
-		const s        = slider.settings || {};
-		const offish   = ( v ) => v === '0' || v === 0 || v === false;
-		const captions = s.captions === 'off' ? 'off' : 'on';
-		const arrows   = offish( s.arrows ) ? '0' : '1';
-		const dots     = offish( s.dots ) ? '0' : '1';
-		const loop     = offish( s.loop ) ? '0' : '1';
-		const autoplay = s.autoplay ? '1' : '0';
-		const speed    = s.speed ?? 5000;
-		const height   = s.height || '';
-		const radius   = s.radius ?? 6;
-		const yesNo    = ( id, val ) => `
+		const s           = slider.settings || {};
+		const offish      = ( v ) => v === '0' || v === 0 || v === false;
+		const captions    = s.captions === 'off' ? 'off' : 'on';
+		const dots        = offish( s.dots ) ? '0' : '1';
+		const loop        = offish( s.loop ) ? '0' : '1';
+		const speed       = s.speed ?? 5000;
+		const height      = s.height || '';
+		const radius      = s.radius ?? 6;
+		const sliderType  = s.slider_type === 'hero' || s.slider_type === 'banner' ? s.slider_type : '';
+		// Today's default (no autoplay, arrows on) reads as "Arrows" advancement.
+		const advancement = s.autoplay ? 'automatic' : 'arrows';
+		const arrowPos    = s.arrow_position === 'below' ? 'below' : 'sides';
+		const imageSize   = s.image_size === 'medium' ? 'medium' : 'large';
+		const imageFit    = s.image_fit === 'cover' ? 'cover' : 'contain';
+		const yesNo       = ( id, val ) => `
 			<select id="${ id }">
 				<option value="1"${ val === '1' ? ' selected' : '' }>On</option>
 				<option value="0"${ val === '0' ? ' selected' : '' }>Off</option>
@@ -3489,6 +3496,45 @@
 				<input type="text" id="zyg-slider-title" class="regular-text" value="${ escAttr( slider.title || '' ) }">
 			</div>
 			<div class="bltgallery-field">
+				<label for="zyg-slider-type">Type</label>
+				<select id="zyg-slider-type">
+					<option value=""${ '' === sliderType ? ' selected' : '' }>— Custom —</option>
+					<option value="hero"${ 'hero' === sliderType ? ' selected' : '' }>Hero — large, top-of-page</option>
+					<option value="banner"${ 'banner' === sliderType ? ' selected' : '' }>Banner — short, compact strip</option>
+				</select>
+				<p class="description">Sets a starting Height below. Everything here stays editable either way.</p>
+			</div>
+			<div class="bltgallery-field">
+				<span class="bltgallery-field__label">Advancement</span>
+				<label class="bltgallery-radio-option">
+					<input type="radio" name="zyg-slider-advancement" value="automatic"${ 'automatic' === advancement ? ' checked' : '' }>
+					Automatic — advances on its own
+				</label>
+				<label class="bltgallery-radio-option">
+					<input type="radio" name="zyg-slider-advancement" value="arrows"${ 'arrows' === advancement ? ' checked' : '' }>
+					Arrows — the visitor clicks through
+				</label>
+			</div>
+			<div class="bltgallery-field" id="zyg-slider-speed-field"${ 'automatic' === advancement ? '' : ' hidden' }>
+				<label for="zyg-slider-speed">Slide speed (ms)</label>
+				<input type="number" id="zyg-slider-speed" class="small-text" min="1000" max="30000" step="500" value="${ speed }">
+			</div>
+			<div class="bltgallery-field" id="zyg-slider-arrowpos-field"${ 'arrows' === advancement ? '' : ' hidden' }>
+				<label for="zyg-slider-arrow-position">Arrow placement</label>
+				<select id="zyg-slider-arrow-position">
+					<option value="sides"${ 'sides' === arrowPos ? ' selected' : '' }>On the sides — hover to reveal</option>
+					<option value="below"${ 'below' === arrowPos ? ' selected' : '' }>Below the slider — always visible</option>
+				</select>
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-dots">Slide counter (the dots)</label>
+				${ yesNo( 'zyg-slider-dots', dots ) }
+			</div>
+			<div class="bltgallery-field">
+				<label for="zyg-slider-loop">Loop back to the first slide</label>
+				${ yesNo( 'zyg-slider-loop', loop ) }
+			</div>
+			<div class="bltgallery-field">
 				<label for="zyg-slider-captions">Captions</label>
 				<select id="zyg-slider-captions">
 					<option value="on"${ captions === 'on' ? ' selected' : '' }>On — description / photo credit</option>
@@ -3496,27 +3542,25 @@
 				</select>
 			</div>
 			<div class="bltgallery-field">
-				<label for="zyg-slider-arrows">Hover arrows</label>
-				${ yesNo( 'zyg-slider-arrows', arrows ) }
+				<label for="zyg-slider-image-size">Image size</label>
+				<select id="zyg-slider-image-size">
+					<option value="large"${ 'large' === imageSize ? ' selected' : '' }>Large — 1600×1200 max (default)</option>
+					<option value="medium"${ 'medium' === imageSize ? ' selected' : '' }>Medium — 800×600 max, smaller file size</option>
+				</select>
+				<p class="description">Which already-generated size to use — smaller loads faster, especially on mobile.</p>
 			</div>
 			<div class="bltgallery-field">
-				<label for="zyg-slider-dots">Dot counter</label>
-				${ yesNo( 'zyg-slider-dots', dots ) }
+				<label for="zyg-slider-image-fit">Image fit</label>
+				<select id="zyg-slider-image-fit">
+					<option value="contain"${ 'contain' === imageFit ? ' selected' : '' }>Fit within frame — never crops, shrinks to fit</option>
+					<option value="cover"${ 'cover' === imageFit ? ' selected' : '' }>Crop to fill — every slide fills the full height</option>
+				</select>
+				<p class="description">"Fit within frame" keeps one steady height so the page doesn't shift as different-shaped images cycle through.</p>
 			</div>
 			<div class="bltgallery-field">
-				<label for="zyg-slider-autoplay">Autoplay</label>
-				${ yesNo( 'zyg-slider-autoplay', autoplay ) }
-				<label for="zyg-slider-speed" style="margin-left:1rem">Speed (ms)</label>
-				<input type="number" id="zyg-slider-speed" class="small-text" min="1000" max="30000" step="500" value="${ speed }">
-			</div>
-			<div class="bltgallery-field">
-				<label for="zyg-slider-loop">Loop</label>
-				${ yesNo( 'zyg-slider-loop', loop ) }
-			</div>
-			<div class="bltgallery-field">
-				<label for="zyg-slider-height">Max height (optional)</label>
+				<label for="zyg-slider-height">Height</label>
 				<input type="text" id="zyg-slider-height" class="regular-text" value="${ escAttr( height ) }" placeholder="e.g. 70vh or 480px">
-				<p class="description">Limits how tall each slide can be. Leave blank for the default.</p>
+				<p class="description">Filled in by Type above, or set your own. Leave blank for the default (~70vh).</p>
 			</div>
 			<div class="bltgallery-field">
 				<label for="zyg-slider-radius">Corner radius (px)</label>
@@ -3527,19 +3571,39 @@
 			</div>
 		`;
 
-		state.readForm = () => ( {
-			title: container.querySelector( '#zyg-slider-title' ).value,
-			settings: {
-				captions: container.querySelector( '#zyg-slider-captions' ).value,
-				arrows:   container.querySelector( '#zyg-slider-arrows' ).value,
-				dots:     container.querySelector( '#zyg-slider-dots' ).value,
-				autoplay: container.querySelector( '#zyg-slider-autoplay' ).value === '1',
-				speed:    parseInt( container.querySelector( '#zyg-slider-speed' ).value, 10 ) || 5000,
-				loop:     container.querySelector( '#zyg-slider-loop' ).value,
-				height:   container.querySelector( '#zyg-slider-height' ).value.trim(),
-				radius:   parseInt( container.querySelector( '#zyg-slider-radius' ).value, 10 ) || 0,
-			},
+		container.querySelector( '#zyg-slider-type' ).addEventListener( 'change', ( e ) => {
+			const preset = SLIDER_TYPE_HEIGHTS[ e.target.value ];
+			if ( preset ) container.querySelector( '#zyg-slider-height' ).value = preset;
 		} );
+
+		container.querySelectorAll( 'input[name="zyg-slider-advancement"]' ).forEach( ( radio ) => {
+			radio.addEventListener( 'change', () => {
+				const val = container.querySelector( 'input[name="zyg-slider-advancement"]:checked' ).value;
+				container.querySelector( '#zyg-slider-speed-field' ).hidden = val !== 'automatic';
+				container.querySelector( '#zyg-slider-arrowpos-field' ).hidden = val !== 'arrows';
+			} );
+		} );
+
+		state.readForm = () => {
+			const advancementVal = container.querySelector( 'input[name="zyg-slider-advancement"]:checked' )?.value || 'arrows';
+			return {
+				title: container.querySelector( '#zyg-slider-title' ).value,
+				settings: {
+					slider_type:    container.querySelector( '#zyg-slider-type' ).value,
+					autoplay:       advancementVal === 'automatic',
+					arrows:         advancementVal === 'arrows' ? '1' : '0',
+					arrow_position: container.querySelector( '#zyg-slider-arrow-position' ).value,
+					speed:          parseInt( container.querySelector( '#zyg-slider-speed' ).value, 10 ) || 5000,
+					dots:           container.querySelector( '#zyg-slider-dots' ).value,
+					loop:           container.querySelector( '#zyg-slider-loop' ).value,
+					captions:       container.querySelector( '#zyg-slider-captions' ).value,
+					image_size:     container.querySelector( '#zyg-slider-image-size' ).value,
+					image_fit:      container.querySelector( '#zyg-slider-image-fit' ).value,
+					height:         container.querySelector( '#zyg-slider-height' ).value.trim(),
+					radius:         parseInt( container.querySelector( '#zyg-slider-radius' ).value, 10 ) || 0,
+				},
+			};
+		};
 
 		container.querySelector( '#zyg-slider-save' ).addEventListener( 'click', ( e ) => onSave( e.target ) );
 	}

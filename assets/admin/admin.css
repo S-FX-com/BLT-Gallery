@@ -58,6 +58,8 @@
 .bltgallery-field--toggle { flex-direction: row; align-items: center; max-width: none; }
 .bltgallery-field--toggle label { font-weight: normal; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
 
+.bltgallery-radio-option { font-weight: normal; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+
 /* ── Table ────────────────────────────────────────────────────────────── */
 
 .bltgallery-table code {
@@ -611,6 +613,16 @@
 
 .bltgallery-editor-layout__sidebar .bltgallery-panel {
 	margin-bottom: 1rem;
+}
+
+/* The sidebar is a fixed 300px column, but WP core's `.regular-text` (25em)
+   and even a bare <select> can render wider than that and spill out past
+   the card edge — same underlying cause as the album modal fix below. */
+.bltgallery-editor-layout__sidebar .bltgallery-field input,
+.bltgallery-editor-layout__sidebar .bltgallery-field select {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 /* ── Album metabox (sidebar on the gallery editor) ──────────────────── */
