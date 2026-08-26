@@ -432,6 +432,8 @@ class AdminMenu {
 					[ 'captions',    'on · off',                                        __( 'Show the subtle image caption / photo credit.', 'bltgallery' ) ],
 					[ 'arrows',      '1 · 0',                                           __( 'Show the hover-reveal nav arrows.', 'bltgallery' ) ],
 					[ 'dots',        '1 · 0',                                           __( 'Show the dot counter.', 'bltgallery' ) ],
+					[ 'dot_color',   'primary · secondary · tertiary · accent · custom', __( 'Color the dot indicators — aligns with the ACSS primary/secondary/tertiary/accent palette when present.', 'bltgallery' ) ],
+					[ 'dot_color_custom', 'hex',                                         __( 'Hex color used when dot_color is "custom", e.g. #ff5a1f.', 'bltgallery' ) ],
 					[ 'autoplay',    '1 · 0',                                           __( 'Auto-advance slides.', 'bltgallery' ) ],
 					[ 'speed',       'ms',                                              __( 'Autoplay interval (default 5000).', 'bltgallery' ) ],
 					[ 'loop',        '1 · 0',                                           __( 'Wrap from the last slide back to the first.', 'bltgallery' ) ],
@@ -768,6 +770,12 @@ class AdminMenu {
 									<span class="bltgallery-uploader__icon" aria-hidden="true">&#128247;</span>
 									<p><?php esc_html_e( 'Drag & drop images here, or', 'bltgallery' ); ?> <strong><?php esc_html_e( 'click to browse', 'bltgallery' ); ?></strong></p>
 									<p class="bltgallery-uploader__hint"><?php esc_html_e( 'JPEG, PNG, GIF, WebP, AVIF · Max 50 MB each', 'bltgallery' ); ?></p>
+								</div>
+								<div class="bltgallery-uploader__actions">
+									<button type="button" class="button" id="bltgallery-add-from-media">
+										<?php esc_html_e( '+ Add from media library', 'bltgallery' ); ?>
+									</button>
+									<p class="description"><?php esc_html_e( "Pull in a copy of images you've already uploaded elsewhere on the site, instead of uploading them again.", 'bltgallery' ); ?></p>
 								</div>
 								<ul class="bltgallery-uploader__progress-list" id="bltgallery-progress-list"></ul>
 							</div>

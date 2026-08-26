@@ -47,6 +47,8 @@ use BltGallery\Models\Slider;
  *   arrow_position – "sides" | "below"   hover-reveal at the edges, or a static row below
  *   image_size     – "medium" | "large"  which pre-generated thumbnail size to use
  *   image_fit      – "contain" | "cover" letterbox to fit, or crop to fill the height
+ *   dot_color      – "" | "primary" | "secondary" | "tertiary" | "accent" | "custom"
+ *   dot_color_custom – hex color, used when dot_color="custom"
  *   limit          – cap the number of slides rendered
  *   order          – "menu" | "random" | "reverse"
  *   class          – extra CSS class on the wrapping div
@@ -76,6 +78,8 @@ class SliderShortcode {
 				'arrow_position' => '',
 				'image_size'     => '',
 				'image_fit'      => '',
+				'dot_color'      => '',
+				'dot_color_custom' => '',
 				'limit'          => '',
 				'order'          => '',
 				'class'          => '',
@@ -240,6 +244,13 @@ class SliderShortcode {
 		}
 		if ( '' !== $atts['image_fit'] ) {
 			$settings['image_fit'] = 'cover' === sanitize_key( (string) $atts['image_fit'] ) ? 'cover' : 'contain';
+		}
+		if ( '' !== $atts['dot_color'] ) {
+			$color = sanitize_key( (string) $atts['dot_color'] );
+			$settings['dot_color'] = in_array( $color, [ 'primary', 'secondary', 'tertiary', 'accent', 'custom' ], true ) ? $color : '';
+		}
+		if ( '' !== $atts['dot_color_custom'] ) {
+			$settings['dot_color_custom'] = (string) ( sanitize_hex_color( (string) $atts['dot_color_custom'] ) ?: '' );
 		}
 		// A `height` attribute overrides any saved height. Validated against a
 		// CSS length whitelist; SliderDisplay emits it as --blt-slider-height.

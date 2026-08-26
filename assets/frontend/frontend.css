@@ -351,19 +351,31 @@
 	width: 0.6rem;
 	height: 0.6rem;
 	border-radius: 50%;
-	border: 1.5px solid rgba( 255, 255, 255, 0.7 );
+	border: 1.5px solid var(--blt-slider-dot-color, rgba( 255, 255, 255, 0.7 ));
 	background: transparent;
 	cursor: pointer;
 	padding: 0;
 	transition: background var(--blt-transition), border-color var(--blt-transition), transform var(--blt-transition);
 }
 
-.bltgallery-slider__dot:hover { border-color: #fff; }
+.bltgallery-slider__dot:hover { border-color: var(--blt-slider-dot-color, #fff); }
 
 .bltgallery-slider__dot.is-active {
-	background: #fff;
-	border-color: #fff;
+	background: var(--blt-slider-dot-color, #fff);
+	border-color: var(--blt-slider-dot-color, #fff);
 }
+
+/* Dot color — BEM modifiers on the .bltgallery-slider__dots wrapper, keyed to
+   ACSS's (Automatic.css) core brand palette so a slider's dots can align with
+   the rest of a site built on it. Each reads the matching ACSS custom
+   property with a literal fallback, so the slider still looks intentional on
+   a site that isn't running ACSS — same var()-with-fallback pattern as the
+   album title sizes above. "custom" is set inline by SliderDisplay instead,
+   from a saved hex, the same way height becomes --blt-slider-height. */
+.bltgallery-slider__dots--primary   { --blt-slider-dot-color: var(--primary, #2271b1); }
+.bltgallery-slider__dots--secondary { --blt-slider-dot-color: var(--secondary, #135e96); }
+.bltgallery-slider__dots--tertiary  { --blt-slider-dot-color: var(--tertiary, #64748b); }
+.bltgallery-slider__dots--accent    { --blt-slider-dot-color: var(--accent, #f59e0b); }
 
 /* Hover-only navigation arrows. */
 .bltgallery-slider__prev,
