@@ -314,6 +314,9 @@
 					</td>
 					<td class="bltgallery-col-id">${ escHtml( String( g.id ) ) }</td>
 					<td><strong><a href="${ escAttr( listUrl + '&action=edit&gallery_id=' + g.id ) }">${ escHtml( g.title ) }</a></strong></td>
+					<td>${ g.creator
+						? `${ escHtml( g.creator.name ) }${ g.creator.front_end ? ' <span class="blt-badge" title="Created from the front-end gallery">Front-end</span>' : '' }`
+						: '<span class="bltgallery-muted">—</span>' }</td>
 					<td>${ count > 0
 						? escHtml( fmtInt( count ) )
 						: '<span class="bltgallery-muted">0</span>' }</td>
@@ -350,6 +353,7 @@
 						</td>
 						${ sortHeader( 'id', state, ' style="width:5em"' ) }
 						${ sortHeader( 'title', state ) }
+						<th>Creator</th>
 						${ sortHeader( 'images', state, ' style="width:7em"' ) }
 						<th>Display Type</th>
 						<th>Album</th>
@@ -2689,6 +2693,29 @@
 			attrs: [
 				[ 'class', 'string', 'Extra CSS class on the wrapper.' ],
 				[ 'style', 'string', 'Extra inline style on the wrapper.' ],
+			],
+		},
+		{
+			tag: 'blt_user_gallery',
+			title: 'A specific user\'s gallery',
+			intro: 'Displays one WordPress user\'s front-end gallery by their user ID — for templates that already know which profile they\'re showing (a member page, a directory). Read-only: no upload widget, no login required to view, and works even if the front-end gallery feature is currently disabled for new uploads. Renders nothing if that user has never created a gallery. Every [blt_gallery] display attribute (type, cols, gap, captions, lightbox, …) works here too.',
+			examples: [
+				`[blt_user_gallery user_id="123"]`,
+				`[blt_user_gallery user_id="123" type="tile" cols="4"]`,
+				`echo do_shortcode( '[blt_user_gallery user_id="' . (int) $profile_user_id . '"]' );`,
+			],
+			attrs: [
+				[ 'user_id',  'int',                                     'WordPress user ID whose gallery to show.' ],
+				[ 'type',     'masonry · tile · slideshow · lightbox',   'Override the stored display type.' ],
+				[ 'cols',     '1–8',                                     'Target column count at desktop width.' ],
+				[ 'gap',      'px',                                      'Gutter between items.' ],
+				[ 'radius',   'px',                                      'Per-item border radius.' ],
+				[ 'captions', 'below · hover · off',                     'Caption position.' ],
+				[ 'lightbox', '1 · 0',                                   'Enable click-to-lightbox on grids.' ],
+				[ 'limit',    'int',                                     'Cap the number of images rendered.' ],
+				[ 'order',    'menu · date · random',                    'Image sort order.' ],
+				[ 'class',    'string',                                  'Extra CSS class on the wrapper.' ],
+				[ 'style',    'string',                                  'Extra inline style on the wrapper.' ],
 			],
 		},
 	];

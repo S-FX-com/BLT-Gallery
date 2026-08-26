@@ -165,15 +165,17 @@ final class Plugin {
 	}
 
 	public function register_shortcodes(): void {
-		$gallery    = new Shortcode();
-		$album      = new AlbumShortcode();
-		$slider     = new SliderShortcode();
-		$my_gallery = new FrontEndGalleryShortcode();
+		$gallery      = new Shortcode();
+		$album        = new AlbumShortcode();
+		$slider       = new SliderShortcode();
+		$my_gallery   = new FrontEndGalleryShortcode();
+		$user_gallery = new UserGalleryShortcode();
 
-		add_shortcode( 'blt_gallery',    [ $gallery,    'render' ] );
-		add_shortcode( 'blt_album',      [ $album,      'render' ] );
-		add_shortcode( 'blt_slider',     [ $slider,     'render' ] );
-		add_shortcode( 'blt_my_gallery', [ $my_gallery, 'render' ] );
+		add_shortcode( 'blt_gallery',      [ $gallery,      'render' ] );
+		add_shortcode( 'blt_album',        [ $album,        'render' ] );
+		add_shortcode( 'blt_slider',       [ $slider,       'render' ] );
+		add_shortcode( 'blt_my_gallery',   [ $my_gallery,   'render' ] );
+		add_shortcode( 'blt_user_gallery', [ $user_gallery, 'render' ] );
 
 		// Backward-compatibility aliases for pre-3.0 content.
 		add_shortcode( 'bltgallery',  [ $gallery, 'render' ] );
