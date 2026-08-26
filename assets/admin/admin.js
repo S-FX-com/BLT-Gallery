@@ -1299,6 +1299,12 @@
 					Delete all data on uninstall
 				</label>
 			</div>
+			<div class="bltgallery-field bltgallery-field--toggle">
+				<label>
+					<input type="checkbox" id="zyg-enable-bricks"${ g.enable_bricks_elements ? ' checked' : '' }>
+					Register Bricks Builder elements (Gallery, Slider)
+				</label>
+			</div>
 			<div class="bltgallery-field">
 				<button class="button button-primary" id="zyg-save-general">Save General Settings</button>
 			</div>
@@ -1334,6 +1340,7 @@
 					lazy_load:                container.querySelector( '#zyg-lazy-load' ).checked,
 					webp_quality:             parseInt( container.querySelector( '#zyg-webp-quality' ).value, 10 ),
 					delete_data_on_uninstall: container.querySelector( '#zyg-delete-data' ).checked,
+					enable_bricks_elements:   container.querySelector( '#zyg-enable-bricks' ).checked,
 				} } );
 				showNotice( 'General settings saved.' );
 				applyIntegrationVisibility( {

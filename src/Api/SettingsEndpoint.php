@@ -266,6 +266,9 @@ class SettingsEndpoint {
 			'enable_s3'                => false,
 			'enable_r2'                => false,
 			'enable_cf_images'         => false,
+			// Registers the BLT Gallery / BLT Slider elements with Bricks
+			// Builder (no-op on sites where Bricks isn't active).
+			'enable_bricks_elements'   => false,
 			// Legacy single-value selector kept so old saves don't lose state.
 			'storage_driver'           => 'local',
 		];
@@ -277,7 +280,7 @@ class SettingsEndpoint {
 			'storage_driver'           => in_array( (string) $value, [ 'local', 's3', 'r2' ], true ) ? (string) $value : 'local',
 			'webp_quality'             => min( 100, max( 1, (int) $value ) ),
 			'thumb_width', 'thumb_height' => max( 1, (int) $value ),
-			'delete_data_on_uninstall', 'lazy_load', 'enable_s3', 'enable_r2', 'enable_cf_images' => (bool) $value,
+			'delete_data_on_uninstall', 'lazy_load', 'enable_s3', 'enable_r2', 'enable_cf_images', 'enable_bricks_elements' => (bool) $value,
 			default                    => $value,
 		};
 	}
