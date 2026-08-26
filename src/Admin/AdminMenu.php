@@ -448,6 +448,19 @@ class AdminMenu {
 					[ 'style',       'string',                                          __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
 				],
 			],
+			[
+				'tag'      => 'blt_my_gallery',
+				'title'    => __( 'Front-end gallery', 'bltgallery' ),
+				'intro'    => __( 'Renders an upload widget for the logged-in visitor\'s own gallery — enable it and choose which roles are allowed under Settings → Front-End Gallery first. There is no id/slug attribute: it always shows the current visitor their own gallery, never a specific one you choose.', 'bltgallery' ),
+				'examples' => [
+					'[blt_my_gallery]',
+					'[blt_my_gallery class="my-custom-wrap"]',
+				],
+				'attrs'    => [
+					[ 'class', 'string', __( 'Extra CSS class on the wrapper.', 'bltgallery' ) ],
+					[ 'style', 'string', __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
+				],
+			],
 		];
 	}
 
@@ -530,6 +543,9 @@ class AdminMenu {
 				'nonce'    => wp_create_nonce( 'wp_rest' ),
 				'pluginUrl' => BLT_GALLERY_PLUGIN_URL,
 				'adminUrl' => admin_url( 'admin.php?page=' . self::MENU_SLUG ),
+				// Role slug => translated label, for the Front-End Gallery
+				// settings panel's "allowed roles" checkboxes.
+				'roles'    => wp_roles()->get_names(),
 			]
 		);
 	}
@@ -566,6 +582,17 @@ class AdminMenu {
 					<h2><?php esc_html_e( 'General', 'bltgallery' ); ?></h2>
 				</div>
 				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-general-settings">
+					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
+				</div>
+			</div>
+
+			<!-- Front-End Gallery -->
+			<div class="bltgallery-panel blt-card">
+				<div class="bltgallery-panel__header blt-card-header">
+					<h2><?php esc_html_e( 'Front-End Gallery', 'bltgallery' ); ?></h2>
+					<p><?php esc_html_e( 'Let logged-in visitors upload their own images into a gallery tied to their account.', 'bltgallery' ); ?></p>
+				</div>
+				<div class="bltgallery-panel__body blt-card-body" id="bltgallery-front-end-gallery-settings">
 					<p class="bltgallery-loading"><?php esc_html_e( 'Loading…', 'bltgallery' ); ?></p>
 				</div>
 			</div>
