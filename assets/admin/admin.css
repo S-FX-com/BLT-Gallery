@@ -107,6 +107,16 @@
 .bltgallery-uploader__icon  { font-size: 2rem; display: block; margin-bottom: .5rem; }
 .bltgallery-uploader__hint  { color: #94a3b8; font-size: .8rem; margin: 0; }
 
+.bltgallery-uploader__actions {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	flex-wrap: wrap;
+	margin-top: .75rem;
+}
+
+.bltgallery-uploader__actions .description { margin: 0; }
+
 .bltgallery-uploader__progress-list {
 	list-style: none;
 	margin: 1rem 0 0;

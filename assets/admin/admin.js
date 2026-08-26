@@ -110,7 +110,7 @@
 					<button type="button" class="button button-secondary" data-action="cancel">Cancel</button>
 				</div>
 				<p class="bltgallery-inline-create__hint description">
-					You can upload images and tweak display settings on the next screen.
+					You can add images — uploaded or from the media library — and tweak display settings on the next screen.
 				</p>
 			</form>
 		`;
@@ -1089,6 +1089,11 @@
 
 		if ( ! dropZone || ! fileInput ) return;
 
+		const mediaBtn = document.getElementById( 'bltgallery-add-from-media' );
+		if ( mediaBtn ) {
+			mediaBtn.addEventListener( 'click', () => addImagesFromMediaLibrary( galleryId, onUploaded ) );
+		}
+
 		dropZone.addEventListener( 'click', () => fileInput.click() );
 		dropZone.addEventListener( 'keydown', ( e ) => { if ( e.key === 'Enter' ) fileInput.click(); } );
 		fileInput.addEventListener( 'change', ( e ) => handleFiles( e.target.files ) );
@@ -1146,6 +1151,88 @@
 			};
 
 			xhr.send( body );
+		}
+	}
+
+	/**
+	 * Add images already in the WordPress media library, instead of
+	 * re-uploading a file the visitor already has on the site somewhere.
+	 * The server pulls its own copy into the gallery — see
+	 * UploadEndpoint::import_attachments().
+	 */
+	function addImagesFromMediaLibrary( galleryId, onUploaded ) {
+		if ( ! window.wp || ! window.wp.media ) {
+			showNotice( 'The WordPress media library is unavailable on this page.', 'error' );
+			return;
+		}
+
+		const frame = window.wp.media( {
+			title:    'Add images from the media library',
+			multiple: 'add',
+			library:  { type: 'image' },
+			button:   { text: 'Add to gallery' },
+		} );
+
+		frame.on( 'select', () => {
+			const ids = [];
+			frame.state().get( 'selection' ).forEach( ( att ) => ids.push( att.id ) );
+			if ( ids.length ) importAttachmentsIntoGallery( galleryId, ids, onUploaded );
+		} );
+
+		frame.open();
+	}
+
+	/**
+	 * Copy the picked attachments into the gallery, chunk by chunk. The
+	 * endpoint is time-boxed the same way gallery bulk-delete is — each image
+	 * still goes through the full resize/thumbnail pipeline — so it hands
+	 * back whatever it did not reach in `remaining` and we send that on again
+	 * until the queue empties.
+	 */
+	async function importAttachmentsIntoGallery( galleryId, attachmentIds, onUploaded ) {
+		let queue = attachmentIds.slice();
+		let added = 0;
+		const errors = [];
+
+		while ( queue.length ) {
+			let res;
+			try {
+				res = await api( `/galleries/${ galleryId }/import-attachments`, {
+					method: 'POST',
+					body:   { attachment_ids: queue },
+				} );
+			} catch ( e ) {
+				showNotice( e.message, 'error' );
+				return;
+			}
+
+			const gotten = res.images || [];
+			gotten.forEach( ( image ) => {
+				added++;
+				onUploaded( image );
+			} );
+			errors.push( ...( res.errors || [] ) );
+
+			const next = Array.isArray( res.remaining ) ? res.remaining : [];
+
+			// A round that neither added an image nor shrank the queue is going
+			// nowhere; stop rather than hammer the endpoint forever.
+			if ( ! gotten.length && next.length >= queue.length ) {
+				showNotice( 'The server stopped making progress adding the selected images.', 'error' );
+				return;
+			}
+
+			queue = next;
+		}
+
+		if ( errors.length ) {
+			const firstReason = errors[ 0 ].message || 'unknown error';
+			showNotice(
+				`Added ${ added } image${ added === 1 ? '' : 's' }; ${ errors.length } failed (${ firstReason }).`,
+				added ? 'warning' : 'error'
+			);
+		} else if ( added ) {
+			showNotice( `Added ${ added } image${ added === 1 ? '' : 's' } from the media library.` );
 		}
 	}
 
@@ -2512,6 +2599,8 @@
 				[ 'captions',    'on · off',                 'Show the subtle caption / photo credit.' ],
 				[ 'arrows',      '1 · 0',                    'Show the hover-reveal nav arrows.' ],
 				[ 'dots',        '1 · 0',                    'Show the dot counter.' ],
+				[ 'dot_color',   'primary · secondary · tertiary · accent · custom', 'Color the dot indicators — aligns with the ACSS primary/secondary/tertiary/accent palette when present.' ],
+				[ 'dot_color_custom', 'hex',                  'Hex color used when dot_color is "custom", e.g. #ff5a1f.' ],
 				[ 'autoplay',    '1 · 0',                    'Auto-advance slides.' ],
 				[ 'speed',       'ms',                       'Autoplay interval (default 5000).' ],
 				[ 'loop',        '1 · 0',                    'Wrap from the last slide back to the first.' ],
@@ -3484,6 +3573,9 @@
 		const arrowPos    = s.arrow_position === 'below' ? 'below' : 'sides';
 		const imageSize   = s.image_size === 'medium' ? 'medium' : 'large';
 		const imageFit    = s.image_fit === 'cover' ? 'cover' : 'contain';
+		const dotColorAllowed = [ 'primary', 'secondary', 'tertiary', 'accent', 'custom' ];
+		const dotColor        = dotColorAllowed.includes( s.dot_color ) ? s.dot_color : '';
+		const dotColorCustom  = s.dot_color_custom || '#2271b1';
 		const yesNo       = ( id, val ) => `
 			<select id="${ id }">
 				<option value="1"${ val === '1' ? ' selected' : '' }>On</option>
@@ -3529,6 +3621,22 @@
 			<div class="bltgallery-field">
 				<label for="zyg-slider-dots">Slide counter (the dots)</label>
 				${ yesNo( 'zyg-slider-dots', dots ) }
+			</div>
+			<div class="bltgallery-field" id="zyg-slider-dot-color-field"${ '1' === dots ? '' : ' hidden' }>
+				<label for="zyg-slider-dot-color">Dot color</label>
+				<select id="zyg-slider-dot-color">
+					<option value=""${ '' === dotColor ? ' selected' : '' }>Default</option>
+					<option value="primary"${ 'primary' === dotColor ? ' selected' : '' }>Primary</option>
+					<option value="secondary"${ 'secondary' === dotColor ? ' selected' : '' }>Secondary</option>
+					<option value="tertiary"${ 'tertiary' === dotColor ? ' selected' : '' }>Tertiary</option>
+					<option value="accent"${ 'accent' === dotColor ? ' selected' : '' }>Accent</option>
+					<option value="custom"${ 'custom' === dotColor ? ' selected' : '' }>Custom color…</option>
+				</select>
+				<span id="zyg-slider-dot-color-custom-wrap" style="margin-left:0.75rem"${ 'custom' === dotColor ? '' : ' hidden' }>
+					<label for="zyg-slider-dot-color-custom">Color</label>
+					<input type="color" id="zyg-slider-dot-color-custom" value="${ escAttr( dotColorCustom ) }">
+				</span>
+				<p class="description">Primary/Secondary/Tertiary/Accent line up with your Automatic.css (ACSS) palette when it's active on this site, and fall back to sensible defaults otherwise.</p>
 			</div>
 			<div class="bltgallery-field">
 				<label for="zyg-slider-loop">Loop back to the first slide</label>
@@ -3584,23 +3692,33 @@
 			} );
 		} );
 
+		container.querySelector( '#zyg-slider-dots' ).addEventListener( 'change', ( e ) => {
+			container.querySelector( '#zyg-slider-dot-color-field' ).hidden = e.target.value !== '1';
+		} );
+
+		container.querySelector( '#zyg-slider-dot-color' ).addEventListener( 'change', ( e ) => {
+			container.querySelector( '#zyg-slider-dot-color-custom-wrap' ).hidden = e.target.value !== 'custom';
+		} );
+
 		state.readForm = () => {
 			const advancementVal = container.querySelector( 'input[name="zyg-slider-advancement"]:checked' )?.value || 'arrows';
 			return {
 				title: container.querySelector( '#zyg-slider-title' ).value,
 				settings: {
-					slider_type:    container.querySelector( '#zyg-slider-type' ).value,
-					autoplay:       advancementVal === 'automatic',
-					arrows:         advancementVal === 'arrows' ? '1' : '0',
-					arrow_position: container.querySelector( '#zyg-slider-arrow-position' ).value,
-					speed:          parseInt( container.querySelector( '#zyg-slider-speed' ).value, 10 ) || 5000,
-					dots:           container.querySelector( '#zyg-slider-dots' ).value,
-					loop:           container.querySelector( '#zyg-slider-loop' ).value,
-					captions:       container.querySelector( '#zyg-slider-captions' ).value,
-					image_size:     container.querySelector( '#zyg-slider-image-size' ).value,
-					image_fit:      container.querySelector( '#zyg-slider-image-fit' ).value,
-					height:         container.querySelector( '#zyg-slider-height' ).value.trim(),
-					radius:         parseInt( container.querySelector( '#zyg-slider-radius' ).value, 10 ) || 0,
+					slider_type:      container.querySelector( '#zyg-slider-type' ).value,
+					autoplay:         advancementVal === 'automatic',
+					arrows:           advancementVal === 'arrows' ? '1' : '0',
+					arrow_position:   container.querySelector( '#zyg-slider-arrow-position' ).value,
+					speed:            parseInt( container.querySelector( '#zyg-slider-speed' ).value, 10 ) || 5000,
+					dots:             container.querySelector( '#zyg-slider-dots' ).value,
+					dot_color:        container.querySelector( '#zyg-slider-dot-color' ).value,
+					dot_color_custom: container.querySelector( '#zyg-slider-dot-color-custom' ).value,
+					loop:             container.querySelector( '#zyg-slider-loop' ).value,
+					captions:         container.querySelector( '#zyg-slider-captions' ).value,
+					image_size:       container.querySelector( '#zyg-slider-image-size' ).value,
+					image_fit:        container.querySelector( '#zyg-slider-image-fit' ).value,
+					height:           container.querySelector( '#zyg-slider-height' ).value.trim(),
+					radius:           parseInt( container.querySelector( '#zyg-slider-radius' ).value, 10 ) || 0,
 				},
 			};
 		};

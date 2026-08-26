@@ -245,6 +245,17 @@ class SliderEndpoint {
 			$out['image_fit'] = 'cover' === $fit ? 'cover' : 'contain';
 		}
 
+		// Dot color: BEM modifier keyed to ACSS's primary/secondary/tertiary/
+		// accent palette, or a literal hex when "custom" is picked. See
+		// SliderDisplay::render() and frontend.css for how each renders.
+		if ( array_key_exists( 'dot_color', $incoming ) ) {
+			$color = sanitize_key( (string) $incoming['dot_color'] );
+			$out['dot_color'] = in_array( $color, [ 'primary', 'secondary', 'tertiary', 'accent', 'custom' ], true ) ? $color : '';
+		}
+		if ( array_key_exists( 'dot_color_custom', $incoming ) ) {
+			$out['dot_color_custom'] = (string) ( sanitize_hex_color( (string) $incoming['dot_color_custom'] ) ?: '' );
+		}
+
 		return $out;
 	}
 

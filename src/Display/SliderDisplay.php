@@ -131,7 +131,31 @@ class SliderDisplay extends AbstractDisplay {
 			}
 
 			if ( $show_dots && $count > 1 && $count <= 30 ) {
-				echo '<ol class="bltgallery-slider__dots" aria-label="' . esc_attr__( 'Slide indicators', 'bltgallery' ) . '">';
+				// BEM modifier keyed to the dot color setting. Values map to ACSS's
+				// core brand palette (var(--primary)/--secondary/--tertiary/--accent)
+				// when Automatic.css is active, with a literal fallback when it isn't
+				// — see the matching rules in frontend.css. "custom" instead emits a
+				// literal hex as an inline custom property, same pattern as the
+				// slider's own --blt-slider-height above.
+				$dot_color = sanitize_key( (string) ( $gallery->settings['dot_color'] ?? '' ) );
+				if ( ! in_array( $dot_color, [ 'primary', 'secondary', 'tertiary', 'accent', 'custom' ], true ) ) {
+					$dot_color = '';
+				}
+				$dots_class = 'bltgallery-slider__dots' . ( '' !== $dot_color ? ' bltgallery-slider__dots--' . $dot_color : '' );
+				$dots_style = '';
+				if ( 'custom' === $dot_color ) {
+					$dot_hex = sanitize_hex_color( (string) ( $gallery->settings['dot_color_custom'] ?? '' ) );
+					if ( $dot_hex ) {
+						$dots_style = ' style="--blt-slider-dot-color:' . esc_attr( $dot_hex ) . '"';
+					}
+				}
+
+				printf(
+					'<ol class="%s" aria-label="%s"%s>',
+					esc_attr( $dots_class ),
+					esc_attr__( 'Slide indicators', 'bltgallery' ),
+					$dots_style // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from esc_attr()'d hex above, same pattern as $height_style.
+				);
 				for ( $idx = 0; $idx < $count; $idx++ ) {
 					printf(
 						'<li><button type="button" class="bltgallery-slider__dot%s" data-slide="%d" aria-label="%s"></button></li>',
