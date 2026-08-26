@@ -11,6 +11,7 @@ use BltGallery\Core\GalleryRepository;
 use BltGallery\Core\ImageProcessor;
 use BltGallery\Core\ImageRepository;
 use BltGallery\Core\StorageOffloader;
+use BltGallery\Core\UploadValidator;
 use BltGallery\Models\Gallery;
 use BltGallery\Models\Image;
 
@@ -30,12 +31,6 @@ use BltGallery\Models\Image;
 class UploadEndpoint {
 
 	const NAMESPACE = 'bltgallery/v1';
-
-	/** Maximum upload size in bytes (50 MB). Servers may enforce a lower limit. */
-	const MAX_UPLOAD_SIZE = 52_428_800;
-
-	/** Allowed MIME types. */
-	const ALLOWED_TYPES = [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif' ];
 
 	public function register(): void {
 		register_rest_route(
@@ -87,7 +82,7 @@ class UploadEndpoint {
 		$file = $files['file'];
 
 		// Validate the upload.
-		$validation = $this->validate_file( $file );
+		$validation = UploadValidator::validate( $file );
 		if ( is_wp_error( $validation ) ) {
 			return $validation;
 		}
@@ -185,39 +180,6 @@ class UploadEndpoint {
 	// Helpers
 	// ------------------------------------------------------------------
 
-	private function validate_file( array $file ): true|WP_Error {
-		if ( ! empty( $file['error'] ) ) {
-			return new WP_Error( 'upload_error', __( 'File upload error.', 'bltgallery' ), [ 'status' => 400 ] );
-		}
-
-		if ( $file['size'] > self::MAX_UPLOAD_SIZE ) {
-			return new WP_Error(
-				'file_too_large',
-				sprintf(
-					/* translators: %s: max size in MB */
-					__( 'File exceeds maximum size of %s MB.', 'bltgallery' ),
-					self::MAX_UPLOAD_SIZE / 1_048_576
-				),
-				[ 'status' => 413 ]
-			);
-		}
-
-		// Verify MIME by reading file magic bytes, not trusting $_FILES['type'].
-		$finfo = finfo_open( FILEINFO_MIME_TYPE );
-		$mime  = finfo_file( $finfo, $file['tmp_name'] );
-		finfo_close( $finfo );
-
-		if ( ! in_array( $mime, self::ALLOWED_TYPES, true ) ) {
-			return new WP_Error(
-				'invalid_type',
-				__( 'Only JPEG, PNG, GIF, WebP, and AVIF images are allowed.', 'bltgallery' ),
-				[ 'status' => 415 ]
-			);
-		}
-
-		return true;
-	}
-
 	/**
 	 * Validate, process, and save one media library attachment as a new
 	 * gallery image. Metadata already on the attachment (alt text, caption,
@@ -229,7 +191,7 @@ class UploadEndpoint {
 			return new WP_Error( 'invalid_attachment', __( 'Not a valid image from the media library.', 'bltgallery' ) );
 		}
 
-		if ( ! in_array( (string) get_post_mime_type( $attachment_id ), self::ALLOWED_TYPES, true ) ) {
+		if ( ! in_array( (string) get_post_mime_type( $attachment_id ), UploadValidator::ALLOWED_TYPES, true ) ) {
 			return new WP_Error( 'invalid_type', __( 'Only JPEG, PNG, GIF, WebP, and AVIF images are allowed.', 'bltgallery' ) );
 		}
 
@@ -238,13 +200,13 @@ class UploadEndpoint {
 			return new WP_Error( 'file_missing', __( 'Original file not found on this server (it may be stored elsewhere).', 'bltgallery' ) );
 		}
 
-		if ( filesize( $src_path ) > self::MAX_UPLOAD_SIZE ) {
+		if ( filesize( $src_path ) > UploadValidator::MAX_UPLOAD_SIZE ) {
 			return new WP_Error(
 				'file_too_large',
 				sprintf(
 					/* translators: %s: max size in MB */
 					__( 'File exceeds maximum size of %s MB.', 'bltgallery' ),
-					self::MAX_UPLOAD_SIZE / 1_048_576
+					UploadValidator::MAX_UPLOAD_SIZE / 1_048_576
 				)
 			);
 		}

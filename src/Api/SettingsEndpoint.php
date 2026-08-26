@@ -271,6 +271,11 @@ class SettingsEndpoint {
 			'enable_bricks_elements'   => false,
 			// Legacy single-value selector kept so old saves don't lose state.
 			'storage_driver'           => 'local',
+			// Front-end gallery: logged-in visitors in an allowed role upload
+			// into a gallery of their own. See BltGallery\Core\FrontEndGallery.
+			'enable_front_end_gallery' => false,
+			'front_end_gallery_roles'  => [],
+			'front_end_gallery_limit'  => 20,
 		];
 	}
 
@@ -280,9 +285,24 @@ class SettingsEndpoint {
 			'storage_driver'           => in_array( (string) $value, [ 'local', 's3', 'r2' ], true ) ? (string) $value : 'local',
 			'webp_quality'             => min( 100, max( 1, (int) $value ) ),
 			'thumb_width', 'thumb_height' => max( 1, (int) $value ),
-			'delete_data_on_uninstall', 'lazy_load', 'enable_s3', 'enable_r2', 'enable_cf_images', 'enable_bricks_elements' => (bool) $value,
+			'delete_data_on_uninstall', 'lazy_load', 'enable_s3', 'enable_r2', 'enable_cf_images', 'enable_bricks_elements', 'enable_front_end_gallery' => (bool) $value,
+			'front_end_gallery_roles'  => $this->sanitize_roles( is_array( $value ) ? $value : [] ),
+			'front_end_gallery_limit'  => max( 1, min( 1000, (int) $value ) ),
 			default                    => $value,
 		};
+	}
+
+	/**
+	 * Whitelist against roles that actually exist on this site, so a stale
+	 * or hand-crafted request can't grant the feature to a role slug that
+	 * doesn't (or no longer) exists.
+	 *
+	 * @param array<mixed> $roles
+	 * @return string[]
+	 */
+	private function sanitize_roles( array $roles ): array {
+		$valid = array_keys( wp_roles()->roles );
+		return array_values( array_intersect( array_map( 'sanitize_key', $roles ), $valid ) );
 	}
 
 	// ------------------------------------------------------------------

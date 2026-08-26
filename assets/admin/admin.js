@@ -1246,8 +1246,9 @@
 		const r2El  = document.getElementById( 'bltgallery-r2-settings' );
 		const cfEl  = document.getElementById( 'bltgallery-cf-images-settings' );
 		const upEl  = document.getElementById( 'bltgallery-updates-settings' );
+		const feEl  = document.getElementById( 'bltgallery-front-end-gallery-settings' );
 
-		if ( ! genEl && ! awsEl && ! r2El && ! cfEl && ! upEl ) return;
+		if ( ! genEl && ! awsEl && ! r2El && ! cfEl && ! upEl && ! feEl ) return;
 
 		let general, aws, r2, cfImages, updates;
 		try {
@@ -1266,6 +1267,7 @@
 		// Renders happen first so the panels exist in the DOM before
 		// visibility is applied.
 		renderGeneralSettings( genEl, general );
+		renderFrontEndGallerySettings( feEl, general );
 		renderAwsSettings( awsEl, aws );
 		renderR2Settings( r2El, r2 );
 		renderCfImagesSettings( cfEl, cfImages );
@@ -1455,6 +1457,72 @@
 			} finally {
 				e.target.disabled = false;
 				e.target.textContent = 'Save General Settings';
+			}
+		} );
+	}
+
+	function renderFrontEndGallerySettings( container, general ) {
+		if ( ! container ) return;
+		const g             = general || {};
+		const enabled       = !! g.enable_front_end_gallery;
+		const selectedRoles = new Set( Array.isArray( g.front_end_gallery_roles ) ? g.front_end_gallery_roles : [] );
+		const limit         = g.front_end_gallery_limit ?? 20;
+		const roles         = cfg.roles || {};
+
+		container.innerHTML = `
+			<div class="bltgallery-field bltgallery-field--toggle">
+				<label>
+					<input type="checkbox" id="zyg-fe-enabled"${ enabled ? ' checked' : '' }>
+					Let logged-in visitors upload their own images
+				</label>
+			</div>
+			<p class="description">Adds the <code>[blt_my_gallery]</code> shortcode — an upload widget tied to each visitor's own WordPress account. Place it on any page.</p>
+			<div class="bltgallery-field" id="zyg-fe-roles-row"${ enabled ? '' : ' hidden' }>
+				<span class="bltgallery-field__label">Allowed roles</span>
+				${ Object.keys( roles ).length
+					? Object.entries( roles ).map( ( [ slug, label ] ) => `
+						<label class="bltgallery-radio-option">
+							<input type="checkbox" name="zyg-fe-role" value="${ escAttr( slug ) }"${ selectedRoles.has( slug ) ? ' checked' : '' }>
+							${ escHtml( label ) }
+						</label>
+					` ).join( '' )
+					: '<p class="description">No roles found.</p>' }
+				<p class="description">Only visitors in a checked role can use the uploader. Nobody can until at least one role is checked here.</p>
+			</div>
+			<div class="bltgallery-field" id="zyg-fe-limit-row"${ enabled ? '' : ' hidden' }>
+				<label for="zyg-fe-limit">Image limit per visitor</label>
+				<input type="number" id="zyg-fe-limit" class="small-text" min="1" max="1000" value="${ limit }">
+				<p class="description">Once a visitor hits this many images, uploading is blocked until they delete one of their own.</p>
+			</div>
+			<div class="bltgallery-field">
+				<button class="button button-primary" id="zyg-save-fe">Save Front-End Gallery Settings</button>
+			</div>
+		`;
+
+		const enabledCb = container.querySelector( '#zyg-fe-enabled' );
+		const rolesRow  = container.querySelector( '#zyg-fe-roles-row' );
+		const limitRow  = container.querySelector( '#zyg-fe-limit-row' );
+
+		enabledCb.addEventListener( 'change', () => {
+			rolesRow.hidden = ! enabledCb.checked;
+			limitRow.hidden = ! enabledCb.checked;
+		} );
+
+		container.querySelector( '#zyg-save-fe' ).addEventListener( 'click', async ( e ) => {
+			e.target.disabled = true;
+			e.target.textContent = 'Saving…';
+			try {
+				await api( '/settings', { method: 'POST', body: {
+					enable_front_end_gallery: enabledCb.checked,
+					front_end_gallery_roles:  [ ...container.querySelectorAll( 'input[name="zyg-fe-role"]:checked' ) ].map( ( cb ) => cb.value ),
+					front_end_gallery_limit:  parseInt( container.querySelector( '#zyg-fe-limit' ).value, 10 ) || 20,
+				} } );
+				showNotice( 'Front-end gallery settings saved.' );
+			} catch ( err ) {
+				showNotice( err.message, 'error' );
+			} finally {
+				e.target.disabled = false;
+				e.target.textContent = 'Save Front-End Gallery Settings';
 			}
 		} );
 	}
@@ -2608,6 +2676,19 @@
 				[ 'radius',      'px',                       'Slider border radius.' ],
 				[ 'order',       'menu · random · reverse',  'Slide order.' ],
 				[ 'limit',       'int',                      'Cap the number of slides rendered.' ],
+			],
+		},
+		{
+			tag: 'blt_my_gallery',
+			title: 'Front-end gallery',
+			intro: 'Renders an upload widget for the logged-in visitor\'s own gallery — enable it and choose which roles are allowed under Settings → Front-End Gallery first. There is no id/slug attribute: it always shows the current visitor their own gallery, never a specific one you choose.',
+			examples: [
+				`[blt_my_gallery]`,
+				`[blt_my_gallery class="my-custom-wrap"]`,
+			],
+			attrs: [
+				[ 'class', 'string', 'Extra CSS class on the wrapper.' ],
+				[ 'style', 'string', 'Extra inline style on the wrapper.' ],
 			],
 		},
 	];

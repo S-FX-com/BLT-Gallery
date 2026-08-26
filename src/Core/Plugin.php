@@ -6,6 +6,7 @@ namespace BltGallery\Core;
 
 use BltGallery\Admin\AdminMenu;
 use BltGallery\Api\AlbumEndpoint;
+use BltGallery\Api\FrontEndGalleryEndpoint;
 use BltGallery\Api\GalleryEndpoint;
 use BltGallery\Api\ImageEndpoint;
 use BltGallery\Api\SettingsEndpoint;
@@ -164,13 +165,15 @@ final class Plugin {
 	}
 
 	public function register_shortcodes(): void {
-		$gallery = new Shortcode();
-		$album   = new AlbumShortcode();
-		$slider  = new SliderShortcode();
+		$gallery    = new Shortcode();
+		$album      = new AlbumShortcode();
+		$slider     = new SliderShortcode();
+		$my_gallery = new FrontEndGalleryShortcode();
 
-		add_shortcode( 'blt_gallery', [ $gallery, 'render' ] );
-		add_shortcode( 'blt_album',   [ $album,   'render' ] );
-		add_shortcode( 'blt_slider',  [ $slider,  'render' ] );
+		add_shortcode( 'blt_gallery',    [ $gallery,    'render' ] );
+		add_shortcode( 'blt_album',      [ $album,      'render' ] );
+		add_shortcode( 'blt_slider',     [ $slider,     'render' ] );
+		add_shortcode( 'blt_my_gallery', [ $my_gallery, 'render' ] );
 
 		// Backward-compatibility aliases for pre-3.0 content.
 		add_shortcode( 'bltgallery',  [ $gallery, 'render' ] );
@@ -186,6 +189,7 @@ final class Plugin {
 		( new ImportEndpoint() )->register();
 		( new AlbumEndpoint() )->register();
 		( new SliderEndpoint() )->register();
+		( new FrontEndGalleryEndpoint() )->register();
 	}
 
 	public function enqueue_frontend_assets(): void {
@@ -211,6 +215,36 @@ final class Plugin {
 			'bltGalleryFrontend',
 			[
 				'apiBase' => esc_url_raw( rest_url( 'bltgallery/v1' ) ),
+			]
+		);
+
+		// [blt_my_gallery]'s uploader. A separate handle from the shared
+		// frontend script/style above so pages without the shortcode never
+		// load it, and so only this one carries a REST nonce — the shared
+		// handle only ever does anonymous reads and has no need for one.
+		wp_register_style(
+			'bltgallery-my-gallery',
+			BLT_GALLERY_PLUGIN_URL . 'assets/frontend/front-end-gallery.css',
+			[],
+			BLT_GALLERY_VERSION
+		);
+
+		wp_register_script(
+			'bltgallery-my-gallery',
+			BLT_GALLERY_PLUGIN_URL . 'assets/frontend/front-end-gallery.js',
+			[],
+			BLT_GALLERY_VERSION,
+			true
+		);
+
+		wp_script_add_data( 'bltgallery-my-gallery', 'strategy', 'defer' );
+
+		wp_localize_script(
+			'bltgallery-my-gallery',
+			'bltGalleryMyGallery',
+			[
+				'apiBase' => esc_url_raw( rest_url( 'bltgallery/v1' ) ),
+				'nonce'   => wp_create_nonce( 'wp_rest' ),
 			]
 		);
 	}
