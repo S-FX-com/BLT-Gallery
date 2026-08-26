@@ -37,34 +37,41 @@ use BltGallery\Models\Gallery;
  */
 class Shortcode {
 
+	/**
+	 * The display-customisation attributes every [blt_gallery]-family
+	 * shortcode accepts, with their defaults. Shared with UserGalleryShortcode
+	 * so a shortcode that resolves its own Gallery a different way (by user
+	 * id rather than id/slug) still gets the same cols/gap/captions/etc.
+	 * overrides via render_gallery(), instead of re-declaring this list.
+	 */
+	public static function display_atts(): array {
+		return [
+			'id'         => 0,
+			'slug'       => '',
+			'type'       => '',
+			'cols'       => '',
+			'gap'        => '',
+			'radius'     => '',
+			'size'       => '', // small | medium | large | xlarge
+			'thumb_min'  => '', // raw px override
+			'captions'   => '',
+			'lightbox'   => '',
+			'autoplay'   => '',
+			'speed'      => '',
+			'arrows'     => '',
+			'dots'       => '',
+			'pagination' => '', // off | load-more | numbered | infinite
+			'per_page'   => '',
+			'date'       => '', // YYYY-MM-DD override
+			'limit'      => '',
+			'order'      => '',
+			'class'      => '',
+			'style'      => '',
+		];
+	}
+
 	public function render( array $atts, string $content = '', string $tag = 'blt_gallery' ): string {
-		$atts = shortcode_atts(
-			[
-				'id'         => 0,
-				'slug'       => '',
-				'type'       => '',
-				'cols'       => '',
-				'gap'        => '',
-				'radius'     => '',
-				'size'       => '', // small | medium | large | xlarge
-				'thumb_min'  => '', // raw px override
-				'captions'   => '',
-				'lightbox'   => '',
-				'autoplay'   => '',
-				'speed'      => '',
-				'arrows'     => '',
-				'dots'       => '',
-				'pagination' => '', // off | load-more | numbered | infinite
-				'per_page'   => '',
-				'date'       => '', // YYYY-MM-DD override
-				'limit'      => '',
-				'order'      => '',
-				'class'      => '',
-				'style'      => '',
-			],
-			$atts,
-			$tag
-		);
+		$atts = shortcode_atts( self::display_atts(), $atts, $tag );
 
 		$gallery = null;
 		if ( ! empty( $atts['id'] ) ) {
@@ -77,6 +84,17 @@ class Shortcode {
 			return '<!-- blt_gallery: gallery not found -->';
 		}
 
+		return $this->render_gallery( $gallery, $atts );
+	}
+
+	/**
+	 * Render an already-resolved Gallery with the same display-customisation
+	 * attributes render() applies — the part of rendering that has nothing to
+	 * do with *how* the gallery was found. $atts should come from
+	 * shortcode_atts( self::display_atts(), ... ) so every key it reads
+	 * is guaranteed present.
+	 */
+	public function render_gallery( Gallery $gallery, array $atts ): string {
 		$gallery->settings = $this->merge_settings( $gallery->settings, $atts );
 
 		$display_type = ! empty( $atts['type'] )

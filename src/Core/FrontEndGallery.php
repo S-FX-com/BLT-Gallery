@@ -89,11 +89,15 @@ class FrontEndGallery {
 
 		$user = get_userdata( $user_id );
 
+		// user_login (the username), not display_name — a visitor can change
+		// their display name at any time from their own profile, which would
+		// otherwise make the gallery title drift out of sync with who it
+		// actually is; the login name is stable.
 		$gallery                = new Gallery();
 		$gallery->title         = sprintf(
-			/* translators: %s: the visitor's display name */
+			/* translators: %s: the visitor's username */
 			__( "%s's Gallery", 'bltgallery' ),
-			$user ? $user->display_name : __( 'My', 'bltgallery' )
+			$user ? $user->user_login : __( 'My', 'bltgallery' )
 		);
 		$gallery->slug          = $slug;
 		$gallery->display_type  = 'masonry';

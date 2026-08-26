@@ -122,7 +122,10 @@ class GalleryEndpoint {
 
 		$response = new WP_REST_Response(
 			array_map(
-				fn( Gallery $g ) => $g->to_array() + [ 'image_count' => (int) ( $counts[ $g->id ] ?? 0 ) ],
+				fn( Gallery $g ) => $g->to_array() + [
+					'image_count' => (int) ( $counts[ $g->id ] ?? 0 ),
+					'creator'     => $this->creator_info( $g ),
+				],
 				$galleries
 			)
 		);
@@ -131,6 +134,29 @@ class GalleryEndpoint {
 		$response->header( 'X-WP-TotalPages', (string) max( 1, ceil( $total / $per_page ) ) );
 
 		return $response;
+	}
+
+	/**
+	 * Who a gallery is attributed to, for the admin list's Creator column.
+	 * `get_userdata()` is served from WordPress's own user cache, so this
+	 * costs nothing extra beyond the first lookup per user on a page.
+	 *
+	 * @return array{ name: string, front_end: bool }|null
+	 */
+	private function creator_info( Gallery $g ): ?array {
+		if ( ! $g->author_id ) {
+			return null;
+		}
+
+		$user = get_userdata( $g->author_id );
+
+		return [
+			// Username, not display name — stable even if the user later
+			// renames their display name; matches how FrontEndGallery titles
+			// a visitor's own gallery.
+			'name'      => $user ? $user->user_login : sprintf( __( 'User #%d', 'bltgallery' ), $g->author_id ),
+			'front_end' => ! empty( $g->settings['front_end'] ),
+		];
 	}
 
 	public function create( WP_REST_Request $request ): WP_REST_Response|WP_Error {

@@ -131,14 +131,35 @@
 			const empty = grid.querySelector( '.bltgallery-my-gallery__empty' );
 			if ( empty ) empty.remove();
 
+			const alt = escHtml( res.image.alt_text || res.image.filename );
+
 			const li = document.createElement( 'li' );
 			li.className = 'bltgallery-my-gallery__item';
 			li.dataset.id = res.image.id;
 			li.innerHTML = `
-				<img src="${ escHtml( res.image.thumb_url || res.image.url ) }" alt="${ escHtml( res.image.alt_text || res.image.filename ) }" loading="lazy">
+				<button type="button" class="bltgallery-lightbox__trigger" data-index="-1" data-image-id="${ res.image.id }" aria-label="${ alt }">
+					<img src="${ escHtml( res.image.thumb_url || res.image.url ) }" alt="${ alt }" loading="lazy">
+				</button>
 				<button type="button" class="bltgallery-my-gallery__delete" data-id="${ res.image.id }" aria-label="Delete this image">&times;</button>
 			`;
 			grid.appendChild( li );
+
+			// In place, not a reassignment — frontend.js's lightbox closed over
+			// this exact array when it initialised the .bltgallery--lightbox
+			// container (see initLightbox() in frontend.js), so mutating it here
+			// is what keeps a newly uploaded image reachable by prev/next once
+			// the visitor is browsing the lightbox, without re-running any init.
+			if ( Array.isArray( root._bltLightboxImages ) ) {
+				root._bltLightboxImages.push( {
+					id:      res.image.id,
+					src:     res.image.url,
+					thumb:   res.image.thumb_url,
+					alt:     res.image.alt_text || res.image.filename,
+					caption: res.image.caption,
+					w:       res.image.width,
+					h:       res.image.height,
+				} );
+			}
 
 			applyQuota( res.remaining, res.limit );
 		}
@@ -149,6 +170,13 @@
 			try {
 				const res = await api( `/my-gallery/images/${ id }`, { method: 'DELETE' } );
 				li?.remove();
+
+				if ( Array.isArray( root._bltLightboxImages ) ) {
+					const idNum = parseInt( id, 10 );
+					const i     = root._bltLightboxImages.findIndex( ( img ) => img.id === idNum );
+					if ( i > -1 ) root._bltLightboxImages.splice( i, 1 );
+				}
+
 				applyQuota( res.remaining, res.limit );
 				if ( ! grid.children.length ) {
 					grid.innerHTML = `<li class="bltgallery-my-gallery__empty">You haven't added any images yet.</li>`;

@@ -461,6 +461,29 @@ class AdminMenu {
 					[ 'style', 'string', __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
 				],
 			],
+			[
+				'tag'      => 'blt_user_gallery',
+				'title'    => __( "A specific user's gallery", 'bltgallery' ),
+				'intro'    => __( "Displays one WordPress user's front-end gallery by their user ID — for templates that already know which profile they're showing (a member page, a directory). Read-only: no upload widget, no login required to view, and works even if the front-end gallery feature is currently disabled for new uploads. Renders nothing if that user has never created a gallery. Every [blt_gallery] display attribute (type, cols, gap, captions, lightbox, …) works here too.", 'bltgallery' ),
+				'examples' => [
+					'[blt_user_gallery user_id="123"]',
+					'[blt_user_gallery user_id="123" type="tile" cols="4"]',
+					'echo do_shortcode( \'[blt_user_gallery user_id="\' . (int) $profile_user_id . \'"]\' );',
+				],
+				'attrs'    => [
+					[ 'user_id', 'int', __( 'WordPress user ID whose gallery to show.', 'bltgallery' ) ],
+					[ 'type',    'masonry · tile · slideshow · lightbox', __( 'Override the stored display type.', 'bltgallery' ) ],
+					[ 'cols',    '1–8', __( 'Target column count at desktop width.', 'bltgallery' ) ],
+					[ 'gap',     'px', __( 'Gutter between items.', 'bltgallery' ) ],
+					[ 'radius',  'px', __( 'Per-item border radius.', 'bltgallery' ) ],
+					[ 'captions', 'below · hover · off', __( 'Caption position.', 'bltgallery' ) ],
+					[ 'lightbox', '1 · 0', __( 'Enable click-to-lightbox on grids.', 'bltgallery' ) ],
+					[ 'limit',   'int', __( 'Cap the number of images rendered.', 'bltgallery' ) ],
+					[ 'order',   'menu · date · random', __( 'Image sort order.', 'bltgallery' ) ],
+					[ 'class',   'string', __( 'Extra CSS class on the wrapper.', 'bltgallery' ) ],
+					[ 'style',   'string', __( 'Extra inline style on the wrapper.', 'bltgallery' ) ],
+				],
+			],
 		];
 	}
 
