@@ -18,6 +18,7 @@ use BltGallery\Display\MasonryDisplay;
 use BltGallery\Display\SlideshowDisplay;
 use BltGallery\Display\SliderDisplay;
 use BltGallery\Display\TileGridDisplay;
+use BltGallery\Integrations\Bricks\BricksIntegration;
 use BltGallery\Import\ImportJob;
 use BltGallery\Import\ImportRunner;
 use BltGallery\Display\AlbumDisplay;
@@ -109,6 +110,12 @@ final class Plugin {
 		// Pushes existing local images out to R2/S3 when asked to from the
 		// Settings page.
 		StorageBackfillRunner::init();
+
+		// Registers the BLT Gallery / BLT Slider Bricks elements. Runs on
+		// the front end too — that's where Bricks actually renders built
+		// pages — and is a no-op unless Bricks is active and the setting
+		// is on.
+		BricksIntegration::init();
 
 		if ( is_admin() ) {
 			$admin = new AdminMenu();

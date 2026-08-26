@@ -8,6 +8,7 @@ A modern, self-contained WordPress photo gallery plugin with Cloudflare R2 / AWS
 
 - **Six display types**: Masonry, Tile Grid, Slideshow, Lightbox, Album, Image Slider
 - **Three shortcodes**: `[blt_gallery]` (single gallery), `[blt_album]` (collection of galleries), and `[blt_slider]` (image slider)
+- **Bricks Builder elements** (optional): native "BLT Gallery" and "BLT Slider" elements in the Bricks panel — pick a saved gallery or slider from a dropdown, no shortcode needed
 - **Visual slider builder**: assemble a slider from your galleries + the media library under **BLT Gallery → Sliders**, then copy its shortcode
 - **Rich shortcode attributes** for inline styling — `cols`, `gap`, `radius`, `captions`, `autoplay`, etc.
 - **No external dependencies**: standalone plugin — no NextGEN Gallery required
@@ -184,6 +185,19 @@ For code-only sliders you can skip the builder and source images inline instead 
 | `slugs`       | comma-separated slugs           | Galleries by slug                                  |
 | `images`      | comma-separated ints            | Specific BLT gallery image IDs                      |
 | `attachments` | comma-separated ints            | WordPress media attachment IDs                      |
+
+## Bricks Builder elements
+
+If the site runs [Bricks Builder](https://bricksbuilder.io/), flip **Settings → General → Register Bricks Builder elements** to add two native elements to the Bricks panel — **BLT Gallery** and **BLT Slider** — searchable there the same way as any built-in element. The setting is off by default and does nothing on sites without Bricks active.
+
+Each element's own settings panel replaces the shortcode: a dropdown lists your saved galleries (or sliders) to pick from, plus the handful of overrides you'd otherwise pass as shortcode attributes.
+
+| Element | Picker | Overrides |
+|---------|--------|-----------|
+| **BLT Gallery** | Gallery | Layout, columns, gap, lightbox |
+| **BLT Slider** | Slider | Autoplay, nav arrows, dot counter, loop, speed, slide height |
+
+Anything left as "use the gallery's/slider's own setting" falls through to whatever's saved under **BLT Gallery → Galleries/Sliders** — the element only overrides what you explicitly set, exactly like the shortcode attributes it wraps.
 
 ## Storage and offloading
 
