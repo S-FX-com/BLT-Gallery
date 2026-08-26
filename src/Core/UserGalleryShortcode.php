@@ -22,10 +22,11 @@ namespace BltGallery\Core;
  * Unlike [blt_my_gallery], this is pure display — no upload widget, no
  * login requirement, and no dependency on the front-end gallery feature
  * being currently enabled (disabling new uploads shouldn't blank out
- * already-public profile pages). Renders nothing when user_id is missing,
- * invalid, or that user has never created a gallery — a profile page
- * simply shows no gallery section, rather than an admin-facing "not
- * found" comment.
+ * already-public profile pages). Shows a visible "No gallery exists for
+ * this user." notice when user_id is missing, invalid, or that user has
+ * never created a gallery — a template author should be able to tell
+ * that from the rendered page, rather than an empty section with no
+ * explanation.
  *
  * All of [blt_gallery]'s display-customisation attributes (type, cols,
  * gap, radius, captions, lightbox, pagination, limit, order, class,
@@ -41,15 +42,21 @@ class UserGalleryShortcode {
 		);
 
 		$user_id = (int) $atts['user_id'];
-		if ( $user_id <= 0 ) {
-			return '';
-		}
+		$gallery = $user_id > 0 ? GalleryRepository::find_by_slug( FrontEndGallery::slug_for_user( $user_id ) ) : null;
 
-		$gallery = GalleryRepository::find_by_slug( FrontEndGallery::slug_for_user( $user_id ) );
 		if ( ! $gallery ) {
-			return '';
+			return $this->no_gallery_notice();
 		}
 
 		return ( new Shortcode() )->render_gallery( $gallery, $atts );
+	}
+
+	private function no_gallery_notice(): string {
+		wp_enqueue_style( 'bltgallery-frontend' );
+
+		// Same .bltgallery__empty class AbstractDisplay::no_images_notice()
+		// uses for "no images in this (existing) gallery" — this is the
+		// "no gallery at all" counterpart, so it should look the same.
+		return '<p class="bltgallery__empty">' . esc_html__( 'No gallery exists for this user.', 'bltgallery' ) . '</p>';
 	}
 }
