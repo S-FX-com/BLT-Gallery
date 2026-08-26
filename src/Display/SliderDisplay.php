@@ -49,14 +49,31 @@ class SliderDisplay extends AbstractDisplay {
 
 		$count = count( $images );
 
-		// Optional saved max-height, validated against a CSS length whitelist.
-		$height       = trim( (string) ( $gallery->settings['height'] ?? '' ) );
-		$height_style = ( '' !== $height && preg_match( '/^[0-9.]+(px|vh|vw|rem|em|%)$/', $height ) )
-			? ' style="--blt-slider-height:' . esc_attr( $height ) . '"'
-			: '';
+		$image_fit      = 'cover' === sanitize_key( (string) ( $gallery->settings['image_fit'] ?? '' ) ) ? 'cover' : 'contain';
+		$image_size     = 'medium' === sanitize_key( (string) ( $gallery->settings['image_size'] ?? '' ) ) ? 'medium' : 'large';
+		$arrow_position = 'below' === sanitize_key( (string) ( $gallery->settings['arrow_position'] ?? '' ) ) ? 'below' : 'sides';
+
+		// Optional saved height, validated against a CSS length whitelist.
+		// "Crop to fill" needs a concrete box to crop into — a slider left on
+		// "cover" with no height saved falls back to 70vh rather than silently
+		// not cropping anything.
+		$height = trim( (string) ( $gallery->settings['height'] ?? '' ) );
+		if ( ! preg_match( '/^[0-9.]+(px|vh|vw|rem|em|%)$/', $height ) ) {
+			$height = 'cover' === $image_fit ? '70vh' : '';
+		}
+		$height_style = '' !== $height ? ' style="--blt-slider-height:' . esc_attr( $height ) . '"' : '';
+
+		$class = 'bltgallery-slider';
+		if ( 'cover' === $image_fit ) {
+			$class .= ' bltgallery-slider--fit-cover';
+		}
+		if ( 'below' === $arrow_position ) {
+			$class .= ' bltgallery-slider--arrows-below';
+		}
 
 		printf(
-			'<div class="bltgallery-slider" data-autoplay="%s" data-speed="%d" data-loop="%s" role="group" aria-roledescription="carousel" aria-label="%s"%s>',
+			'<div class="%s" data-autoplay="%s" data-speed="%d" data-loop="%s" role="group" aria-roledescription="carousel" aria-label="%s"%s>',
+			esc_attr( $class ),
 			$autoplay ? 'true' : 'false',
 			$speed,
 			$loop ? 'true' : 'false',
@@ -67,27 +84,43 @@ class SliderDisplay extends AbstractDisplay {
 		// Slides.
 		echo '<ul class="bltgallery-slider__track">';
 		foreach ( array_values( $images ) as $idx => $image ) {
-			$this->render_slide( $image, $idx, $count );
+			$this->render_slide( $image, $idx, $count, $image_size );
 		}
 		echo '</ul>';
 
-		// Navigation arrows (single slide needs none).
+		// Navigation arrows (single slide needs none). "sides" renders them
+		// here, as a hover-reveal overlay; "below" defers them into the
+		// footer so they sit as static buttons flanking the caption/dots.
+		$nav_prev = '';
+		$nav_next = '';
 		if ( $show_arrows && $count > 1 ) {
-			echo '<button type="button" class="bltgallery-slider__prev" aria-label="' . esc_attr__( 'Previous slide', 'bltgallery' ) . '">';
-			echo '<span aria-hidden="true">&#8249;</span>';
-			echo '</button>';
-			echo '<button type="button" class="bltgallery-slider__next" aria-label="' . esc_attr__( 'Next slide', 'bltgallery' ) . '">';
-			echo '<span aria-hidden="true">&#8250;</span>';
-			echo '</button>';
+			$nav_prev = sprintf(
+				'<button type="button" class="bltgallery-slider__prev" aria-label="%s"><span aria-hidden="true">&#8249;</span></button>',
+				esc_attr__( 'Previous slide', 'bltgallery' )
+			);
+			$nav_next = sprintf(
+				'<button type="button" class="bltgallery-slider__next" aria-label="%s"><span aria-hidden="true">&#8250;</span></button>',
+				esc_attr__( 'Next slide', 'bltgallery' )
+			);
 		}
 
-		// Bottom overlay: subtle caption + dot counter, sharing one gradient
-		// scrim so they stay legible over any image.
+		if ( 'below' !== $arrow_position ) {
+			echo $nav_prev . $nav_next; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup; the only dynamic parts already passed through esc_attr() above.
+		}
+
+		// Bottom overlay: subtle caption + dot counter (+ below-mode arrows),
+		// sharing one gradient scrim so they stay legible over any image.
 		$first_caption = $show_caps ? trim( (string) ( array_values( $images )[0]->caption ?? '' ) ) : '';
-		$has_footer    = $show_caps || ( $show_dots && $count > 1 );
+		$has_footer    = $show_caps || ( $show_dots && $count > 1 ) || ( 'below' === $arrow_position && '' !== $nav_prev );
 
 		if ( $has_footer ) {
 			echo '<div class="bltgallery-slider__footer">';
+
+			if ( 'below' === $arrow_position ) {
+				echo $nav_prev; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- see note above.
+			}
+
+			echo '<div class="bltgallery-slider__footer-content">';
 
 			if ( $show_caps ) {
 				printf(
@@ -111,13 +144,19 @@ class SliderDisplay extends AbstractDisplay {
 			}
 
 			echo '</div>';
+
+			if ( 'below' === $arrow_position ) {
+				echo $nav_next; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- see note above.
+			}
+
+			echo '</div>';
 		}
 
 		echo '</div>';
 		$this->close_container();
 	}
 
-	private function render_slide( Image $image, int $idx, int $total ): void {
+	private function render_slide( Image $image, int $idx, int $total, string $image_size ): void {
 		printf(
 			'<li class="bltgallery-slider__slide%s" role="group" aria-roledescription="slide" aria-label="%s" data-caption="%s"%s>',
 			0 === $idx ? ' is-active' : '',
@@ -126,7 +165,7 @@ class SliderDisplay extends AbstractDisplay {
 			0 === $idx ? '' : ' aria-hidden="true"'
 		);
 
-		echo $this->img_tag( $image, 'large', $idx > 0 );
+		echo $this->img_tag( $image, $image_size, $idx > 0 );
 
 		echo '</li>';
 	}

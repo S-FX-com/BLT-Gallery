@@ -218,6 +218,33 @@ class SliderEndpoint {
 			$out['height'] = preg_match( '/^[0-9.]+(px|vh|vw|rem|em|%)$/', $h ) ? $h : '';
 		}
 
+		// Creation-flow helper: which starting height preset was picked.
+		// Purely descriptive — it does not affect rendering, only the
+		// admin editor's own "Type" dropdown when reopened.
+		if ( array_key_exists( 'slider_type', $incoming ) ) {
+			$type = sanitize_key( (string) $incoming['slider_type'] );
+			$out['slider_type'] = in_array( $type, [ 'hero', 'banner' ], true ) ? $type : '';
+		}
+
+		if ( array_key_exists( 'arrow_position', $incoming ) ) {
+			$pos = sanitize_key( (string) $incoming['arrow_position'] );
+			$out['arrow_position'] = 'below' === $pos ? 'below' : 'sides';
+		}
+
+		// Which pre-generated thumbnail size (see ImageProcessor::THUMBNAIL_SIZES)
+		// feeds the slider. 'thumb' is deliberately not offered here — it's
+		// hard-cropped to a 320x320 square at upload time, which would fight
+		// the slider's own image_fit setting.
+		if ( array_key_exists( 'image_size', $incoming ) ) {
+			$size = sanitize_key( (string) $incoming['image_size'] );
+			$out['image_size'] = 'medium' === $size ? 'medium' : 'large';
+		}
+
+		if ( array_key_exists( 'image_fit', $incoming ) ) {
+			$fit = sanitize_key( (string) $incoming['image_fit'] );
+			$out['image_fit'] = 'cover' === $fit ? 'cover' : 'contain';
+		}
+
 		return $out;
 	}
 

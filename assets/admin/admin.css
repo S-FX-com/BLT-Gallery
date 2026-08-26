@@ -58,6 +58,8 @@
 .bltgallery-field--toggle { flex-direction: row; align-items: center; max-width: none; }
 .bltgallery-field--toggle label { font-weight: normal; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
 
+.bltgallery-radio-option { font-weight: normal; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+
 /* ── Table ────────────────────────────────────────────────────────────── */
 
 .bltgallery-table code {

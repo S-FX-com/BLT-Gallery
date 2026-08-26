@@ -277,6 +277,16 @@
 	object-fit: contain;
 }
 
+/* Image fit: "Crop to fill". A fixed height instead of a ceiling, and
+   object-fit: cover instead of contain — every slide fills the box edge to
+   edge. Scoped to this modifier so the default ("Fit within frame") above
+   is untouched. */
+.bltgallery-slider--fit-cover .bltgallery-slider__slide img {
+	height: var(--blt-slider-height, 70vh);
+	max-height: none;
+	object-fit: cover;
+}
+
 /* Bottom overlay shared by the caption + dot counter. A soft gradient keeps
    both legible over any image without a heavy bar. */
 .bltgallery-slider__footer {
@@ -292,6 +302,23 @@
 	padding: 2.25rem 1rem 0.85rem;
 	background: linear-gradient( to top, rgba( 0, 0, 0, 0.55 ), rgba( 0, 0, 0, 0 ) );
 	pointer-events: none;
+}
+
+/* Arrow placement: "Below the slider". The footer becomes a row — static
+   prev/next buttons flanking the caption/dots column — instead of the
+   default hover-reveal pair positioned over the image itself. */
+.bltgallery-slider--arrows-below .bltgallery-slider__footer {
+	flex-direction: row;
+	align-items: center;
+}
+
+.bltgallery-slider__footer-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	flex: 1;
+	min-width: 0;
 }
 
 /* Subtle caption — image description or photo credit. */
@@ -388,6 +415,27 @@
 .bltgallery-slider__next:disabled {
 	opacity: 0 !important;
 	pointer-events: none;
+}
+
+/* Arrow placement: "Below the slider" — static and always visible, sized
+   down to sit comfortably in the footer row rather than overlaying the
+   image. Higher specificity than the hover-reveal rules above, so it wins
+   regardless of hover state or the touch-device rule below. */
+.bltgallery-slider--arrows-below .bltgallery-slider__prev,
+.bltgallery-slider--arrows-below .bltgallery-slider__next {
+	position: static;
+	transform: none;
+	width: 2.25rem;
+	height: 2.25rem;
+	font-size: 1.25rem;
+	opacity: 0.85;
+	pointer-events: auto;
+	flex: 0 0 auto;
+}
+
+.bltgallery-slider--arrows-below .bltgallery-slider__prev:hover,
+.bltgallery-slider--arrows-below .bltgallery-slider__next:hover {
+	opacity: 1;
 }
 
 /* Touch / coarse-pointer devices have no hover — keep arrows gently visible. */

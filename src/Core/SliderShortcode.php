@@ -28,52 +28,58 @@ use BltGallery\Models\Slider;
  *   [blt_slider galleries="5" attachments="123" images="44,45"]
  *
  * Supported attributes:
- *   id           – saved slider ID (primary)
- *   slug         – saved slider slug (alternative to id)
- *   galleries    – comma-separated gallery IDs (ad-hoc)
- *   gallery      – alias for `galleries`
- *   slugs        – comma-separated gallery slugs (ad-hoc)
- *   images       – comma-separated BLT image IDs (ad-hoc)
- *   attachments  – comma-separated WP media attachment IDs (ad-hoc)
- *   title        – accessible label for the carousel (ad-hoc)
- *   captions     – "on" | "off"
- *   arrows       – "1" | "0"      show hover nav arrows
- *   dots         – "1" | "0"      show the dot counter
- *   autoplay     – "1" | "0"
- *   speed        – ms between slides when autoplaying
- *   loop         – "1" | "0"      wrap from last slide back to first
- *   height       – CSS max-height for slides, e.g. "70vh" or "480px"
- *   radius       – border-radius in px
- *   limit        – cap the number of slides rendered
- *   order        – "menu" | "random" | "reverse"
- *   class        – extra CSS class on the wrapping div
- *   style        – extra inline style on the wrapping div
+ *   id             – saved slider ID (primary)
+ *   slug           – saved slider slug (alternative to id)
+ *   galleries      – comma-separated gallery IDs (ad-hoc)
+ *   gallery        – alias for `galleries`
+ *   slugs          – comma-separated gallery slugs (ad-hoc)
+ *   images         – comma-separated BLT image IDs (ad-hoc)
+ *   attachments    – comma-separated WP media attachment IDs (ad-hoc)
+ *   title          – accessible label for the carousel (ad-hoc)
+ *   captions       – "on" | "off"
+ *   arrows         – "1" | "0"      show hover nav arrows
+ *   dots           – "1" | "0"      show the dot counter
+ *   autoplay       – "1" | "0"
+ *   speed          – ms between slides when autoplaying
+ *   loop           – "1" | "0"      wrap from last slide back to first
+ *   height         – CSS max-height for slides, e.g. "70vh" or "480px"
+ *   radius         – border-radius in px
+ *   arrow_position – "sides" | "below"   hover-reveal at the edges, or a static row below
+ *   image_size     – "medium" | "large"  which pre-generated thumbnail size to use
+ *   image_fit      – "contain" | "cover" letterbox to fit, or crop to fill the height
+ *   limit          – cap the number of slides rendered
+ *   order          – "menu" | "random" | "reverse"
+ *   class          – extra CSS class on the wrapping div
+ *   style          – extra inline style on the wrapping div
  */
 class SliderShortcode {
 
 	public function render( array $atts, string $content = '', string $tag = 'blt_slider' ): string {
 		$atts = shortcode_atts(
 			[
-				'id'          => '',
-				'slug'        => '',
-				'galleries'   => '',
-				'gallery'     => '',
-				'slugs'       => '',
-				'images'      => '',
-				'attachments' => '',
-				'title'       => '',
-				'captions'    => '',
-				'arrows'      => '',
-				'dots'        => '',
-				'autoplay'    => '',
-				'speed'       => '',
-				'loop'        => '',
-				'height'      => '',
-				'radius'      => '',
-				'limit'       => '',
-				'order'       => '',
-				'class'       => '',
-				'style'       => '',
+				'id'             => '',
+				'slug'           => '',
+				'galleries'      => '',
+				'gallery'        => '',
+				'slugs'          => '',
+				'images'         => '',
+				'attachments'    => '',
+				'title'          => '',
+				'captions'       => '',
+				'arrows'         => '',
+				'dots'           => '',
+				'autoplay'       => '',
+				'speed'          => '',
+				'loop'           => '',
+				'height'         => '',
+				'radius'         => '',
+				'arrow_position' => '',
+				'image_size'     => '',
+				'image_fit'      => '',
+				'limit'          => '',
+				'order'          => '',
+				'class'          => '',
+				'style'          => '',
 			],
 			$atts,
 			$tag
@@ -225,6 +231,15 @@ class SliderShortcode {
 		}
 		if ( '' !== $atts['radius'] ) {
 			$settings['radius'] = (int) $atts['radius'];
+		}
+		if ( '' !== $atts['arrow_position'] ) {
+			$settings['arrow_position'] = 'below' === sanitize_key( (string) $atts['arrow_position'] ) ? 'below' : 'sides';
+		}
+		if ( '' !== $atts['image_size'] ) {
+			$settings['image_size'] = 'medium' === sanitize_key( (string) $atts['image_size'] ) ? 'medium' : 'large';
+		}
+		if ( '' !== $atts['image_fit'] ) {
+			$settings['image_fit'] = 'cover' === sanitize_key( (string) $atts['image_fit'] ) ? 'cover' : 'contain';
 		}
 		// A `height` attribute overrides any saved height. Validated against a
 		// CSS length whitelist; SliderDisplay emits it as --blt-slider-height.
