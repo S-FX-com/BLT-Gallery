@@ -222,17 +222,23 @@ final class Plugin {
 		// frontend script/style above so pages without the shortcode never
 		// load it, and so only this one carries a REST nonce — the shared
 		// handle only ever does anonymous reads and has no need for one.
+		// It does depend on the shared handle, though: the widget reuses
+		// frontend.js's lightbox module (via the .bltgallery--lightbox
+		// class — see FrontEndGalleryShortcode) rather than shipping a
+		// second one, and its .bltgallery-lightbox__* CSS comes from
+		// frontend.css. Declaring both as deps means enqueuing this handle
+		// pulls them in automatically, in the right order.
 		wp_register_style(
 			'bltgallery-my-gallery',
 			BLT_GALLERY_PLUGIN_URL . 'assets/frontend/front-end-gallery.css',
-			[],
+			[ 'bltgallery-frontend' ],
 			BLT_GALLERY_VERSION
 		);
 
 		wp_register_script(
 			'bltgallery-my-gallery',
 			BLT_GALLERY_PLUGIN_URL . 'assets/frontend/front-end-gallery.js',
-			[],
+			[ 'bltgallery-frontend' ],
 			BLT_GALLERY_VERSION,
 			true
 		);

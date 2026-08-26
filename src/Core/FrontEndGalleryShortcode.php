@@ -65,7 +65,7 @@ class FrontEndGalleryShortcode {
 		$remaining = FrontEndGallery::remaining_uploads( $gallery );
 
 		ob_start();
-		$this->render_widget( $atts, $images, $limit, $remaining );
+		$this->render_widget( $atts, $gallery->id, $images, $limit, $remaining );
 		return (string) ob_get_clean();
 	}
 
@@ -85,9 +85,15 @@ class FrontEndGalleryShortcode {
 	/**
 	 * @param Image[] $images
 	 */
-	private function render_widget( array $atts, array $images, int $limit, int $remaining ): void {
+	private function render_widget( array $atts, int $gallery_id, array $images, int $limit, int $remaining ): void {
+		// bltgallery--lightbox is what tells frontend.js's generic lightbox
+		// initialiser to wire this container up — see initLightbox() and
+		// LightboxDisplay, which this mirrors (modal + JSON <template> +
+		// .bltgallery-lightbox__trigger buttons). Reusing that module instead
+		// of writing a second one gets focus trapping, keyboard/swipe nav,
+		// and image preloading for free.
 		printf(
-			'<div class="bltgallery-my-gallery" data-limit="%d" data-remaining="%d"%s%s>',
+			'<div class="bltgallery-my-gallery bltgallery--lightbox" data-limit="%d" data-remaining="%d"%s%s>',
 			$limit,
 			$remaining,
 			$this->extra_class( $atts ),
@@ -127,27 +133,74 @@ class FrontEndGalleryShortcode {
 		if ( ! $images ) {
 			echo '<li class="bltgallery-my-gallery__empty">' . esc_html__( "You haven't added any images yet.", 'bltgallery' ) . '</li>';
 		}
-		foreach ( $images as $image ) {
-			$this->render_item( $image );
+		foreach ( $images as $idx => $image ) {
+			$this->render_item( $image, $idx );
 		}
 		echo '</ul>';
+
+		$this->render_lightbox_modal( $gallery_id, $images );
 
 		echo '</div>';
 	}
 
-	private function render_item( Image $image ): void {
+	private function render_item( Image $image, int $idx ): void {
+		$alt = esc_attr( $image->alt_text ?: $image->filename );
+
 		printf(
 			'<li class="bltgallery-my-gallery__item" data-id="%1$d">
-				<img src="%2$s" alt="%3$s" loading="lazy" width="%4$d" height="%5$d">
-				<button type="button" class="bltgallery-my-gallery__delete" data-id="%1$d" aria-label="%6$s">&times;</button>
+				<button type="button" class="bltgallery-lightbox__trigger" data-index="%6$d" data-image-id="%1$d" aria-label="%3$s">
+					<img src="%2$s" alt="%3$s" loading="lazy" width="%4$d" height="%5$d">
+				</button>
+				<button type="button" class="bltgallery-my-gallery__delete" data-id="%1$d" aria-label="%7$s">&times;</button>
 			</li>',
 			$image->id,
 			esc_url( $image->get_thumb_url( 'thumb' ) ),
-			esc_attr( $image->alt_text ?: $image->filename ),
+			$alt,
 			(int) ( $image->meta['thumbs']['thumb']['width'] ?? $image->width ),
 			(int) ( $image->meta['thumbs']['thumb']['height'] ?? $image->height ),
+			$idx,
 			esc_attr__( 'Delete this image', 'bltgallery' )
 		);
+	}
+
+	/**
+	 * Hidden lightbox modal + its image data, in the exact shape
+	 * LightboxDisplay::render_modal() uses — same JSON <template> convention,
+	 * same modal markup — so frontend.js's shared lightbox module drives both
+	 * without knowing which one it's looking at.
+	 *
+	 * @param Image[] $images
+	 */
+	private function render_lightbox_modal( int $gallery_id, array $images ): void {
+		$image_data = array_map(
+			static fn( Image $img ) => [
+				'id'      => $img->id,
+				'src'     => $img->get_url(),
+				'thumb'   => $img->get_thumb_url( 'thumb' ),
+				'alt'     => $img->alt_text ?: $img->filename,
+				'caption' => $img->caption,
+				'w'       => $img->width,
+				'h'       => $img->height,
+			],
+			$images
+		);
+
+		printf(
+			'<template class="bltgallery-lightbox__data" data-gallery="%d">%s</template>',
+			$gallery_id,
+			esc_html( wp_json_encode( $image_data ) )
+		);
+
+		echo '<div class="bltgallery-lightbox__modal" role="dialog" aria-modal="true" aria-label="'
+			. esc_attr__( 'Image lightbox', 'bltgallery' ) . '" hidden>';
+		echo '<button class="bltgallery-lightbox__close" aria-label="' . esc_attr__( 'Close lightbox', 'bltgallery' ) . '">&times;</button>';
+		echo '<button class="bltgallery-lightbox__prev"  aria-label="' . esc_attr__( 'Previous image', 'bltgallery' ) . '">&#8249;</button>';
+		echo '<button class="bltgallery-lightbox__next"  aria-label="' . esc_attr__( 'Next image', 'bltgallery' ) . '">&#8250;</button>';
+		echo '<figure class="bltgallery-lightbox__figure">';
+		echo '<img class="bltgallery-lightbox__img" src="" alt="">';
+		echo '<figcaption class="bltgallery-lightbox__caption"></figcaption>';
+		echo '</figure>';
+		echo '</div>';
 	}
 
 	private function quota_text( int $count, int $limit ): string {

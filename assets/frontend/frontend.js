@@ -249,8 +249,12 @@
 			var triggers = [ ...container.querySelectorAll( '.bltgallery-lightbox__trigger' ) ];
 			if ( ! modal || ! template ) return;
 
+			// A <template>'s children live in its .content DocumentFragment,
+			// not as normal children of the element — template.textContent is
+			// always "" (per spec, in every browser), so the JSON has to be
+			// read through .content.
 			var images = [];
-			try { images = JSON.parse( template.textContent ); } catch {}
+			try { images = JSON.parse( template.content.textContent ); } catch {}
 
 			var lb = createLightbox( modal, images );
 			container._bltLightbox       = lb;
