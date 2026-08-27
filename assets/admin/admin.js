@@ -2698,7 +2698,7 @@
 		{
 			tag: 'blt_user_gallery',
 			title: 'A specific user\'s gallery',
-			intro: 'Displays one WordPress user\'s front-end gallery by their user ID — for templates that already know which profile they\'re showing (a member page, a directory). Read-only: no upload widget, no login required to view, and works even if the front-end gallery feature is currently disabled for new uploads. Renders nothing if that user has never created a gallery. Every [blt_gallery] display attribute (type, cols, gap, captions, lightbox, …) works here too.',
+			intro: 'Displays one WordPress user\'s front-end gallery by their user ID — for templates that already know which profile they\'re showing (a member page, a directory). Read-only: no upload widget, no login required to view, and works even if the front-end gallery feature is currently disabled for new uploads. Shows a "No gallery exists for this user." message if that user has never created a gallery. Every [blt_gallery] display attribute (type, cols, gap, captions, lightbox, …) works here too.',
 			examples: [
 				`[blt_user_gallery user_id="123"]`,
 				`[blt_user_gallery user_id="123" type="tile" cols="4"]`,
@@ -2706,7 +2706,7 @@
 			],
 			attrs: [
 				[ 'user_id',  'int',                                     'WordPress user ID whose gallery to show.' ],
-				[ 'type',     'masonry · tile · slideshow · lightbox',   'Override the stored display type.' ],
+				[ 'type',     'masonry · tile · slideshow · lightbox',   'Override this gallery\'s saved display style just for this placement — e.g. tile for a grid layout — without changing the stored gallery.' ],
 				[ 'cols',     '1–8',                                     'Target column count at desktop width.' ],
 				[ 'gap',      'px',                                      'Gutter between items.' ],
 				[ 'radius',   'px',                                      'Per-item border radius.' ],

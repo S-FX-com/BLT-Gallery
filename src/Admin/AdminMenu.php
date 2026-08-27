@@ -464,7 +464,7 @@ class AdminMenu {
 			[
 				'tag'      => 'blt_user_gallery',
 				'title'    => __( "A specific user's gallery", 'bltgallery' ),
-				'intro'    => __( "Displays one WordPress user's front-end gallery by their user ID — for templates that already know which profile they're showing (a member page, a directory). Read-only: no upload widget, no login required to view, and works even if the front-end gallery feature is currently disabled for new uploads. Renders nothing if that user has never created a gallery. Every [blt_gallery] display attribute (type, cols, gap, captions, lightbox, …) works here too.", 'bltgallery' ),
+				'intro'    => __( 'Displays one WordPress user\'s front-end gallery by their user ID — for templates that already know which profile they\'re showing (a member page, a directory). Read-only: no upload widget, no login required to view, and works even if the front-end gallery feature is currently disabled for new uploads. Shows a "No gallery exists for this user." message if that user has never created a gallery. Every [blt_gallery] display attribute (type, cols, gap, captions, lightbox, …) works here too.', 'bltgallery' ),
 				'examples' => [
 					'[blt_user_gallery user_id="123"]',
 					'[blt_user_gallery user_id="123" type="tile" cols="4"]',
@@ -472,7 +472,7 @@ class AdminMenu {
 				],
 				'attrs'    => [
 					[ 'user_id', 'int', __( 'WordPress user ID whose gallery to show.', 'bltgallery' ) ],
-					[ 'type',    'masonry · tile · slideshow · lightbox', __( 'Override the stored display type.', 'bltgallery' ) ],
+					[ 'type',    'masonry · tile · slideshow · lightbox', __( "Override this gallery's saved display style just for this placement — e.g. tile for a grid layout — without changing the stored gallery.", 'bltgallery' ) ],
 					[ 'cols',    '1–8', __( 'Target column count at desktop width.', 'bltgallery' ) ],
 					[ 'gap',     'px', __( 'Gutter between items.', 'bltgallery' ) ],
 					[ 'radius',  'px', __( 'Per-item border radius.', 'bltgallery' ) ],
