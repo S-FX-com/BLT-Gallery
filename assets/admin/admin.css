@@ -1294,10 +1294,21 @@
 	color: #fff;
 }
 
-.bltgallery-table .check-column {
+/*
+ * Core's common.css styles `.widefat thead td.check-column` and
+ * `.widefat tbody td.check-column` (0-2-2) with lopsided padding
+ * (11px 0 0 3px), which outranks a bare `.bltgallery-table .check-column`
+ * (0-2-0) no matter what values it holds. Stack the table's own
+ * `.wp-list-table` class (0-3-2) so this rule actually wins.
+ */
+.wp-list-table.bltgallery-table thead td.check-column,
+.wp-list-table.bltgallery-table tbody td.check-column {
 	width: 3rem;
 	padding: 0 0 0 10px;
 	vertical-align: middle;
 }
 
-.bltgallery-table .check-column input[type="checkbox"] { margin: 0; }
+.bltgallery-table .check-column input[type="checkbox"] {
+	margin: 0;
+	vertical-align: middle;
+}
